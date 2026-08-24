@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>MCP Security Risks You Should Understand · Sagar Trivedi</title>
+<meta name="description" content="MCP servers sit between agents and real systems. That makes them powerful. It also makes them sensitive. If an MCP server can read private data, create tickets, update records, trigger workflows, or m">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/mcp-security-risks-you-should-understand/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP Security Risks You Should Understand · Sagar Trivedi">
+<meta property="og:description" content="MCP servers sit between agents and real systems. That makes them powerful. It also makes them sensitive. If an MCP server can read private data, create tickets, update records, trigger workflows, or m">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/mcp-security-risks-you-should-understand/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MCP Security Risks You Should Understand · Sagar Trivedi">
+<meta name="twitter:description" content="MCP servers sit between agents and real systems. That makes them powerful. It also makes them sensitive. If an MCP server can read private data, create tickets, update records, trigger workflows, or m">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>MCP Security Risks You Should Understand</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-02">2 June 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> MCP servers sit between agents and real systems. </p>
+<p> That makes them powerful. It also makes them sensitive. </p>
+<p> If an MCP server can read private data, create tickets, update records, trigger workflows, or move money, then every tool call deserves serious security design. </p>
+<p> The main rule: </p>
+<p> Treat MCP as production integration infrastructure, not demo glue. </p>
+<h2>Risk 1: Prompt Injection </h2>
+<p> Prompt injection happens when malicious instructions are hidden inside data the model reads. </p>
+<p> Examples: </p>
+<ul><li>An issue title </li><li>A support ticket </li><li>A web page </li><li>A document </li><li>An email body </li></ul>
+<p> The dangerous part is that the content may look like normal data, but it tries to influence the agent's behaviour. </p>
+<p> For MCP, the risk is higher when the agent can read untrusted content and then call tools with side effects. </p>
+<p> Mitigation: </p>
+<ul><li>Treat external content as untrusted. </li><li>Separate instructions from data. </li><li>Require user confirmation for destructive actions. </li><li>Keep tool permissions narrow. </li></ul>
+<h2>Risk 2: Tool Poisoning </h2>
+<p> Tool poisoning happens when a server exposes a benign tool description and later changes it to include hidden or harmful behaviour. </p>
+<p> Because tool descriptions are part of the model's context, a poisoned description can influence the model's decisions. </p>
+<p> Mitigation: </p>
+<ul><li>Pin tool definitions when possible. </li><li>Review unexpected tool-list changes. </li><li>Use trusted servers. </li><li>Monitor tool descriptions in production. </li></ul>
+<h2>Risk 3: Over-Privileged Tokens </h2>
+<p> Agents should not run with broad, permanent access. </p>
+<p> If one token can do everything, then one bad tool call can do too much damage. </p>
+<p> Mitigation: </p>
+<h2>Recommended by LinkedIn</h2>
+<ul><li>Use least-privilege scopes. </li><li>Bind permissions to the user and action. </li><li>Prefer short-lived access tokens. </li><li>Re-check authorisation on every tool call. </li></ul>
+<h2>Risk 4: Cross-Server Token Replay </h2>
+<p> A token issued for one MCP server should not work against another server. </p>
+<p> For protected HTTP MCP servers, use OAuth-based authorisation with Resource Indicators so access tokens are bound to the intended MCP server URI. </p>
+<p> Mitigation: </p>
+<ul><li>Validate the token audience. </li><li>Reject tokens meant for another server. </li><li>Scope tokens to the specific resource server. </li></ul>
+<h2>Risk 5: Weak Audit Trails </h2>
+<p> When an agent calls a tool, you need to know what happened. </p>
+<p> A useful audit log should answer: </p>
+<ul><li>Which user was the agent acting for? </li><li>Which tool was called? </li><li>What arguments were used? </li><li>What result came back? </li><li>Was the action approved? </li><li>How long did it take? </li></ul>
+<p> Without that trail, incidents become hard to investigate. </p>
+<h2>A Compact Security Baseline </h2>
+<p><br/></p>
+<p> For any serious MCP server: </p>
+<ul><li>Authenticate every request. </li><li>Authorise every tool call. </li><li>Validate every input. </li><li>Sanitise every output. </li><li>Encrypt HTTP traffic. </li><li>Log every action. </li><li>Require confirmation for destructive operations. </li></ul>
+<h2>The Takeaway </h2>
+<p> MCP security is not only about protecting the server. </p>
+<p> It is about protecting the user, the downstream system, and the agent's decision loop. </p>
+<p> Good MCP servers assume mistakes will happen and limit the blast radius. </p>
+<p> Full knowledge base: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-mcp%2F&amp;urlhash=0akZ&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://sagart-cactus.github.io/learn-mcp/ </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/mcp-security-risks-you-should-understand-sagar-trivedi-nosjc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/mcp-just-rest-ai/"><span class="dir">Previous</span>MCP Is Not Just REST for AI</a><a class="prevnext next" href="../../articles/best-practices-building-mcp-servers/"><span class="dir">Next</span>Best Practices for Building MCP Servers</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MCP Security Risks You Should Understand",
+  "datePublished": "2026-06-02",
+  "description": "MCP servers sit between agents and real systems. That makes them powerful. It also makes them sensitive. If an MCP server can read private data, create tickets, update records, trigger workflows, or m",
+  "wordCount": 449,
+  "url": "https://sagart-cactus.github.io/articles/mcp-security-risks-you-should-understand/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/mcp-security-risks-you-should-understand/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

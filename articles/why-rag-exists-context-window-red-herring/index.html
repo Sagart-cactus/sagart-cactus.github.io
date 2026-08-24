@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Why RAG Exists: The Context Window Is a Red Herring · Sagar Trivedi</title>
+<meta name="description" content="The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Why RAG Exists: The Context Window Is a Red Herring · Sagar Trivedi">
+<meta property="og:description" content="The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Why RAG Exists: The Context Window Is a Red Herring · Sagar Trivedi">
+<meta name="twitter:description" content="The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Why RAG Exists: The Context Window Is a Red Herring</h1>
+      <p class="post-meta">
+        <time datetime="2026-08-24">24 August 2026</time>
+        <span class="dot">·</span>4 min read
+      </p>
+
+      <div class="post-body">
+<p> The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. </p>
+<p> It is not wrong. It is just the weakest of the four real reasons, and believing it is the main one leads to a specific and expensive kind of debugging. </p>
+<p> Here is the shape of that failure. A RAG system starts giving confident, well-written, wrong answers on maybe one question in six. The natural response is to assume too much is being crammed in and things are getting lost. So you cut the number of retrieved chunks. No change. You raise it. No change. You move to a model with a much bigger window on the theory that there is more headroom. Sometimes slightly worse. </p>
+<p> Weeks can disappear into this, because every one of those changes is tuning what happens after retrieval, on queries where retrieval already failed. The correct document was never in the results at all. </p>
+<p> That failure mode is a direct consequence of believing the capacity story. </p>
+<h2>The four reasons, in order of how much they actually matter </h2>
+<p> Recency. The model's weights froze at training time. Your pricing did not. Your policies did not. No context window size fixes a model not knowing about something that happened after it was trained. </p>
+<p> Privacy and scope. Your contracts were never in the training data and should not have been. Neither should customer A's records be visible to customer B. One set of weights cannot hold a per-user view of the world. It has one view, and everyone with access gets the same one. </p>
+<p> Verifiability. This is the one that decides architectures. A model's knowledge is smeared across billions of parameters. It cannot tell you where a fact came from. Worse, it cannot distinguish "I memorised this" from "this is a plausible continuation of that sentence." There is no internal signal for I do not know. That is what hallucination is, mechanically. </p>
+<p> Economics. Even when the corpus does fit, paying to push 400,000 tokens through a model on every query when 3,000 would do is a strange way to spend money. </p>
+<p> Now run the thought experiment that makes the ranking obvious. Imagine a model with an infinite context window, free and instant. </p>
+<p> Reasons one, two and three are completely untouched. You still cannot tell which document an answer came from. You still cannot stop one customer seeing another's data. The corpus is still stale the moment somebody edits a file. </p>
+<p> Capacity was never load bearing. It is just the easiest reason to draw on a slide. </p>
+<h2>Why verifiability decides the architecture </h2>
+<p> In legal, healthcare, finance and support, "cite your source" is not a feature request. It is the condition under which the thing is allowed to ship. </p>
+<p> Retrieval gives you that for free. Not as a clever addition, as a byproduct. You had to go and find document X to answer the question, so you already know it was document X. The provenance chain falls out of the mechanism. </p>
+<p> No context window size gives you that. No amount of fine-tuning gives you that either. You can fine-tune a model until it knows an entire handbook perfectly and it still cannot tell you which page it learned something from, because that is not how the information is stored. </p>
+<p> Which gives you a one-sentence definition that is more useful than any box diagram: </p>
+<p> Separate knowledge from reasoning. The model is a reasoning engine you rent. The corpus is memory you own, update, permission and audit. </p>
+<p> Everything else in retrieval is an engineering consequence of that split. </p>
+<h2>Two diagnostics worth running before you tune anything </h2>
+<p> The grounding test. Take a query the system answers correctly. Now look at the chunks that were actually retrieved. Do they contain the answer? </p>
+<p> If they do not, the model answered from its own training knowledge and got lucky. Which means grounding is not enforced anywhere in the pipeline, so every answer it produces is unverifiable, including the wrong ones. A correct answer can hide a completely broken guarantee, and most teams would call that a passing test. </p>
+<p> The retrieval test. When something goes wrong, before touching anything downstream, ask whether the right chunk was retrieved at all. </p>
+<p> A large fraction of the time it was not, and everything after retrieval is irrelevant to the fix. </p>
+<h2>The reflex worth building </h2>
+<p> The capacity explanation trains a bad instinct. Something goes wrong, and you reach for "it does not fit." That framing is comfortable because capacity problems are loud. They throw errors. They truncate visibly. They appear in logs. </p>
+<p> Quality problems do none of that. They return a confident, well-written, correctly formatted, wrong answer, and nothing anywhere reports a problem. </p>
+<p> So the first question is not "did it fit." It is: </p>
+<p> Did we retrieve the right thing, and how would we even know? </p>
+<p> The second half matters more than the first. If you cannot answer "how would we know," you do not have a retrieval problem yet. You have a measurement problem, and it is hiding all the others. </p>
+<p> There is a visual walkthrough of the full mechanics, built from a single number outward, linked in the comments. </p>
+<p> What is the longest anyone has spent fixing the wrong layer of a system? Curious whether weeks is typical or optimistic. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/why-rag-exists-context-window-red-herring-sagar-trivedi-t4ync" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext next" href="../../articles/scariest-ai-agent-failure-one-looks-like-success/"><span class="dir">Next</span>The Scariest AI Agent Failure Is the One That Looks Like Success</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Why RAG Exists: The Context Window Is a Red Herring",
+  "datePublished": "2026-08-24",
+  "description": "The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It",
+  "wordCount": 889,
+  "url": "https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

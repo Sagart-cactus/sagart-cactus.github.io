@@ -1,0 +1,110 @@
+{
+ "Agents, evaluation and retrieval": [
+  [
+   "Why RAG Exists: The Context Window Is a Red Herring",
+   "https://www.linkedin.com/pulse/why-rag-exists-context-window-red-herring-sagar-trivedi-t4ync"
+  ],
+  [
+   "The Scariest AI Agent Failure Is the One That Looks Like Success",
+   "https://www.linkedin.com/pulse/scariest-ai-agent-failure-one-looks-like-success-sagar-trivedi-th4kc"
+  ],
+  [
+   "Every Multi-Agent System I've Studied Is One of These Five Designs",
+   "https://www.linkedin.com/pulse/every-multi-agent-system-ive-studied-one-five-designs-sagar-trivedi-gvszc"
+  ],
+  [
+   "I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.",
+   "https://www.linkedin.com/pulse/i-assumed-multi-agent-meant-4x-cost-math-said-sagar-trivedi-nmzsc"
+  ],
+  [
+   "The One Sentence That Explains Every Multi-Agent Failure I've Seen",
+   "https://www.linkedin.com/pulse/one-sentence-explains-every-multi-agent-failure-ive-seen-trivedi-jjo1c"
+  ],
+  [
+   "Your AI Agent Has a Ceiling. Here's Where It Is.",
+   "https://www.linkedin.com/pulse/your-ai-agent-has-ceiling-heres-where-sagar-trivedi-kapbc"
+  ]
+ ],
+ "Model Context Protocol": [
+  [
+   "What Is MCP and Why Does It Exist?",
+   "https://www.linkedin.com/pulse/what-mcp-why-does-exist-sagar-trivedi-4y8fc"
+  ],
+  [
+   "MCP Architecture, Primitives, and Call Flow",
+   "https://www.linkedin.com/pulse/mcp-architecture-primitives-call-flow-sagar-trivedi-0pgic"
+  ],
+  [
+   "MCP Is Not Just REST for AI",
+   "https://www.linkedin.com/pulse/mcp-just-rest-ai-sagar-trivedi-2o1pc"
+  ],
+  [
+   "MCP Security Risks You Should Understand",
+   "https://www.linkedin.com/pulse/mcp-security-risks-you-should-understand-sagar-trivedi-nosjc"
+  ],
+  [
+   "Best Practices for Building MCP Servers",
+   "https://www.linkedin.com/pulse/best-practices-building-mcp-servers-sagar-trivedi-laqtc"
+  ]
+ ],
+ "Inside Codex CLI, an eight-part series": [
+  [
+   "The 10,000-Foot View: What Is Codex CLI and Why Should You Care?",
+   "https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c"
+  ],
+  [
+   "The Nervous System: How Components Talk",
+   "https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c"
+  ],
+  [
+   "The Brain: Inside the Core Engine",
+   "https://www.linkedin.com/pulse/brain-inside-core-engine-sagar-trivedi-7gkec"
+  ],
+  [
+   "The Vault: How Every Command Runs in a Sandbox",
+   "https://www.linkedin.com/pulse/vault-how-every-command-runs-sandbox-sagar-trivedi-jse4c"
+  ],
+  [
+   "Four Windows Into One Brain: TUI, Exec, App Server, and MCP Server",
+   "https://www.linkedin.com/pulse/part-5-four-windows-one-brain-tui-exec-app-server-mcp-sagar-trivedi-xnmlc"
+  ],
+  [
+   "The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem",
+   "https://www.linkedin.com/pulse/swiss-army-knife-mcp-tools-plugin-ecosystem-sagar-trivedi-chqmc"
+  ],
+  [
+   "The Safety Net: Hooks, Policies, and the Approval Chain",
+   "https://www.linkedin.com/pulse/part-7-safety-net-sagar-trivedi-tcjxc"
+  ],
+  [
+   "Building on the Giant: SDKs, APIs, and What's Next",
+   "https://www.linkedin.com/pulse/building-giant-sdks-apis-whats-next-sagar-trivedi-vmvsc"
+  ]
+ ],
+ "Agent tooling and team practice": [
+  [
+   "Stop re-explaining your stack to your AI every morning",
+   "https://www.linkedin.com/pulse/stop-re-explaining-your-stack-ai-every-morning-sagar-trivedi-sx7kc"
+  ],
+  [
+   "Your team's standards keep getting ignored. Hooks fix that for good.",
+   "https://www.linkedin.com/pulse/your-teams-standards-keep-getting-ignored-hooks-fix-good-trivedi-7dqac"
+  ],
+  [
+   "The most important code in your plugin isn't code",
+   "https://www.linkedin.com/pulse/most-important-code-your-plugin-isnt-sagar-trivedi-13gbc"
+  ],
+  [
+   "A plugin you didn't audit is a plugin you don't trust",
+   "https://www.linkedin.com/pulse/plugin-you-didnt-audit-dont-trust-sagar-trivedi-xae2c"
+  ],
+  [
+   "How to turn a 20-minute chore into a 2-minute command",
+   "https://www.linkedin.com/pulse/how-turn-20-minute-chore-2-minute-command-sagar-trivedi-yettc"
+  ],
+  [
+   "SprintFoundry now supports Agent Sandboxes",
+   "https://www.linkedin.com/pulse/sprintfoundry-now-supports-agent-sandboxes-sagar-trivedi-koqgc"
+  ]
+ ]
+}

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust · Sagar Trivedi</title>
+<meta name="description" content="Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust · Sagar Trivedi">
+<meta property="og:description" content="Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust · Sagar Trivedi">
+<meta name="twitter:description" content="Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-25">25 June 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what's inside. </p>
+<p> Think about what an install actually means. The moment a plugin is enabled, you have handed it the ability to run skills, spawn agents, fire shell hooks, start MCP servers, and stream from background monitors, all inside your environment, with your credentials in reach. That trust is transitive, and it is usually opaque. </p>
+<p> This is not hypothetical. Real CVEs have already exploited exactly this surface: remote code execution through malicious hooks planted in a repository's settings file, and API-key exfiltration through a rogue MCP server overriding environment variables. </p>
+<h2>You trust the whole pyramid </h2>
+<p> When you trust a plugin, you trust every component inside it, all at once. A single bad one is enough. </p>
+<p> That is the threat. Here is the discipline that contains it. </p>
+<h2>Least privilege, component by component </h2>
+<p> The principle is old, and it still wins: give each component only what it needs, and nothing more. </p>
+<ul><li>Skills: declare the tools you actually use. Reading logs? tools: Read, Glob, and nothing else. </li><li>Agents: explicit tool lists, always. A documentation writer needs Read, Write, Glob, not Bash. </li><li>MCP servers: treat each as its own trust boundary. Ship only servers you control or have audited. Reference secrets through environment variables, never hardcode them, and scope tokens to the minimum. Prefer read-only. </li><li>Hooks: the most dangerous surface, covered next. </li></ul>
+<h2>Treat every input as hostile </h2>
+<p> Hooks receive JSON from Claude on stdin. That is untrusted input, full stop. The job of a hook is to validate first and act second, and to allowlist what is permitted rather than trying to blocklist what isn't. </p>
+<h2>Recommended by LinkedIn</h2>
+<p> In practice, that looks like this: </p>
+<pre><code># Extract and validate; treat stdin as untrusted
+FILE_PATH=$(echo "$STDIN" | jq -r '.tool_input.file_path // empty')
+if [ -z "$FILE_PATH" ]; then exit 0; fi
+# Reject path traversal
+case "$FILE_PATH" in *../*) exit 1 ;; esac</code></pre>
+<p> Always quote your variables ("$FILE", never $FILE), parse specific fields with jq instead of evaluating the whole blob, and never pipe user-provided content into sh. </p>
+<h2>The checklist before you publish </h2>
+<p> Before any plugin reaches another person, walk through this list: </p>
+<ul><li>no hardcoded secrets anywhere </li><li>Every hook command uses quoted variables </li><li>MCP servers pin exact dependency versions </li><li>Agents have explicit tool restrictions </li><li>claude plugin validate passes with no warnings </li><li>The README documents every required environment variable </li><li>tested in a sandboxed container or VM, never as root </li><li>no unnecessary network access </li><li>Least privilege is applied to every single component </li></ul>
+<p> Powerful tools deserve careful owners. The plugin model gives you real leverage, and this is the price of holding it responsibly. </p>
+<hr/>
+<p> This is one chapter of a much larger field guide. The full interactive version covers the complete trust model, secret management, supply-chain risk, and the architecture patterns that keep plugins safe at scale, all with animated diagrams. </p>
+<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/plugin-you-didnt-audit-dont-trust-sagar-trivedi-xae2c" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/most-important-code-your-plugin-isnt/"><span class="dir">Previous</span>The most important code in your plugin isn&#x27;t code</a><a class="prevnext next" href="../../articles/how-turn-20-minute-chore-2-minute-command/"><span class="dir">Next</span>How to turn a 20-minute chore into a 2-minute command</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A plugin you didn't audit is a plugin you don't trust",
+  "datePublished": "2026-06-25",
+  "description": "Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what's inside. Think about what an install actually means. The moment a p",
+  "wordCount": 500,
+  "url": "https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

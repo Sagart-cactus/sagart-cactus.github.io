@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Scariest AI Agent Failure Is the One That Looks Like Success · Sagar Trivedi</title>
+<meta name="description" content="Everyone designs for the crash. Almost nobody designs for the lie. After running multi-agent pipelines in production for a while, I&#x27;ve come to sort failures into three kinds. Only one of them announce">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/scariest-ai-agent-failure-one-looks-like-success/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Scariest AI Agent Failure Is the One That Looks Like Success · Sagar Trivedi">
+<meta property="og:description" content="Everyone designs for the crash. Almost nobody designs for the lie. After running multi-agent pipelines in production for a while, I&#x27;ve come to sort failures into three kinds. Only one of them announce">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/scariest-ai-agent-failure-one-looks-like-success/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Scariest AI Agent Failure Is the One That Looks Like Success · Sagar Trivedi">
+<meta name="twitter:description" content="Everyone designs for the crash. Almost nobody designs for the lie. After running multi-agent pipelines in production for a while, I&#x27;ve come to sort failures into three kinds. Only one of them announce">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The Scariest AI Agent Failure Is the One That Looks Like Success</h1>
+      <p class="post-meta">
+        <time datetime="2026-08-06">6 August 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> Everyone designs for the crash. Almost nobody designs for the lie. </p>
+<p> After running multi-agent pipelines in production for a while, I've come to sort failures into three kinds. Only one of them announces itself. The other two get quietly folded into your results, and you find out later, if you find out at all. </p>
+<h2>The loud failure </h2>
+<p> A child agent times out. Or errors. Or returns text when you asked for JSON. This is the failure everyone already knows how to handle, because it's just distributed systems hygiene: validate the output, catch the exception, retry once, and if it still fails, route the item to a review queue instead of letting one bad item sink the whole batch. </p>
+<p> Treat every child agent like an external API, and you've basically got this one covered. The output is a string until proven otherwise. Parse it, check the required fields exist, and never assume. </p>
+<h2>The quiet failure </h2>
+<p> This is the one that changed how I build. </p>
+<p> The child returns on time. The JSON parses. Every field is present and the right type. And the answer is wrong, because the model reasoned badly somewhere in the middle. Nothing in your pipeline can tell, because structurally the output is perfect. </p>
+<p> Two defences have actually worked for me. </p>
+<p> First, don't trust self-reported confidence. I used to have my agents return a confidence field, and I used to believe it. A model's own confidence estimate is just more model output, subject to the same bad reasoning that produced the wrong answer. </p>
+<p> Second, use disagreement as the signal instead. For items that matter, run the evaluation twice, with slightly varied prompts or just at nonzero temperature. If the two runs agree, fine. If they disagree significantly, the item is genuinely ambiguous or the model is genuinely unreliable on it, and either way it goes to a human. Consistency between independent runs is a real signal in a way that self-reported confidence is not. </p>
+<h2>Recommended by LinkedIn</h2>
+<h2>The propagated failure </h2>
+<p> The third kind is a compound failure, and it's the most dangerous because it wears the other two as camouflage. </p>
+<p> Say fifty children out of a thousand fail loudly. You catch them, flag them, all correct. Then your summary agent receives the nine hundred fifty successful results and writes its report. Nobody told it about the fifty. So it reports on nine hundred fifty items as if they were the full thousand, and it does so fluently and confidently. </p>
+<p> If the fifty failures were random, maybe fine. But failures are rarely random. Maybe the longest conversation times out. Maybe one category of input breaks parsing. Your missing fifty are systematically different from your successful nine hundred fifty, and your summary now has a blind spot exactly where the problems are. </p>
+<p> The fix costs one sentence. Every downstream agent gets the denominator: processed this many, succeeded this many, failed this many, and here's the pattern in the failures if there is one. Let the summarizer reason about the gap instead of hiding it. </p>
+<h2>The audit habit </h2>
+<p> One more practice, for pipelines that run in a language or domain you can't personally check. Sample a small percentage of outputs regularly and have a separate agent explain, in plain language you understand, why each score or decision was given, with translated or quoted evidence. It's cheap, and it's the difference between operating a system you trust and operating a black box that hasn't burned you yet. </p>
+<p> Design for the crash, sure. But spend your real effort on the lie. The crash costs you an item. The lie costs you your trust in the whole pipeline, right at the moment you've stopped checking. </p>
+<p> That wraps the series. I've put everything from these five articles, plus animated diagrams for each concept, into a free visual guide. Link in the post that brought you here, or check my profile. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/scariest-ai-agent-failure-one-looks-like-success-sagar-trivedi-th4kc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/why-rag-exists-context-window-red-herring/"><span class="dir">Previous</span>Why RAG Exists: The Context Window Is a Red Herring</a><a class="prevnext next" href="../../articles/every-multi-agent-system-ive-studied-one-five-designs/"><span class="dir">Next</span>Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Scariest AI Agent Failure Is the One That Looks Like Success",
+  "datePublished": "2026-08-06",
+  "description": "Everyone designs for the crash. Almost nobody designs for the lie. After running multi-agent pipelines in production for a while, I've come to sort failures into three kinds. Only one of them announce",
+  "wordCount": 644,
+  "url": "https://sagart-cactus.github.io/articles/scariest-ai-agent-failure-one-looks-like-success/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/scariest-ai-agent-failure-one-looks-like-success/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

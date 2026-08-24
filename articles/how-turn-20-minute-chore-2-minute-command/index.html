@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>How to turn a 20-minute chore into a 2-minute command · Sagar Trivedi</title>
+<meta name="description" content="Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, for">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/how-turn-20-minute-chore-2-minute-command/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How to turn a 20-minute chore into a 2-minute command · Sagar Trivedi">
+<meta property="og:description" content="Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, for">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/how-turn-20-minute-chore-2-minute-command/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to turn a 20-minute chore into a 2-minute command · Sagar Trivedi">
+<meta name="twitter:description" content="Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, for">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>How to turn a 20-minute chore into a 2-minute command</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-29">29 June 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, forever. </p>
+<p> Here is what that friction actually looks like for a single pull request: </p>
+<ol><li>Open the PR and copy the diff into a chat </li><li>Type "review this for security" </li><li>Read the findings </li><li>Create the GitHub comments by hand </li><li>Update the ticket in Jira </li><li>Run the linter manually </li><li>Fix what it flags </li></ol>
+<p> Call it twenty minutes. Now multiply by every PR, every week, for your whole team. </p>
+<h2>The same work, collapsed into one command </h2>
+<p> A plugin turns that sequence into a single invocation. /pr-tools:full-review PR-456 and the rest happens on its own: it fetches the diff through the GitHub MCP server, a security-reviewer agent analyzes it, a PostToolUse hook runs the linter, the GitHub MCP posts the review comments, and the Jira MCP updates the ticket. About two minutes, zero copy-paste. </p>
+<p> The trick to designing one of these is to map the "before" in detail first. Every manual step you write down is a candidate for automation. </p>
+<h2>Four patterns cover almost everything </h2>
+<p> Most useful workflow skills are one of four shapes: </p>
+<ul><li>Context loader: primes Claude with everything it needs at the start of a task. No action, just context. </li><li>Workflow executor: runs a multi-step process in order (fetch, analyze, act, report) and stops the moment a step fails. </li><li>State-aware operator: checks external state through MCP tools and acts conditionally. Classify a ticket, then branch. </li><li>Feedback loop: a skill paired with hooks for continuous improvement. Write the test, run it, implement, verify, refactor. </li></ul>
+<h2>Recommended by LinkedIn</h2>
+<p> A pre-deploy executor reads as plainly as the runbook it replaces: </p>
+<pre><code>---
+description: Run the full pre-deployment checklist. Use before any
+  production deployment.
+---
+# Pre-Deploy Checklist
+Run these IN ORDER and stop if any fail:
+1. `npm run test:all` must pass 100%
+2. `npm run build` must produce zero warnings
+3. confirm all commits in `main..HEAD` are reviewed
+4. verify every var in `.env.production.example` is set
+5. `npm run db:migrate:dry-run` must report a safe migration</code></pre>
+<h2>Hooks are what make it automatic </h2>
+<p> Skills describe the work. Hooks make it run without you. Because a hook's output flows back to Claude, a failing test in a PostToolUse hook is not a dead end, it is the next instruction. Claude reads the failure and fixes it, then the loop continues. </p>
+<p> Compose small skills into bigger ones and the leverage compounds. A fetch-pr, a security-check, and a post-review skill each do one job. A full-review skill calls all three in sequence. You build the atoms once and assemble the workflows on top. </p>
+<h2>Where to start </h2>
+<p> Find the task you resent most this week. Write down every manual step. Then ask which steps are a skill, which are a hook, and which need an MCP tool to reach the outside world. That list is your first plugin, and it is the one that will pay you back fastest. </p>
+<p> The work you repeat is the work worth automating. </p>
+<hr/>
+<p> This is one chapter of a much larger field guide. The full interactive version covers all four automation patterns, stateful workflows with monitors, and how to compose skills into production-grade pipelines, all with animated diagrams. </p>
+<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/how-turn-20-minute-chore-2-minute-command-sagar-trivedi-yettc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/plugin-you-didnt-audit-dont-trust/"><span class="dir">Previous</span>A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust</a><a class="prevnext next" href="../../articles/sprintfoundry-now-supports-agent-sandboxes/"><span class="dir">Next</span>SprintFoundry now supports Agent Sandboxes</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "How to turn a 20-minute chore into a 2-minute command",
+  "datePublished": "2026-06-29",
+  "description": "Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, for",
+  "wordCount": 560,
+  "url": "https://sagart-cactus.github.io/articles/how-turn-20-minute-chore-2-minute-command/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/how-turn-20-minute-chore-2-minute-command/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

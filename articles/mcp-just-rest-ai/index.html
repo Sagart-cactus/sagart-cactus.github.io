@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>MCP Is Not Just REST for AI · Sagar Trivedi</title>
+<meta name="description" content="One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/mcp-just-rest-ai/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP Is Not Just REST for AI · Sagar Trivedi">
+<meta property="og:description" content="One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/mcp-just-rest-ai/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MCP Is Not Just REST for AI · Sagar Trivedi">
+<meta name="twitter:description" content="One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>MCP Is Not Just REST for AI</h1>
+      <p class="post-meta">
+        <time datetime="2026-05-29">29 May 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> One of the fastest ways to misunderstand MCP is to describe it as "REST for AI agents." </p>
+<p> That sounds convenient, but it misses the point. </p>
+<p> REST and MCP solve different problems for different consumers. </p>
+<p> REST is usually designed for developers writing deterministic code. MCP is designed for models choosing actions at runtime. </p>
+<h2>REST Is for Known Calls </h2>
+<p> REST works beautifully when the caller already knows what it wants to do. </p>
+<p> For example: </p>
+<ul><li>A mobile app gets a user's profile. </li><li>A backend job syncs invoices. </li><li>A service creates a payment. </li><li>A dashboard fetches analytics. </li></ul>
+<p> The developer reads API docs, writes code, handles errors, and ships a fixed call sequence. </p>
+<p> The API is consumed at build time by a human developer. </p>
+<h2>MCP Is for Agent Workflows </h2>
+<p> An agent often does not know the exact call sequence in advance. </p>
+<p> It receives a user request, inspects available tools, decides what to call, reads results, and then decides what to do next. </p>
+<p> That means the integration needs more than endpoints. </p>
+<p> It needs: </p>
+<ul><li>Runtime discovery </li><li>Model-friendly tool descriptions </li><li>JSON schemas </li><li>Guidance-rich errors </li><li>User consent flows </li><li>Notifications and callbacks </li><li>Context-aware responses </li></ul>
+<p> MCP is shaped around that loop. </p>
+<h2>Discovery Is a Big Difference </h2>
+<p> With REST, discovery usually happens when a developer reads documentation. </p>
+<p> With MCP, discovery happens at runtime through calls such as tools/list, resources/list, and prompts/list. </p>
+<p> The model can be given the available capabilities as part of its working context. </p>
+<p> That changes how you design the interface. Tool names and descriptions become part of the product. </p>
+<h2>Recommended by LinkedIn</h2>
+<h2>Error Messages Need to Help the Model </h2>
+<p> A REST API can return: </p>
+<pre><code>{ "error": "403 Forbidden" }</code></pre>
+<p> That might be enough for a developer who can inspect logs and documentation. </p>
+<p> For an agent, it is often too thin. </p>
+<p> A better MCP error might say: </p>
+<pre><code>Permission denied. This action requires the repo:write scope. Ask the user to reconnect GitHub with write access before retrying.</code></pre>
+<p> That message gives the model the next step. </p>
+<h2>MCP Usually Sits on Top of APIs </h2>
+<p> MCP does not replace REST. </p>
+<p> In many systems, the MCP server calls existing REST or GraphQL APIs under the hood. The difference is that it exposes an agent-friendly surface on top. </p>
+<p> Instead of mirroring every endpoint, a good MCP server exposes workflow-shaped tools. </p>
+<p> For example, instead of forcing the model to call: </p>
+<ul><li>list_customers </li><li>get_customer </li><li>list_orders </li><li>get_order </li><li>refund_order </li></ul>
+<p> You might expose: </p>
+<ul><li>find_refundable_order </li><li>refund_damaged_order </li></ul>
+<p> The MCP tool can call multiple APIs internally and return one clear result. </p>
+<h2>When to Use Each </h2>
+<p> Use REST when the caller is human-written code with a known sequence. </p>
+<p> Use MCP when an agent needs to choose among capabilities at runtime. </p>
+<p> Keep REST as the system of record. Use MCP as the agent-facing layer. </p>
+<h2>The Takeaway </h2>
+<p> REST is excellent for deterministic system-to-system calls. </p>
+<p> MCP is built for open-ended agent workflows where discovery, context, consent, and tool selection matter. </p>
+<p> Full knowledge base: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-mcp%2F&amp;urlhash=0akZ&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://sagart-cactus.github.io/learn-mcp/ </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/mcp-just-rest-ai-sagar-trivedi-2o1pc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/mcp-architecture-primitives-call-flow/"><span class="dir">Previous</span>MCP Architecture, Primitives, and Call Flow</a><a class="prevnext next" href="../../articles/mcp-security-risks-you-should-understand/"><span class="dir">Next</span>MCP Security Risks You Should Understand</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MCP Is Not Just REST for AI",
+  "datePublished": "2026-05-29",
+  "description": "One of the fastest ways to misunderstand MCP is to describe it as \"REST for AI agents.\" That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.",
+  "wordCount": 474,
+  "url": "https://sagart-cactus.github.io/articles/mcp-just-rest-ai/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/mcp-just-rest-ai/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

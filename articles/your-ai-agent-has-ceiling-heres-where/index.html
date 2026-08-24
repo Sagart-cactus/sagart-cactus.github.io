@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Your AI Agent Has a Ceiling. Here&#x27;s Where It Is. · Sagar Trivedi</title>
+<meta name="description" content="You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Your AI Agent Has a Ceiling. Here&#x27;s Where It Is. · Sagar Trivedi">
+<meta property="og:description" content="You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Your AI Agent Has a Ceiling. Here&#x27;s Where It Is. · Sagar Trivedi">
+<meta name="twitter:description" content="You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Your AI Agent Has a Ceiling. Here&#x27;s Where It Is.</h1>
+      <p class="post-meta">
+        <time datetime="2026-07-20">20 July 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that's built into the architecture itself. </p>
+<p> Let me walk you through how it shows up, because if you're building with LLMs right now, you're either about to hit it or you already have and couldn't name it. </p>
+<h2>Stage one: the single call </h2>
+<p> Everyone starts here. You send a prompt, you get an answer. For summaries, classification, rewriting, it's honestly all you need. </p>
+<p> Then someone asks for something real. "Research our top competitors, analyze their pricing, and write me a brief." </p>
+<p> A single call cannot do this. It can't search. It can't read results and change its plan. It can't do step 3 based on what step 1 found. So you level up. </p>
+<h2>Stage two: the agent loop </h2>
+<p> You give the model tools and put it in a loop. Think, call a tool, read the result, think again, repeat until done. This is what people mean when they say "agent," and it's a big jump. Suddenly the model can search, read files, run code, and course-correct. </p>
+<p> I ran happily on this stage for months. Then my tasks got bigger, and four problems showed up at almost exactly the same time. </p>
+<p> The context fills with junk. My agent read ten web pages to answer one question. All ten pages sat in its memory for the rest of the task, crowding out the stuff that mattered. Answers got vaguer as tasks got longer. </p>
+<p> Quality dropped as scope grew. One agent playing researcher, analyst, and writer in a single session does all three jobs worse than an agent doing one job. Every context switch costs something. You can see it in the output. </p>
+<p> Everything waits in line. My pipeline had five independent chunks of work. The loop did them one at a time, because that's all a loop can do. A twenty minute job that should have been four. </p>
+<h2>Recommended by LinkedIn</h2>
+<p> Every tool is exposed to every step. The same agent that read untrusted input from the internet also held the tool that could write files. Nothing bad happened. But nothing was stopping it either, except hope. </p>
+<p> I started calling these the four pressures: context, quality, time, and safety. One of them alone is annoying. Two or more and you've hit the ceiling. </p>
+<h2>Stage three: agents that manage agents </h2>
+<p> The fix is not a bigger context window or a cleverer prompt. I tried both. The fix is structural: a parent agent that breaks the task into pieces and hands each piece to a child agent that runs on its own, with its own context, its own tools, and its own job. </p>
+<p> The parent works like a manager. It doesn't do the research. It writes a brief, hands it to a researcher agent, hands another brief to a writer agent, and puts the results together. </p>
+<p> Each child starts with a clean context, so the junk problem disappears. Each child does one job, so the quality problem shrinks. Independent children run at the same time, so the queue disappears. And each child gets only the tools its job needs, so the safety problem becomes a design property instead of a hope. </p>
+<p> This pattern is usually called managed agents, and after building with it for a while I'd summarize it in one line: one agent is a worker, managed agents are a team. </p>
+<h2>How to know if you're at the ceiling </h2>
+<p> Ask yourself these four questions about your current pipeline: </p>
+<ol><li>Is tool output crowding my context by the end of long tasks? </li><li>Would a specialist produce noticeably better output than my generalist? </li><li>Are independent steps running one after another for no reason? </li><li>Does any step have tools it doesn't strictly need? </li></ol>
+<p> Two or more yes answers, and the single-agent loop is costing you more than it's giving you. </p>
+<p> In my next article I'll cover the one rule that makes multi-agent systems work or fail: what a child agent actually knows. It's less than you think, and that's the whole point. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/your-ai-agent-has-ceiling-heres-where-sagar-trivedi-kapbc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/one-sentence-explains-every-multi-agent-failure-ive-seen/"><span class="dir">Previous</span>The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Your AI Agent Has a Ceiling. Here's Where It Is.",
+  "datePublished": "2026-07-20",
+  "description": "You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that's built into the architecture itself. Let me wal",
+  "wordCount": 684,
+  "url": "https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

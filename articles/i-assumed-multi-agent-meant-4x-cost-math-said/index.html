@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise. · Sagar Trivedi</title>
+<meta name="description" content="When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. The pipeline evaluates items in bulk. Say a thousand items. The single-agent">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/i-assumed-multi-agent-meant-4x-cost-math-said/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise. · Sagar Trivedi">
+<meta property="og:description" content="When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. The pipeline evaluates items in bulk. Say a thousand items. The single-agent">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/i-assumed-multi-agent-meant-4x-cost-math-said/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise. · Sagar Trivedi">
+<meta name="twitter:description" content="When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. The pipeline evaluates items in bulk. Say a thousand items. The single-agent">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.</h1>
+      <p class="post-meta">
+        <time datetime="2026-07-27">27 July 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. </p>
+<p> The pipeline evaluates items in bulk. Say a thousand items. The single-agent version makes one LLM call per item, so a thousand calls. The multi-agent redesign used four agents per item. Four thousand calls. Four times the cost, for the same throughput. </p>
+<p> That math is correct, and it's also the wrong math. It took me an embarrassingly long time to see why. </p>
+<h2>Not all calls are equal. </h2>
+<p> The number I was ignoring is the price gap between model tiers. Small fast models cost a fraction of frontier models per token. Not slightly less. Dramatically less, often around twenty times cheaper. </p>
+<p> A single-agent pipeline can't exploit this. One agent does the whole job, and the job as a whole is hard, so the whole job runs on the expensive model. Every token, including the trivially easy ones, gets billed at the frontier rate. </p>
+<p> Decomposition changes that. Once the work is split into separate agents, each agent's job has its own difficulty, and you can ask a question that was meaningless before: does this specific step need frontier reasoning? </p>
+<h2>Sorting the work </h2>
+<p> When I actually sorted my pipeline's subtasks by difficulty, the pattern was obvious. </p>
+<p> Scanning text for specific keywords and phrases: mechanical. Extracting fields into a fixed format: mechanical. Simple binary classification: mechanical. None of this needs a frontier model. A small model does it just as well, at a twentieth of the price. </p>
+<h2>Recommended by LinkedIn</h2>
+<p> What genuinely needed the big model: the nuanced judgment calls, the synthesis across many inputs, and the orchestration decisions about what to do next. </p>
+<p> My four-agent design turned out to be two small-model agents and two big-model agents. Rerunning the cost math with real prices per tier, the four thousand call version came out cheaper than the thousand call version. And that's before counting the quality benefits, because a focused agent with a narrow brief simply does its one job better. </p>
+<h2>How to decide what to downgrade </h2>
+<p> You don't guess which steps can run on the small model. You measure. </p>
+<p> My procedure, which is nothing fancy: take fifty representative samples. Run the subtask on the big model and the small model. Compare. If the small model agrees with the big one on roughly ninety five percent or more of the samples, the subtask gets downgraded. If not, it stays on the big model and I've spent a few cents learning that. </p>
+<p> Two things to watch. First, rerun this check occasionally, because your data drifts. Second, be more conservative with subtasks that feed decisions than ones that feed summaries. An error that propagates costs more than an error that sits in a report. </p>
+<h2>The question that decides the architecture </h2>
+<p> The lesson I took away: when someone shows you a multi-agent design and objects that it multiplies the number of calls, the call count is not the interesting number. </p>
+<p> The interesting question is: how many of those calls have to be expensive? </p>
+<p> Sometimes the answer really is "all of them," and the multi-agent version costs more. You then decide if the quality and speed are worth it. But a surprising amount of the time, decomposition is exactly what makes the cheap tier usable at all, and the "expensive" architecture is the affordable one. </p>
+<p> Next in the series: the five patterns that nearly every production multi-agent system boils down to. Once you can name them, you'll see them everywhere. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/i-assumed-multi-agent-meant-4x-cost-math-said-sagar-trivedi-nmzsc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/every-multi-agent-system-ive-studied-one-five-designs/"><span class="dir">Previous</span>Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs</a><a class="prevnext next" href="../../articles/one-sentence-explains-every-multi-agent-failure-ive-seen/"><span class="dir">Next</span>The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.",
+  "datePublished": "2026-07-27",
+  "description": "When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. The pipeline evaluates items in bulk. Say a thousand items. The single-agent",
+  "wordCount": 584,
+  "url": "https://sagart-cactus.github.io/articles/i-assumed-multi-agent-meant-4x-cost-math-said/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/i-assumed-multi-agent-meant-4x-cost-math-said/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

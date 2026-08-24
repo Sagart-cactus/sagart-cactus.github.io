@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Brain: Inside the Core Engine · Sagar Trivedi</title>
+<meta name="description" content="Part 3 of &quot;Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI&quot; We&#x27;ve journeyed from the 10,000-foot view of Codex&#x27;s architecture down to the nervous system that carries signals between com">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/brain-inside-core-engine/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Brain: Inside the Core Engine · Sagar Trivedi">
+<meta property="og:description" content="Part 3 of &quot;Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI&quot; We&#x27;ve journeyed from the 10,000-foot view of Codex&#x27;s architecture down to the nervous system that carries signals between com">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/brain-inside-core-engine/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Brain: Inside the Core Engine · Sagar Trivedi">
+<meta name="twitter:description" content="Part 3 of &quot;Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI&quot; We&#x27;ve journeyed from the 10,000-foot view of Codex&#x27;s architecture down to the nervous system that carries signals between com">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The Brain: Inside the Core Engine</h1>
+      <p class="post-meta">
+        <time datetime="2026-04-03">3 April 2026</time>
+        <span class="dot">·</span>5 min read
+      </p>
+
+      <div class="post-body">
+<p> Part 3 of "Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI" </p>
+<blockquote>We've journeyed from the 10,000-foot view of Codex's architecture down to the nervous system that carries signals between components. Now it's time to step inside the skull and examine the brain itself </blockquote>
+<ul><li><a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The 10,000-Foot View: What Is Codex CLI and Why Should You Care? </a></li><li><a href="https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Nervous System: How Components Talk </a></li></ul>
+<h2>The Codex Orchestrator: The Main Brain </h2>
+<p> At the absolute core of everything sits this deceptively simple struct: </p>
+<pre><code>pub struct Codex {
+    pub(crate) tx_sub: Sender&lt;Submission&gt;,
+    pub(crate) rx_event: Receiver&lt;Event&gt;,
+    pub(crate) agent_status: watch::Receiver&lt;AgentStatus&gt;,
+    pub(crate) session: Arc&lt;Session&gt;,
+    pub(crate) session_loop_termination: SessionLoopTermination,
+}</code></pre>
+<p> Three public-facing queues and a reference to the session. That's the entire API surface. Everything you need to command an AI agent in 5 lines of code. </p>
+<p> But inside that Session struct, hidden behind async mutexes and channels, lives a sprawling 7000+ line codex.rs file that orchestrates one of the most complex state machines ever built. Let me pull back the veil. </p>
+<h2>The Session: The Persistent Memory </h2>
+<p> Inside the Codex struct lives an Arc&lt;Session&gt;: </p>
+<pre><code>pub(crate) struct Session {
+    pub(crate) conversation_id: ThreadId,
+    tx_event: Sender&lt;Event&gt;,
+    agent_status: watch::Sender&lt;AgentStatus&gt;,
+    state: Mutex&lt;SessionState&gt;,
+    features: ManagedFeatures,
+    pub(crate) active_turn: Mutex&lt;Option&lt;ActiveTurn&gt;&gt;,
+    pub(crate) services: SessionServices,
+    js_repl: Arc&lt;JsReplHandle&gt;,
+}</code></pre>
+<p> The Session is the persistent memory of a conversation. It holds conversation history, configuration, active turns, and all the subsystems (file watchers, MCP managers, skills managers, etc.). The Arc is crucial—this session is shared across multiple async tasks. </p>
+<p><br/></p>
+<h2>The Submission Loop: The Heartbeat </h2>
+<p> When Codex::spawn initializes the system, it creates two async channels and spawns a submission loop: </p>
+<pre><code>async fn submission_loop(
+    sess: Arc&lt;Session&gt;,
+    config: Arc&lt;Config&gt;,
+    rx_sub: Receiver&lt;Submission&gt;,
+) {
+    while let Ok(sub) = rx_sub.recv().await {
+        match sub.op.clone() {
+            Op::UserTurn { items, ... } =&gt; {
+                handlers::user_input_or_turn(&amp;sess, sub.id, sub.op).await;
+            }
+            Op::ExecApproval { decision, ... } =&gt; {
+                handlers::exec_approval(&amp;sess, decision).await;
+            }
+            Op::Interrupt =&gt; {
+                handlers::interrupt(&amp;sess).await;
+            }
+            Op::Shutdown =&gt; break,
+            // ... 30+ more Op variants
+        }
+    }
+}</code></pre>
+<p> This loop is the heartbeat of the entire system. It runs for the lifetime of the session, waiting for submissions to arrive. Each submission is a request to do something: "Run a user prompt," "Approve this command," "Undo the last turn," "Refresh MCP servers." </p>
+<h2>The Turn: A Single Round Trip </h2>
+<p> Let's trace what happens when a user submits a turn with Op::UserTurn. A turn has a complete lifecycle: </p>
+<p> Turn Lifecycle </p>
+<p> TurnStarted → items flow → TurnCompleted </p>
+<p> Events are emitted at the start, during execution (streaming), and at the end. </p>
+<h2>Building the Prompt: The Assembly Pipeline </h2>
+<p> Before the model can think, the orchestrator must assemble a prompt from many sources. This is where context becomes gold: </p>
+<pre><code>fn assemble_prompt(
+    turn_ctx: &amp;TurnContext,
+    conversation_history: &amp;[TurnItem],
+    tools: &amp;[ToolSpec],
+    skills: &amp;[SkillMetadata],
+) → Prompt {
+    let mut messages = Vec::new();
+
+    // 1. System prompt: Who are you?
+    messages.push(Message {
+        role: "system",
+        content: build_system_prompt(&amp;turn_ctx),
+    });
+
+    // 2. Conversation history: What have we talked about?
+    for item in conversation_history {
+        messages.push(Message {
+            role: item.role,
+            content: item.text,
+        });
+    }
+
+    // 3. Tool definitions: What can you call?
+    let tool_definitions =
+        create_tools_json_for_responses_api(tools);
+
+    // 4. Skills context: Custom capabilities?
+    let skills_section = render_skills_section(skills);
+
+    // 5. MCP tools: External tools?
+    let mcp_tools = render_mcp_tools(turn_ctx);
+
+    Prompt {
+        messages,
+        tools: tool_definitions,
+        max_tokens: 16000,
+    }
+}</code></pre>
+<p><br/></p>
+<p> The prompt is a layered construction. Each layer adds context. The model sees the full picture: who it is, what it's been asked to do, and what tools it can use. </p>
+<h2>The ModelClient: Talking to OpenAI </h2>
+<p> Now we have a prompt. How does it get to the model? </p>
+<pre><code>pub struct ModelClient {
+    state: Arc&lt;ModelClientState&gt;,
+}
+
+pub struct ModelClientSession {
+    client: ModelClient,
+    // Cached request for incremental updates
+    last_request: Option&lt;ResponsesApiRequest&gt;,
+    // Sticky routing token for this turn
+    turn_state: Option&lt;String&gt;,
+    // WebSocket connection (created lazily)
+    websocket: Option&lt;ApiWebSocketConnection&gt;,
+}</code></pre>
+<p> The ModelClient is a session-scoped wrapper around the OpenAI Responses API. When we call client.stream_response(prompt): </p>
+<pre><code>// 1. Build the API request
+let api_request = ResponsesApiRequest {
+    messages: prompt.messages,
+    tools: prompt.tools,
+    model: "claude-opus-4.6",
+    temperature: 0.7,
+    max_tokens: 16000,
+};
+
+// 2. Get authentication
+let auth = self.get_auth().await?;
+
+// 3. Attempt WebSocket (preferred)
+if let Some(ws) = self.get_or_create_websocket(&amp;auth).await? {
+    return self.stream_via_websocket(ws, api_request).await;
+}
+
+// 4. Fall back to SSE (Server-Sent Events)
+self.stream_via_sse(&amp;auth, api_request).await</code></pre>
+<p> Two transport options exist: WebSocket (preferred, persistent connection) and Server-Sent Events (fallback, HTTP streaming). The client tries WebSocket first. If it disconnects, future turns automatically fall back to SSE. </p>
+<h2>Streaming Responses: Chunks Arrive in Real Time </h2>
+<p> Once the connection is established, the model starts outputting tokens. The response arrives as a stream of events: </p>
+<pre><code>while let Some(event) = response_stream.next().await {
+    match event {
+        ResponseEvent::ContentBlockDelta(ContentDelta::Text { text }) =&gt; {
+            // Text token arrived. Stream to UI.
+            agent_message_buffer.push_str(&amp;text);
+            sess.send_event(Event {
+                msg: EventMsg::AgentMessageDelta(text),
+            }).await;
+        }
+        ResponseEvent::FunctionCall { name, arguments, id } =&gt; {
+            // Model wants to call a tool!
+            handle_tool_call(name, arguments, id).await;
+        }
+        ResponseEvent::Done { finish_reason } =&gt; {
+            // Stream ended.
+            break;
+        }
+    }
+}</code></pre>
+<p> The key insight: nothing waits for the full response. Text arrives in chunks, and each chunk is immediately emitted as an event. The UI streams text to the user in real time. It's all happening concurrently. </p>
+<h2>The Tool Call Loop: Execution Under Control </h2>
+<p> When the model decides to run a shell command, it sends a function call. Here's the loop: </p>
+<p><br/></p>
+<p> The beauty is structured interleaving: the model generates text, requests a tool, the orchestrator executes it, the result comes back, and the model continues from where it left off. </p>
+<h2>MCP Connections: Bringing External Tools In </h2>
+<p> Codex doesn't have to know about every possible tool. Instead, it uses the Model Context Protocol (MCP) to connect to external tool servers: </p>
+<pre><code>pub struct McpConnectionManager {
+    connections: Arc&lt;RwLock&lt;HashMap&lt;String, McpConnection&gt;&gt;&gt;,
+    services: Arc&lt;SessionServices&gt;,
+}
+
+pub async fn get_or_create(
+    &amp;self,
+    server_name: &amp;str,
+) → CodexResult&lt;Arc&lt;McpConnection&gt;&gt; {
+    // Check if already connected
+    if let Some(conn) = self.connections.read().await.get(server_name) {
+        return Ok(Arc::clone(conn));
+    }
+
+    // Load config, launch server, establish connection, cache...
+}</code></pre>
+<p> MCP is the bridge to the wider ecosystem. GitHub, Slack, databases, custom APIs—all accessible through a standard protocol. </p>
+<h2>The Safety Layer: Approval Before Execution </h2>
+<p> One of the most important features is approval gating: </p>
+<pre><code>pub enum ApprovalPolicy {
+    AlwaysAllow,      // Auto-approve (dangerous!)
+    AskAlways,        // Show every command
+    AskIfDangerous,   // Show risky commands
+}</code></pre>
+<p> The user always has the final say over what code runs. The model can suggest, but cannot command. </p>
+<h2>The Cliffhanger: Who Stops the Danger? </h2>
+<p> The model generates: </p>
+<pre><code>"I'll clean up the temporary files."
+
+call_tool("sh", { "command": "rm -rf /" })</code></pre>
+<p> Codex emits an ExecApprovalRequest event with a big red warning. The user sees it. They reject it. </p>
+<p> But what if the approval policy was AlwaysAllow? What if the user made a mistake and approved it? </p>
+<p> The Critical Question </p>
+<p> Who stops a malicious or mistaken command from running? </p>
+<p> The Sandbox. </p>
+<p> Next time, we'll open up the vault. We'll see how Codex isolates code execution, enforces filesystem constraints, limits network access, and ensures that even if the model or the user makes a catastrophic mistake, the damage is contained. </p>
+<p> The brain may decide to run rm -rf / . But the sandbox will laugh and deny the request. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/brain-inside-core-engine-sagar-trivedi-7gkec" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/nervous-system-how-components-talk/"><span class="dir">Previous</span>The Nervous System: How Components Talk</a><a class="prevnext next" href="../../articles/vault-how-every-command-runs-sandbox/"><span class="dir">Next</span>The Vault: How Every Command Runs in a Sandbox</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Brain: Inside the Core Engine",
+  "datePublished": "2026-04-03",
+  "description": "Part 3 of \"Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI\" We've journeyed from the 10,000-foot view of Codex's architecture down to the nervous system that carries signals between com",
+  "wordCount": 1157,
+  "url": "https://sagart-cactus.github.io/articles/brain-inside-core-engine/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/brain-inside-core-engine/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

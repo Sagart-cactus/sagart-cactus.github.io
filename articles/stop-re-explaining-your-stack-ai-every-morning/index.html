@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Stop re-explaining your stack to your AI every morning · Sagar Trivedi</title>
+<meta name="description" content="You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stop re-explaining your stack to your AI every morning · Sagar Trivedi">
+<meta property="og:description" content="You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stop re-explaining your stack to your AI every morning · Sagar Trivedi">
+<meta name="twitter:description" content="You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Stop re-explaining your stack to your AI every morning</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-16">16 June 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float. After that, they remember. </p>
+<p> Your AI coding assistant does not. Every fresh session starts from zero. "We use hexagonal architecture, the DB layer lives in src/infra/, money is always int64 cents, never call external HTTP from the domain layer." You type it again. And again. It is the most expensive copy-paste of your week. </p>
+<p> Claude Code plugins exist to end that. A plugin is a self-contained, installable bundle of capabilities that Claude loads, understands, and acts on, so the context that used to live in your head (and your clipboard) now lives in the tool. </p>
+<h2>One bundle, six kinds of power </h2>
+<p> A plugin is not a prompt wrapper. It is a composable unit that can carry any combination of six things: skills (reusable instruction sets), agents (specialised sub-assistants with their own tools), hooks (scripts that fire on events), MCP servers (live integrations with your APIs), LSP servers (real code intelligence), and background monitors (watchers that stream context as things happen). </p>
+<p> Install one, and Claude Code lights up with all of them at once. </p>
+<p> The mental model that makes this click: if Claude Code is the operating system, plugins are the applications. You do not reinstall your editor every time you open a file. You should not re-teach your assistant every time you open a session. </p>
+<h2>It is all ready before you type a word </h2>
+<p> When Claude Code starts with a plugin enabled, the loading happens in a fixed order, and all of it finishes before Claude's first response. The manifest registers the plugin's identity, skills join the command list, agents load into the registry, hooks arm themselves for lifecycle events, MCP and LSP servers boot as child processes, and monitors begin streaming. </p>
+<h2>Recommended by LinkedIn</h2>
+<p> You never see the boot sequence. You just noticed that Claude already knows your conventions. </p>
+<h2>When to reach for a plugin </h2>
+<p> The honest answer is: not always. If it is just you, on one project, for a quick experiment, a standalone .claude/ directory is faster to set up and perfectly fine. The moment any of these become true, build a plugin instead: </p>
+<ul><li>More than one person will use it </li><li>It works across several projects </li><li>It needs versioning and a controlled rollout </li><li>It depends on external services like MCP or LSP servers </li></ul>
+<p> The dividing line is shareability and namespace isolation. Standalone config is a sticky note. A plugin is institutional memory. </p>
+<h2>The payoff </h2>
+<p> Encode your team's "way we do things" once, and it becomes permanently available and automatically applied, instead of sitting in a wiki your assistant cannot read. Ship it org-wide, and every engineer's Claude Code starts from the same baseline. Update it once, and the change reaches everyone. </p>
+<p> That is the difference between an assistant who needs a briefing every morning and one who already works here. </p>
+<hr/>
+<p> This is one chapter of a much larger field guide. The full interactive version covers all nine building blocks, the security model, workflow automation, and the production-grade architecture patterns, all drawn out with animated diagrams. </p>
+<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/stop-re-explaining-your-stack-ai-every-morning-sagar-trivedi-sx7kc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext next" href="../../articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/"><span class="dir">Next</span>Your team&#x27;s standards keep getting ignored. Hooks fix that for good.</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Stop re-explaining your stack to your AI every morning",
+  "datePublished": "2026-06-16",
+  "description": "You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.",
+  "wordCount": 547,
+  "url": "https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

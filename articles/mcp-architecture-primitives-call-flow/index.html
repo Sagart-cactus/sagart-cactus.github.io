@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>MCP Architecture, Primitives, and Call Flow · Sagar Trivedi</title>
+<meta name="description" content="MCP becomes much easier once you separate the three ideas: The roles in the system The capabilities a server exposes The lifecycle of a request Together, these form the mental model you need before bu">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/mcp-architecture-primitives-call-flow/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="MCP Architecture, Primitives, and Call Flow · Sagar Trivedi">
+<meta property="og:description" content="MCP becomes much easier once you separate the three ideas: The roles in the system The capabilities a server exposes The lifecycle of a request Together, these form the mental model you need before bu">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/mcp-architecture-primitives-call-flow/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MCP Architecture, Primitives, and Call Flow · Sagar Trivedi">
+<meta name="twitter:description" content="MCP becomes much easier once you separate the three ideas: The roles in the system The capabilities a server exposes The lifecycle of a request Together, these form the mental model you need before bu">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>MCP Architecture, Primitives, and Call Flow</h1>
+      <p class="post-meta">
+        <time datetime="2026-05-26">26 May 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> MCP becomes much easier once you separate the three ideas: </p>
+<ul><li>The roles in the system </li><li>The capabilities a server exposes </li><li>The lifecycle of a request </li></ul>
+<p> Together, these form the mental model you need before building or using MCP servers. </p>
+<h2>The Three Roles </h2>
+<p> MCP has three core roles: </p>
+<ul><li>Host </li><li>Client </li><li>Server </li></ul>
+<p> The host is the AI application the user interacts with. It could be a desktop assistant, an IDE, a coding agent, a chat app, or an internal company agent. </p>
+<p> The host owns the user experience. It receives the user's request, shows model responses, asks for confirmation, and decides which connected servers are available in the current context. </p>
+<p> The client is the connector inside the host. </p>
+<p> An MCP client speaks MCP to exactly one MCP server. If a host connects to five MCP servers, it usually has five clients running in parallel. </p>
+<p> The client handles protocol details such as initialization, discovery, tool calls, results, and notifications. </p>
+<p> The server exposes capabilities from an external system. </p>
+<p> That external system could be GitHub, Slack, a database, a SaaS product, a local filesystem, or an internal workflow engine. The server turns that system into agent-friendly capabilities. </p>
+<h2>The Main Primitives </h2>
+<p> MCP servers expose capabilities through a small set of primitives. </p>
+<p> The three server-side primitives to understand first are: </p>
+<ul><li>Tools </li><li>Resources </li><li>Prompts </li></ul>
+<p> Tools are functions the model can invoke. </p>
+<p> Examples: </p>
+<ul><li>github_create_issue </li><li>db_run_query </li><li>stripe_refund_charge </li><li>linear_search_issues </li></ul>
+<p> A tool has a name, a natural-language description, an input schema, and a structured result. Tool descriptions matter because the model uses them to decide when a tool is relevant. </p>
+<p> Resources are read-only pieces of context. </p>
+<p> Examples: </p>
+<ul><li>File contents </li><li>Database rows </li><li>API responses </li><li>Configuration blobs </li><li>Documentation pages </li></ul>
+<p> The key distinction is simple: a resource is something the model reads. A tool is something the model calls. </p>
+<p> Prompts are reusable templates or workflows provided by the server. </p>
+<p> Examples: </p>
+<ul><li>Review this code change </li><li>Summarise this incident </li><li>Draft a support response </li><li>Generate a release note </li></ul>
+<p> Prompts are useful when a connected system knows the shape of a workflow and wants to offer it to the user or host in a reusable form. </p>
+<h2>How the Pieces Fit Together </h2>
+<p> A typical MCP flow looks like this: </p>
+<ol><li>The user asks the host for help. </li><li>The host gives the model access to discovered MCP capabilities. </li><li>The model decides whether it needs a tool or resource. </li><li>The host's MCP client sends a request to the MCP server. </li><li>The server executes the action or returns the requested context. </li><li>The result comes back to the model through the host. </li><li>The host shows the answer or asks the user for confirmation before a sensitive action. </li></ol>
+<p> The agent does not directly speak to your REST API or database. It works through the MCP layer. </p>
+<h2>How an MCP Session Works </h2>
+<p> MCP is built on JSON-RPC 2.0. </p>
+<p> That means messages are structured as requests, responses, and notifications. The protocol can run over different transports, but the message model stays consistent. </p>
+<p><br/></p>
+<p> The two common transports are: </p>
+<ul><li>stdio for local, single-user integrations </li><li>Streamable HTTP for remote or multi-tenant deployments </li></ul>
+<p> A session usually follows this lifecycle: </p>
+<ol><li>Initialise: the client and server exchange protocol version, capabilities, and basic identity information. </li><li>Discover: the client lists available tools, resources, and prompts through calls such as tools/list, resources/list, and prompts/list. </li><li>Decide: the model reads the user's request and chooses whether it needs an MCP capability. </li><li>Invoke: the client sends a tools/call request or asks for a resource. </li><li>Return: the server sends a structured result back to the client. </li><li>Notify: the server may send updates when tool lists, resources, logs, or long-running operations change. </li><li>Shutdown: the session closes when the host exits or the integration is removed. </li></ol>
+<h2>Design Implication </h2>
+<p> Do not turn everything into a tool. </p>
+<p> If the model only needs to read something, a resource may be better. If the user should explicitly choose a reusable workflow, a prompt may be better. If the model needs to perform an action or query a system dynamically, a tool is probably the right fit. </p>
+<p> The best MCP servers use the right primitive for the right job. </p>
+<h2>The Takeaway </h2>
+<p> The host is the AI app. The client is the connector. The server exposes capabilities. </p>
+<p> Tools let the model act. Resources let it read. Prompts give users reusable workflows. </p>
+<p> Once you understand those roles, primitives, and session flow, MCP becomes much less mysterious. </p>
+<p> Full knowledgebase: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-mcp%2F&amp;urlhash=0akZ&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://sagart-cactus.github.io/learn-mcp/ </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/mcp-architecture-primitives-call-flow-sagar-trivedi-0pgic" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/what-mcp-why-does-exist/"><span class="dir">Previous</span>What Is MCP and Why Does It Exist?</a><a class="prevnext next" href="../../articles/mcp-just-rest-ai/"><span class="dir">Next</span>MCP Is Not Just REST for AI</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "MCP Architecture, Primitives, and Call Flow",
+  "datePublished": "2026-05-26",
+  "description": "MCP becomes much easier once you separate the three ideas: The roles in the system The capabilities a server exposes The lifecycle of a request Together, these form the mental model you need before bu",
+  "wordCount": 718,
+  "url": "https://sagart-cactus.github.io/articles/mcp-architecture-primitives-call-flow/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/mcp-architecture-primitives-call-flow/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

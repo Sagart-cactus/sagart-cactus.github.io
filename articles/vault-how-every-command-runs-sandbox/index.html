@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Vault: How Every Command Runs in a Sandbox · Sagar Trivedi</title>
+<meta name="description" content="We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Vault: How Every Command Runs in a Sandbox · Sagar Trivedi">
+<meta property="og:description" content="We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Vault: How Every Command Runs in a Sandbox · Sagar Trivedi">
+<meta name="twitter:description" content="We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The Vault: How Every Command Runs in a Sandbox</h1>
+      <p class="post-meta">
+        <time datetime="2026-04-09">9 April 2026</time>
+        <span class="dot">·</span>9 min read
+      </p>
+
+      <div class="post-body">
+<p> We've traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here's the sacred truth that separates a useful AI agent from a dangerous one: </p>
+<blockquote>An AI that can execute arbitrary shell commands must run them in a cage. </blockquote>
+<p> This is the Vault, the containment layer that lets Codex run your code without running amok. Three separate operating systems. Three entirely different strategies. One unified philosophy: maximum capability, minimum risk. </p>
+<h2>Why Sandboxing Matters </h2>
+<p> Imagine you ask Claude to write a script that downloads your project dependencies. The AI, being helpful, writes a command that pipes curl to bash. Safe enough, right? But what if, through hallucination, prompt injection, or just plain bad luck, the agent decided to add rm -rf / to the pipeline? </p>
+<p> Without sandboxing, you'd have a disaster. With sandboxing, you have a contained experiment. The command runs. It can see the workspace. It can download files, read configs, modify code. But it cannot escape. It cannot delete your home directory. It cannot steal SSH keys from ~/.ssh. It cannot phone home to report your source code. </p>
+<p> The sandbox is the moat. The chain-of-trust. </p>
+<p> But it's not just about preventing catastrophe. Sandboxing also enables transparency. When you see a command execute, you know it ran in a restricted environment. You know what it could access. You know what it couldn't touch. This asymmetry, bounded capability, is what makes AI-assisted development feel safe. </p>
+<hr/>
+<h2>The ExecPolicy DSL: Rules Before Action </h2>
+<p> Before any command executes, even inside a sandbox, it must pass a policy check. The ExecPolicy language is a simple but powerful DSL for defining command rules: </p>
+<pre><code># Allow all variations of 'ls'
+prefix_rule(pattern=["ls"], decision="allowed")
+
+# Block any git push (user must approve)
+exact_rule(pattern=["git", "push"], decision="forbidden")
+
+# Prompt the user for npm install (risky!)
+exact_rule(pattern=["npm", "install"], decision="prompt")
+
+# Network rules
+network_rule(host="api.github.com", port=443, decision="allowed")
+network_rule(host="*", port="*", decision="deny")</code></pre>
+<p> The beauty is in its simplicity. Each rule is a pattern match against the command tokens. The patterns can be: </p>
+<ul><li>prefix: ["echo"] matches echo hello, echo world, etc. </li><li>exact: ["git", "commit"] matches only exactly that sequence </li><li>network: host="*.github.com" with wildcard support </li></ul>
+<p> And each rule carries a decision: </p>
+<ol><li>allowed: Execute without asking </li><li>prompt: Ask the user (they can approve or deny) </li><li>forbidden: Hard reject, no execution </li></ol>
+<p> The policy evaluator walks through all matching rules and selects the most restrictive decision. If one rule says "prompt" and another says "allowed," the user gets asked. </p>
+<hr/>
+<h2>The Three-Tier Approval Flow </h2>
+<p> When a command arrives at the sandbox gate, it faces a simple but iron-fisted checkpoint: </p>
+<pre><code>1. COMMAND ARRIVES
+   ↓
+2. EXECPOLICY CHECK
+   ├─ All rules say "allowed"?  → PROCEED (tier 1: auto-approve)
+   ├─ Any rule says "prompt"?   → ASK USER (tier 2: interactive)
+   └─ Any rule says "forbidden"? → REJECT  (tier 3: hard deny)
+   ↓
+3. SANDBOX EXECUTION
+   (if approved above)</code></pre>
+<p> This three-tier system is elegant because it respects three different user postures: </p>
+<ul><li>Permissive: "I trust the AI. Run safe commands without asking." </li><li>Cautious: "Ask me about anything that could be risky." </li><li>Paranoid: "Block dangerous commands outright." </li></ul>
+<p> You can mix and match. npm install? Forbidden. npm ls? Allowed. curl to GitHub? Allowed. curl to some IP address? Prompt. The policy becomes a conversation between user intention and system capability. </p>
+<hr/>
+<h2>Linux Sandboxing: The Three-Layer Cake </h2>
+<p> On Linux, the sandbox is a three-layer stack. Each layer adds different constraints: </p>
+<h2>Layer 1: Bubblewrap (Filesystem Isolation) </h2>
+<p> Bubblewrap is a user-space program that creates lightweight namespaces. Think of it as a jailbreak in reverse, it builds walls instead of tearing them down. </p>
+<p> When Codex executes a command on Linux with file restrictions, it wraps it like this: </p>
+<pre><code>bubblewrap \
+  --ro-bind / / \              # Mount entire root as read-only
+  --bind /home/alice/work /home/alice/work \  # Mount workspace as read-write
+  --tmpfs /tmp \               # Fresh tmpfs for /tmp
+  --unshare-net \              # Isolate network namespace
+  --die-with-parent \          # Die if parent dies
+  -- bash -c 'npm install'</code></pre>
+<p> The resulting environment is a chroot-like view: the filesystem appears mostly unchanged, but writes only reach specific directories. The process has: </p>
+<ul><li>Read-only system files (/usr, /lib, /etc) </li><li>Read-write workspace directories (/home/alice/work) </li><li>Isolated /tmp that vanishes on exit </li><li>No network access (if policy says so) </li></ul>
+<p> Bubblewrap uses kernel namespaces (PID, mount, network, IPC) and bind mounts to achieve this. It's lightweight and fast, no VM, no container overhead. Just kernel isolation primitives, which is why it's the sandbox of choice for high-performance CI/CD. </p>
+<h2>Layer 2: Seccomp (System Call Filtering) </h2>
+<p> Even inside the bubblewrap jail, a determined process could try to escalate privileges. That's where seccomp enters the picture. </p>
+<p> Seccomp is a kernel feature that lets you filter system calls. A seccomp policy looks like: </p>
+<pre><code>Allow: read, write, open, close, mmap, brk, ...
+Deny: prctl, ptrace, clone(with CLONE_NEWUSER), ...
+Kill: anything else</code></pre>
+<p> The Codex sandbox blocks dangerous syscalls like: </p>
+<ul><li>ptrace: Used to attach to other processes </li><li>prctl(PR_SET_CAPABILITY_BOUNDING_SET): Dropping capabilities (privilege escalation) </li><li>clone with privilege-escalation flags </li><li>Any attempt to create new user namespaces </li></ul>
+<p> Seccomp policies are compiled into BPF bytecode and loaded into the kernel. The overhead is negligible, a few nanoseconds per syscall filtered. The security gain is enormous. </p>
+<h2>Layer 3: Landlock (LSM-Based Access Control) &amp; no_new_privs </h2>
+<p> Landlock is a Linux Security Module that provides filesystem-level access control without requiring elevated privileges. Unlike seccomp (which blocks syscalls globally), Landlock lets you define per-task filesystem rules: </p>
+<pre><code>Allow:
+  /home/alice/work: read, write, execute
+  /usr/lib: read, execute
+  /etc/passwd: read
+
+Deny:
+  /home/bob: (all)
+  /root: (all)
+  ~/.ssh: (all)</code></pre>
+<p> Landlock rules are checked by the kernel for every filesystem access. It's elegant and powerful. </p>
+<p> And finally, no_new_privs is a prctl flag that prevents any process from gaining new privileges through setuid binaries or capability escalation. Once set, it's inherited by all children. No escape route. </p>
+<p> Together, these three layers form a defense-in-depth strategy: </p>
+<pre><code>Layer 1: Bubblewrap    → Filesystem view isolation
+Layer 2: Seccomp       → System call filtering
+Layer 3: Landlock      → Per-file access control
+Layer 4: no_new_privs  → Privilege escalation prevention</code></pre>
+<p> Breaking out requires compromising all four. Good luck. </p>
+<hr/>
+<h2>macOS Sandboxing: Seatbelt </h2>
+<p> On macOS, the story is different. Apple's Seatbelt (née Sandbox) is a capability-based sandbox that was designed for this exact use case: running untrusted code safely. </p>
+<p> Seatbelt profiles are declarative rules written in a Lisp-like syntax: </p>
+<h2>Recommended by LinkedIn</h2>
+<pre><code>(allow default)
+(deny file-write-data (subpath "/System"))
+(deny file-write-data (subpath "/Library"))
+(allow file-read* (subpath "/usr/lib"))
+(allow file-write* (subpath "/var/tmp"))</code></pre>
+<p> Codex generates Seatbelt profiles on the fly, granting: </p>
+<ul><li>Read access to system libraries, config files, and the workspace </li><li>Write access to workspace directories only </li><li>No access to sensitive paths like ~/.ssh, ~/.kube, password stores </li><li>Network isolation (when policy says so) </li></ul>
+<p> Seatbelt is more user-friendly than Linux's fragmented stack of Bubblewrap+Seccomp+Landlock because Apple built the entire OS with sandbox support. File operations, network access, and process creation all go through Seatbelt enforcement. It's the OS's native security model, not a bolt-on. </p>
+<hr/>
+<h2>Windows Sandboxing: ACLs, Restricted Tokens, and ConPTY </h2>
+<p> Windows takes yet another path. The Codex Windows sandbox uses three complementary mechanisms: </p>
+<h2>Mechanism 1: Access Control Lists (ACLs) </h2>
+<p> Windows ACLs are granular permission sets attached to every file: </p>
+<pre><code>C:\Users\alice\work:
+  ✓ alice: full access (read, write, execute, delete)
+  ✓ System: full access
+  ✗ Everyone: deny write
+
+C:\Windows:
+  ✓ System: full access
+  ✗ alice: deny write (explicit deny blocks all)
+  ✓ alice: allow read (but read-only)</code></pre>
+<p> The Codex sandbox mutates ACLs on system directories to explicitly deny write access. Even if a malicious command tries to write to C:\Windows, the kernel checks the ACL and blocks it. </p>
+<h2>Mechanism 2: Restricted Tokens </h2>
+<p> Windows process tokens carry security information: user SID, group memberships, privileges, etc. The sandbox creates a restricted token by: </p>
+<ol><li>Copying the current process token </li><li>Removing dangerous privilege tokens (e.g., SeDebugPrivilege, SeLoadDriverPrivilege) </li><li>Disabling most capability groups </li><li>Lowering the integrity level </li></ol>
+<p> The result: a process that runs as the same user but with severely reduced power. It can read and write files it owns, but it cannot: </p>
+<ul><li>Debug other processes </li><li>Load device drivers </li><li>Access the clipboard </li><li>Modify system configuration </li><li>Access other users' files </li></ul>
+<h2>Mechanism 3: ConPTY (Pseudo-Terminal Emulation) </h2>
+<p> Finally, ConPTY provides sandboxed interactive terminal access without exposing the real console buffer. The sandboxed process writes to a virtual terminal, which Codex reads and streams back to the user. </p>
+<p> All three mechanisms work together: </p>
+<pre><code>1. User asks: "run npm install"
+2. ExecPolicy approves
+3. Codex creates restricted token (drops privs)
+4. Codex modifies ACLs on C:\Windows (deny write)
+5. Codex spawns process in ConPTY (no direct console)
+6. Command runs with sandboxed access
+7. Output streams through ConPTY buffer</code></pre>
+<p> On Windows, the sandbox is not a separate privilege level (you can't easily unshare namespaces like on Linux). Instead, it's a capability-reduction approach: the process runs as you do, but with fewer rights. </p>
+<hr/>
+<h2>Network Sandboxing: Controlling the Pipes </h2>
+<p> Across all platforms, Codex also sandboxes network access. A restrictive policy might allow only: </p>
+<pre><code>network_rule(host="github.com", port=443, decision="allowed")
+network_rule(host="api.github.com", port=443, decision="allowed")
+network_rule(host="registry.npmjs.org", port=443, decision="allowed")
+network_rule(host="*", port="*", decision="forbidden")</code></pre>
+<p> This is implemented differently on each platform: </p>
+<p> Linux: Uses iptables and network namespace isolation. The sandboxed process lives in a separate network namespace with no default route. </p>
+<p> macOS: Uses Seatbelt's network-outbound rules. The OS checks every connect() call. </p>
+<p> Windows: Uses Windows Firewall rules and token-based network isolation. ACLs on network resources are checked. </p>
+<p> Network sandboxing is crucial because it prevents: </p>
+<ul><li>Exfiltration of source code to attacker servers </li><li>Backdoor communication </li><li>Exploitation of network-based vulnerabilities </li></ul>
+<hr/>
+<h2>The Vault in Action: An Example </h2>
+<p> Let's trace a real command through the entire vault: </p>
+<pre><code>1. User: "Run this: npm install --save lodash"
+
+2. Submission → ExecPolicy Check:
+   Matches: prefix_rule(pattern=["npm"], decision="prompt")
+   Decision: PROMPT
+
+3. Codex asks: "npm install detected. Approve? [Y/n]"
+   User: "Y"
+
+4. ExecPolicy Decision: ALLOWED
+
+5. CommandSpec created with:
+   program: "npm"
+   args: ["install", "--save", "lodash"]
+   cwd: /home/alice/work
+   sandbox_policy: WorkspaceWrite
+   network_policy: Restricted(allowed=[npm registry])
+
+6. Platform-specific transform (Linux example):
+   - Bubblewrap wrap: --ro-bind / /, --bind /home/alice/work
+   - Seccomp filter: block ptrace, prctl, clone
+   - Landlock rules: allow /home/alice/work write, deny ~/.ssh read
+   - no_new_privs: enabled
+
+7. Execution:
+   bubblewrap \
+     --ro-bind / / \
+     --bind /home/alice/work /home/alice/work \
+     --tmpfs /tmp \
+     -- /usr/bin/npm install --save lodash
+
+8. Inside sandbox:
+   - npm spawns child processes (allowed by seccomp)
+   - npm makes HTTP to npm registry (allowed by network policy)
+   - npm writes to node_modules/ (allowed by Landlock + bubblewrap)
+   - npm tries to read ~/.ssh (denied by Landlock)
+
+9. Output streams back to user
+   Package installed. Workspace updated.
+   Sandbox exits. All temporary state cleaned up.</code></pre>
+<p> Each layer performed its duty. The filesystem view was isolated. System calls were filtered. Network access was restricted. And the user knew exactly what permissions the command had. </p>
+<hr/>
+<h2>Beyond Just Security: The Philosophy </h2>
+<p> Sandboxing isn't just about preventing disasters. It's about enabling trust through transparency. When you see a sandboxed command, you see: </p>
+<ul><li>What files it can read (explicitly granted) </li><li>What files it can write (explicitly granted) </li><li>What network hosts it can reach (explicitly granted) </li><li>What system calls it can invoke (everything except the dangerous ones) </li></ul>
+<p> This is the opposite of the old Unix philosophy of "trust by default." Instead, Codex practices zero-trust sandboxing: every access is questioned, every privilege is justified, every boundary is enforced. </p>
+<p> It's not paranoia. It's design. </p>
+<hr/>
+<h2>The Vault Holds </h2>
+<p> The sandbox is the most complex system in Codex precisely because it must be. An AI agent capable of running arbitrary commands is powerful and useful. An AI agent that can run arbitrary commands safely is revolutionary. </p>
+<p> Three operating systems. Three different strategies converging on the same goal: maximum security with zero user friction. </p>
+<p> On Linux: Bubblewrap for isolation, seccomp for filtering, Landlock for access control. </p>
+<p> On macOS: Seatbelt for capability-based enforcement. </p>
+<p> On Windows: ACLs for permission, restricted tokens for privilege reduction, and ConPTY for isolation. </p>
+<p> Each layer assumes that the ones below it might fail. Each platform builds on its native security primitives. The result is a vault strong enough for an AI to work inside, yet transparent enough that you always know what's happening. </p>
+<p> The engine runs. Commands are sandboxed. The user is safe. </p>
+<p> But how does the user see what's happening? How are commands presented? How does the agent communicate its actions back to the human? </p>
+<p> That's the question for next time. </p>
+<p> Next: The Four Frontends, where sandboxed commands meet human eyes. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/vault-how-every-command-runs-sandbox-sagar-trivedi-jse4c" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/brain-inside-core-engine/"><span class="dir">Previous</span>The Brain: Inside the Core Engine</a><a class="prevnext next" href="../../articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/"><span class="dir">Next</span>Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Vault: How Every Command Runs in a Sandbox",
+  "datePublished": "2026-04-09",
+  "description": "We've traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here's the sacred truth that separates a useful AI agen",
+  "wordCount": 2016,
+  "url": "https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

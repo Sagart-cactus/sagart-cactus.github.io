@@ -8,9 +8,17 @@ stylesheet (IBM Plex Sans + IBM Plex Mono). It opens correctly from `file://` an
 dropping the file onto any static host.
 
 ```
-index.html    the entire site: markup, styles, print styles, theme toggle, JSON-LD
-README.md     this file
+index.html          the resume page: markup, styles, print styles, theme toggle, JSON-LD
+articles/           25 republished articles, one directory per article
+articles/index.html the writing archive
+assets/site.css     shared styles for the archive and article pages
+tools/              the scripts that fetch and rebuild the archive
+README.md           this file
 ```
+
+The resume page keeps all of its CSS inline and depends on nothing, exactly as before. Only the
+article pages use the shared stylesheet, because inlining 400 lines of CSS into 26 pages would be
+worse. Every path is relative, so the whole site still opens correctly from `file://`.
 
 ## Print / PDF
 
@@ -145,6 +153,51 @@ paragraph and the meta description still say "a regulated digital bank" as a gen
 the sector. That reads naturally in prose and matches your original brief, but if you want the
 phrase gone from the page entirely, those are the two remaining spots. FinOps results are described
 as "cutting annual cloud spend substantially" rather than with the dollar figure.
+
+## The writing archive
+
+All 25 LinkedIn articles are republished at `/articles/`, grouped the same way as the resume's
+Writing section. Each article gets its own page with a publish date, reading time, prev/next links
+within its group, `BlogPosting` structured data, and a link back to the LinkedIn original.
+
+**Canonical.** Each article page points its canonical at itself, claiming your domain as the home of
+your writing. LinkedIn is a much stronger domain and will likely outrank you for a while; that is
+expected and it resolves as the site accumulates its own history. If you ever want to reverse this,
+change the `<link rel="canonical">` in the generated pages to `a["source_url"]` in
+`tools/build_site.py` and rebuild.
+
+**Images are skipped.** The originals only carry LinkedIn cover images, and those URLs are signed
+CDN links that rot. Skipping them also matches the site's no-hero-image direction.
+
+### Rebuilding or adding an article
+
+The pipeline needs `beautifulsoup4`. Use a virtualenv, since macOS system Python refuses installs:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install beautifulsoup4
+```
+
+To add newly published articles, add them to the right group in `tools/articles_source.json`, then:
+
+```bash
+.venv/bin/python tools/fetch_articles.py && .venv/bin/python tools/normalize.py && .venv/bin/python tools/build_site.py
+```
+
+`fetch_articles.py` pulls each article and strips LinkedIn's markup down to a whitelist of semantic
+tags. `normalize.py` repairs structural defects in the source. `build_site.py` writes the pages.
+The Writing links in `index.html` are not regenerated, so add new entries there by hand.
+
+### What was repaired during import
+
+LinkedIn's exported markup had two defects worth knowing about, both fixed:
+
+- **126 invalid `<p>` wrappers** across 19 articles, where a list or code block sat inside a
+  paragraph. Browsers silently split these, leaving stray empty paragraphs. `normalize.py` unwraps
+  them so blocks are proper siblings.
+- **Two flattened lists**, in *Part 7: The Safety Net* and *Building on the Giant*, where items ran
+  together without spaces (`happens:The policy says…`). These are defects in the LinkedIn originals,
+  not artifacts of the import, and they still read that way on LinkedIn. The on-site copies are
+  fixed. Worth correcting at the source if you edit those articles.
 
 ## House style
 

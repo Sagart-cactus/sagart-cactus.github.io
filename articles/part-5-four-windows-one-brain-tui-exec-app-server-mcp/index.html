@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server · Sagar Trivedi</title>
+<meta name="description" content="Welcome back to our deep dive into Codex, the OpenAI CLI agent that&#x27;s reshaping how developers interact with AI. In Part 4, we explored how Codex manages execution—sandboxes, approvals, and rollback.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server · Sagar Trivedi">
+<meta property="og:description" content="Welcome back to our deep dive into Codex, the OpenAI CLI agent that&#x27;s reshaping how developers interact with AI. In Part 4, we explored how Codex manages execution—sandboxes, approvals, and rollback.">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server · Sagar Trivedi">
+<meta name="twitter:description" content="Welcome back to our deep dive into Codex, the OpenAI CLI agent that&#x27;s reshaping how developers interact with AI. In Part 4, we explored how Codex manages execution—sandboxes, approvals, and rollback.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server</h1>
+      <p class="post-meta">
+        <time datetime="2026-04-17">17 April 2026</time>
+        <span class="dot">·</span>9 min read
+      </p>
+
+      <div class="post-body">
+<blockquote>Welcome back to our deep dive into Codex, the OpenAI CLI agent that's reshaping how developers interact with AI. In Part 4, we explored how </blockquote>
+<p> Codex manages execution—sandboxes, approvals, and rollback. But here's the thing: execution is just one face of a much larger organism. Codex isn't a single product. It's an architecture that manifests in four completely different ways, each optimised for a different user or integration. Same core logic. Four entirely different experiences. </p>
+<p> This is Part 5, where the design elegance emerges. </p>
+<hr/>
+<h2>The Power of Decoupling: One Brain, Four Windows </h2>
+<p> Imagine a surgeon with four pairs of hands, each controlled by the same brain but configured for different specialities: </p>
+<ul><li>One hand holds a scalpel (for precision TUI work) </li><li>One hand holds a hammer (for headless CI automation) </li><li>One hand types on a keyboard (for IDE integration via JSON-RPC) </li><li>One hand reaches out to other agents (as an MCP tool) </li></ul>
+<p> This is Codex's architecture. </p>
+<p> At the centre sits the core execution engine—the same state machine, event loop, thread management that we explored in Parts 3 and 4. Around it: four completely different frontends. </p>
+<ul><li>TUI (codex-tui): A rich, interactive terminal interface with vim bindings, real-time markdown rendering, diff views, and approval dialogs. </li><li>Exec (codex-exec): Headless CLI for CI/CD pipelines and automation. Two output modes: pretty terminal or machine-readable JSONL. </li><li>App Server: JSON-RPC 2.0 server over stdio or WebSocket. This is what VS Code/Cursor extensions talk to. </li><li>MCP Server: The "reverse integration"—Codex becomes a tool for other AI agents via the Model Context Protocol. </li></ul>
+<p> The beauty isn't just code reuse. It's that adding a new frontend is trivial. You don't touch the core. You just consume the protocol. </p>
+<hr/>
+<h2>Deep Dive 1: The TUI—Ratatui's Interactive Terminal </h2>
+<p> The TUI is Codex's primary interactive experience, and it's built on ratatui, a Rust-based terminal UI framework. Let's understand its anatomy. </p>
+<h2>App State Machine &amp; Event Loop </h2>
+<p> The TUI is fundamentally an event-driven state machine. The central type is App, defined in /codex-rs/tui/src/app.rs: </p>
+<pre><code>pub struct App {
+    // Thread management
+    active_thread_id: ThreadId,
+    threads: HashMap&lt;ThreadId, ThreadState&gt;,
+
+    // UI state
+    chat_widget: ChatWidget,
+    bottom_pane: BottomPane,
+    status_indicator: StatusIndicator,
+
+    // Theme &amp; rendering
+    current_theme: Theme,
+    terminal: CustomTerminal,
+}</code></pre>
+<p> Every user action—a keystroke, a message arrival, an approval request—becomes an AppEvent. The app loop dispatches: </p>
+<pre><code>loop {
+    // 1. Render the current screen
+    self.render(&amp;mut terminal)?;
+
+    // 2. Wait for input or network events
+    let event = select! {
+        key = crossterm::event::read() =&gt; handle_key(key),
+        msg = thread_receiver.recv() =&gt; AppEvent::CodexEvent(msg),
+    };
+
+    // 3. Update state
+    self.update(event)?;
+}</code></pre>
+<p> This is classic Redux/Elm architecture: immutable state, pure transitions. It makes reasoning about the UI deterministic. </p>
+<h2>Streaming Markdown Rendering </h2>
+<p> One of TUI's superpowers is rendering markdown as it streams. When Claude responds, characters arrive byte-by-byte. The TUI needs to render them live without flickering or waiting. </p>
+<p> The markdown_stream.rs module handles this. It maintains a partial markdown AST and rerenders only what changed: </p>
+<p> ANSI color support comes next. The markdown renderer emits ANSI escape codes for syntax highlighting, bold, italic. The theme system lets users toggle dark/light modes seamlessly—colors are theme-aware. </p>
+<h2>Vim Bindings &amp; Key Handling </h2>
+<p> Developers expect vim bindings. The TUI provides: </p>
+<ul><li>j/k for scrolling </li><li>i to enter insert mode (for typing messages) </li><li>Escape to exit and navigate </li><li>dd to delete a message </li><li>r to review pending approvals </li><li>:q to quit </li></ul>
+<p> This is implemented as a keybinding layer that intercepts crossterm events and translates them to semantic actions. </p>
+<h2>Approval Dialogs &amp; Review Flows </h2>
+<p> When Codex needs approval—to execute a command, apply a patch—the TUI shows an approval dialog in the bottom pane. It's interactive: </p>
+<p> Users can review the full diff, see the context, and approve, deny, or set a preset policy (e.g., "always approve file reads"). </p>
+<h2>Diff Views </h2>
+<p> The diff_render.rs module renders git diffs with context, line numbers, and color-coding. Deletions are red, additions are green. Users can scroll through a proposed patch before approving. </p>
+<hr/>
+<h2>Deep Dive 2: The Headless Exec—For CI and Automation </h2>
+<p> Now shift gears. You're in a GitHub Actions workflow. You can't open an interactive terminal. You need Codex to: </p>
+<ol><li>Run the agent </li><li>Output machine-readable results </li><li>Exit cleanly </li></ol>
+<p> This is codex-exec, the headless mode. </p>
+<h2>Two Output Modes </h2>
+<p> The EventProcessor trait defines two concrete implementations: </p>
+<p> EventProcessorWithHumanOutput: Pretty, colorized output for terminal use. Same as TUI, but simpler—no interactive widgets, just streaming text. Good for developers who invoke codex exec locally. </p>
+<p> EventProcessorWithJsonOutput: Machine-readable JSONL (one JSON event per line). Each event is timestamped and labeled: </p>
+<pre><code>{"type":"session_configured","model":"gpt-4","timestamp":"2026-03-18T10:30:00Z"}
+{"type":"turn_started","thread_id":"abc123","timestamp":"2026-03-18T10:30:01Z"}
+{"type":"message_chunk","content":"Looking at your code...","timestamp":"2026-03-18T10:30:02Z"}
+{"type":"turn_complete","result":"success","timestamp":"2026-03-18T10:30:05Z"}</code></pre>
+<p> Scripts can parse this, extract results, or trigger downstream workflows. </p>
+<h2>Auto-Approval Modes </h2>
+<p> In headless mode, there's no user to click "Approve." So Codex offers execution policies: </p>
+<ul><li>--auto-approve-low-risk: Approve file reads and directory listings </li><li>--auto-approve-harmless: Approve non-destructive commands </li><li>--sandbox=strict: Require approval even in low-risk mode </li><li>--no-approval-policy: Interactive (error in CI) </li></ul>
+<p> A policy engine evaluates each action: </p>
+<pre><code>pub fn should_auto_approve(action: &amp;ApprovalRequest) -&gt; bool {
+    match action {
+        ApprovalRequest::ReadFile { path } =&gt; {
+            // File reads are low-risk; approve if policy allows
+            policy.allows_file_reads &amp;&amp; !is_secrets_file(path)
+        }
+        ApprovalRequest::ExecuteCommand { cmd } =&gt; {
+            // Commands are risky; only approve if harmless
+            policy.allows_harmless_execs &amp;&amp; is_safe_command(cmd)
+        }
+        ApprovalRequest::ApplyPatch { .. } =&gt; {
+            // Patches modify code; usually require approval
+            false
+        }
+    }
+}</code></pre>
+<hr/>
+<h2>Deep Dive 3: The App Server—JSON-RPC 2.0 for IDEs </h2>
+<p> Now here's where things get really interesting. VS Code. Cursor. Any IDE that wants to integrate Codex. </p>
+<p> They don't want to shell out and parse JSONL. They want a bidirectional protocol—a real conversation where the IDE sends requests and Codex sends responses. </p>
+<p> Enter the App Server, a JSON-RPC 2.0 implementation. </p>
+<h2>Architecture: Transport + Message Processor </h2>
+<p> The app-server has two layers: </p>
+<ol><li>Transport: Carries JSON-RPC messages over stdio (for in-process connections) or WebSocket (for remote IDEs). </li><li>Message Processor: Interprets requests, coordinates with the core execution engine, and sends responses. </li></ol>
+<h2>Key JSON-RPC Methods </h2>
+<p> Codex exposes these methods: </p>
+<p> Thread lifecycle: </p>
+<ul><li>thread/start { model, instructions } → ThreadStartResponse { thread_id } </li><li>thread/resume { thread_id } → Reconnects to a running thread </li><li>thread/unsubscribe { thread_id } → Stop listening to updates </li></ul>
+<h2>Recommended by LinkedIn</h2>
+<p> Conversation: </p>
+<ul><li>turn/start { thread_id, user_message } → Agent responds </li><li>turn/interrupt { thread_id } → Stop mid-response </li></ul>
+<p> Reviews: </p>
+<ul><li>review/start { thread_id, target: "patch" | "command" } → Show approval dialog </li><li>review/respond { approval: true | false } → User decision </li></ul>
+<p> Config: </p>
+<ul><li>config/get → Returns current user config </li><li>config/update → Updates settings </li></ul>
+<h2>Thread Management </h2>
+<p> The app-server maintains a thread registry, keyed by ThreadId: </p>
+<pre><code>pub struct ThreadManager {
+    threads: HashMap&lt;ThreadId, RunningThread&gt;,
+    sender: mpsc::Sender&lt;ThreadEvent&gt;,
+}
+
+pub struct RunningThread {
+    core_handle: JoinHandle&lt;()&gt;,
+    event_tx: mpsc::Sender&lt;Event&gt;,
+    event_rx: mpsc::Receiver&lt;Event&gt;,
+}</code></pre>
+<p> When an IDE sends turn/start, the app-server: </p>
+<ol><li>Looks up the thread </li><li>Sends the user message to the thread's event channel </li><li>Waits for responses </li><li>Streams them back to the IDE </li></ol>
+<p> All async, all non-blocking. </p>
+<h2>Stdio vs. WebSocket Transport </h2>
+<p> Stdio: Used when running the app-server in-process (e.g., codex-app-server stdio://). The transport reads from stdin, writes to stdout. Simple, local, fast. </p>
+<p> WebSocket: Used for remote IDEs. The app-server listens on a TCP socket, upgrades connections to WebSocket, and maintains a persistent bidirectional stream. </p>
+<pre><code>pub enum AppServerTransport {
+    Stdio,
+    WebSocket { bind_address: SocketAddr },
+}</code></pre>
+<p> The message processor doesn't care which transport is in use. It just reads from incoming_tx and writes to outgoing_tx. Beautiful separation. </p>
+<h2>How VS Code / Cursor Uses It </h2>
+<p> A typical flow: </p>
+<pre><code>// VS Code Extension (TypeScript)
+const transport = new WebSocketTransport("ws://localhost:9876");
+const client = new AppServerClient(transport);
+
+// Start a new thread
+const { thread_id } = await client.request("thread/start", {
+    model: "gpt-4",
+    instructions: "You are a helpful coding assistant."
+});
+
+// Send a message
+const response = await client.request("turn/start", {
+    thread_id,
+    user_message: "Explain this function",
+});
+
+// Listen for streaming updates
+client.subscribe("turn/event", (event) =&gt; {
+    console.log(event.chunk); // Render in editor
+});</code></pre>
+<hr/>
+<h2>Deep Dive 4: The MCP Server—Codex as a Tool for Others </h2>
+<p> Here's the twist: what if Codex itself becomes a tool that other AI agents can call? </p>
+<p> This is the MCP Server (codex-mcp-server). It implements the Model Context Protocol, turning Codex into a callable function for Claude, Claude-in-VS-Code, or any other MCP-aware agent. </p>
+<h2>The "Reverse Integration" </h2>
+<p> Claude can say: "I need to run a command. Let me ask Codex to do it safely." </p>
+<h2>rmcp Implementation </h2>
+<p> The MCP server uses the rmcp crate (Rust Model Context Protocol). It listens on stdio and speaks JSON-RPC 2.0: </p>
+<pre><code>pub async fn run_main(arg0_paths: Arg0DispatchPaths) -&gt; IoResult&lt;()&gt; {
+    // Initialize
+    let config = Config::load().await?;
+    let (tx, rx) = mpsc::channel(128);
+
+    // Start the message processor
+    let processor = MessageProcessor::new(config);
+    spawn_processor_task(processor, rx, tx);
+
+    // Main loop: read JSON-RPC from stdio, dispatch to processor
+    let mut reader = BufReader::new(io::stdin());
+    let mut line = String::new();
+
+    loop {
+        line.clear();
+        reader.read_line(&amp;mut line).await?;
+
+        let msg: JsonRpcMessage = serde_json::from_str(&amp;line)?;
+        tx.send(msg).await?;
+    }
+}</code></pre>
+<h2>CodexToolRunner </h2>
+<p> The MCP server exposes a single tool called run_codex: </p>
+<pre><code>{
+    "type": "tool",
+    "name": "run_codex",
+    "description": "Run an AI coding agent to solve tasks",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "task": {
+                "type": "string",
+                "description": "What you want Codex to do"
+            },
+            "auto_approve": {
+                "type": "boolean",
+                "description": "Auto-approve low-risk actions"
+            }
+        }
+    }
+}</code></pre>
+<p> When Claude (the parent agent) calls this: </p>
+<pre><code>Claude: I need to refactor this function. Let me use Codex.
+
+[calls tools/run_codex with task="Refactor UserService.authenticate for clarity"]
+
+Codex receives → Runs agent → Returns result → Claude integrates</code></pre>
+<p> The CodexToolRunner in codex_tool_runner.rs handles the orchestration: </p>
+<pre><code>pub struct CodexToolRunner {
+    exec_client: InProcessAppServerClient,
+}
+
+impl CodexToolRunner {
+    pub async fn execute(&amp;self, params: CodexToolCallParam) -&gt; CodexToolCallReplyParam {
+        // Start a thread
+        let thread_id = self.exec_client.thread_start(params.task).await?;
+
+        // Run the agent
+        let result = self.exec_client.wait_for_completion(thread_id).await?;
+
+        // Return structured result
+        CodexToolCallReplyParam {
+            success: true,
+            output: result.final_message,
+            patches: result.patches,
+        }
+    }
+}</code></pre>
+<h2>Approval Flows in MCP </h2>
+<p> But wait—Codex needs approvals. How does that work when called from another agent? </p>
+<p> MCP supports tool result callbacks. When Codex needs approval, it returns: </p>
+<pre><code>{
+    "type": "tool_result",
+    "tool_use_id": "run_codex_call",
+    "content": "Action requires approval",
+    "is_error": false,
+    "pending_action": {
+        "type": "execute_command",
+        "command": "rm -rf ./build",
+        "request_id": "approval_123"
+    }
+}</code></pre>
+<p> The parent agent (Claude) sees this and decides: Does the user want me to approve? Or should I ask? </p>
+<hr/>
+<h2>How Adding a New Frontend Works </h2>
+<p> Say you want to add a web UI (codex-web). Here's the recipe: </p>
+<ol><li>Consume the App Server protocol: Implement the JSON-RPC 2.0 client, connect to the app-server via WebSocket, and send/receive the standard methods. </li><li>Build the frontend: React, Vue, whatever. Your app reads thread/start responses, renders threads, sends turn/start messages. </li><li>Deploy: Run codex-app-server ws://0.0.0.0:8080 in the background. Point your web UI at it. </li></ol>
+<p> That's it. The core doesn't change. The app-server doesn't change. You're just calling an existing protocol. </p>
+<hr/>
+<h2>The Architecture Pattern: Hexagonal Design </h2>
+<p> This is hexagonal architecture (a.k.a. ports and adapters): </p>
+<p> Benefits: </p>
+<ul><li>Core stays focused: Authentication, execution, state management. No UI concerns. </li><li>Frontends are independent: TUI can evolve without touching exec or MCP. </li><li>Easy to test: Mock the core, verify each frontend independently. </li><li>Easy to scale: Run multiple app-servers, share the same core backend. </li></ul>
+<hr/>
+<h2>The Cliffhanger: Codex Using Tools </h2>
+<p> Here's the thing: we've seen Codex as a tool for other agents. But what about the reverse? </p>
+<p> What if Codex—while solving a problem—could call other tools? What if it could invoke external APIs, query databases, or collaborate with other agents in real time? </p>
+<p> This is where MCP gets really interesting. </p>
+<p> In Part 6, we'll explore how Codex becomes a full MCP client—not just a server. We'll see how it discovers tools, orchestrates complex workflows, and becomes part of a larger ecosystem of AI agents. </p>
+<p> Codex won't just be a tool. It will use tools. And that changes everything. </p>
+<hr/>
+<p> Series Navigation: </p>
+<ul><li>Part 1: Architecture Overview </li><li>Part 2: The Protocol &amp; Message Flow </li><li>Part 3: Thread, Core, and the State Machine </li><li>Part 4: Execution, Approval, and Rollback </li><li>Part 5: Four Windows Into One Brain ← You are here </li><li>Part 6: MCP Tools &amp; Ecosystem Integration </li><li>Part 7: Scaling, Deployment, and Production </li><li>Part 8: The Future of AI Agents </li></ul>
+<hr/>
+<p> This article is part of "Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI," a technical deep dive into Rust, async design, and modern AI architecture. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/part-5-four-windows-one-brain-tui-exec-app-server-mcp-sagar-trivedi-xnmlc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/vault-how-every-command-runs-sandbox/"><span class="dir">Previous</span>The Vault: How Every Command Runs in a Sandbox</a><a class="prevnext next" href="../../articles/swiss-army-knife-mcp-tools-plugin-ecosystem/"><span class="dir">Next</span>The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Part 5: Four Windows Into One Brain\nTUI, Exec, App Server, and MCP Server",
+  "datePublished": "2026-04-17",
+  "description": "Welcome back to our deep dive into Codex, the OpenAI CLI agent that's reshaping how developers interact with AI. In Part 4, we explored how Codex manages execution\u2014sandboxes, approvals, and rollback.",
+  "wordCount": 1969,
+  "url": "https://sagart-cactus.github.io/articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

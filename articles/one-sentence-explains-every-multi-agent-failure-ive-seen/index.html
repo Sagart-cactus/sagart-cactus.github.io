@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen · Sagar Trivedi</title>
+<meta name="description" content="A child agent knows only what the parent writes into its prompt. That&#x27;s the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. The bug that tau">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/one-sentence-explains-every-multi-agent-failure-ive-seen/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen · Sagar Trivedi">
+<meta property="og:description" content="A child agent knows only what the parent writes into its prompt. That&#x27;s the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. The bug that tau">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/one-sentence-explains-every-multi-agent-failure-ive-seen/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen · Sagar Trivedi">
+<meta name="twitter:description" content="A child agent knows only what the parent writes into its prompt. That&#x27;s the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. The bug that tau">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen</h1>
+      <p class="post-meta">
+        <time datetime="2026-07-23">23 July 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> A child agent knows only what the parent writes into its prompt. </p>
+<p> That's the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. </p>
+<h2>The bug that taught me </h2>
+<p> Picture a parent agent doing competitive research. It searches the web and finds something important: the competitor just raised fifty million dollars. Great finding. Then it spawns a child agent to write the analysis, with a prompt that says roughly "write a competitive analysis of Company X." </p>
+<p> The fifty million never makes it into the child's prompt. </p>
+<p> Now, what do you expect happens? When I first started with this stuff I expected one of three things. Maybe the child inherits the parent's context and sees the finding anyway. Maybe it notices something is missing and asks. Maybe it goes and re-searches the web on its own. </p>
+<p> None of those happen. The child writes a confident, well-structured, professional analysis with a fifty million dollar hole in it. No error. No warning. Nothing flagged. </p>
+<p> Children do not know what they don't know. That's the property you have to design around. </p>
+<h2>Why it works this way on purpose </h2>
+<p> My first reaction was that this seemed like a flaw. Why not share memory between parent and child? </p>
+<p> Then I built more systems and understood. Isolation is the feature. </p>
+<p> A child with a clean context reviews work with genuinely fresh eyes. If you want one agent to critique another's writing, the critic being unable to see the writer's reasoning is exactly what makes the critique honest. Shared memory would make it an agent grading its own homework. </p>
+<p> A child with a clean context also can't be polluted. Whatever mess the parent accumulated, whatever half-finished reasoning or irrelevant tool output, none of it leaks into the child's thinking. </p>
+<p> And a child with a clean context is predictable. Its behavior depends on its brief and nothing else. You can test it like a function, because it basically is one. </p>
+<h2>Recommended by LinkedIn</h2>
+<h2>The brief is the interface </h2>
+<p> Once you accept the isolation rule, the design question becomes: what goes in the brief? </p>
+<p> I now write subagent briefs the way I write function signatures, and I hold them to one standard. A stranger with zero context about my project should be able to execute the brief. If they'd have to ask me a question first, the brief is incomplete. </p>
+<p> Concretely, every brief gets four sections: </p>
+<p> The goal. One or two sentences on what done looks like. </p>
+<p> The facts. Everything relevant the parent knows, written out explicitly. This is where the fifty million goes. Nothing is too obvious to include, because obvious to the parent means invisible to the child. </p>
+<p> The constraints. What not to do, what to leave alone, where the edges are. </p>
+<p> The output format. If I need JSON back, I say so and I show the shape. A child returns a string, and if I want to parse that string, the brief is where I earn it. </p>
+<h2>The test I use before every spawn </h2>
+<p> Before spawning any child, I reread the brief and ask one question: if I handed this to a smart contractor who has never seen our codebase, our data, or our conversation, could they deliver? </p>
+<p> It takes thirty seconds and it has caught more bugs than any other habit I've built this year. Because here's the uncomfortable part: a missing fact in a brief doesn't fail loudly. It fails silently and confidently, inside output that looks great. </p>
+<p> The next article in this series covers money, specifically why the multi-agent version of a pipeline can cost less than the single-agent version, which surprised me the first time I ran the numbers. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/one-sentence-explains-every-multi-agent-failure-ive-seen-trivedi-jjo1c" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/i-assumed-multi-agent-meant-4x-cost-math-said/"><span class="dir">Previous</span>I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.</a><a class="prevnext next" href="../../articles/your-ai-agent-has-ceiling-heres-where/"><span class="dir">Next</span>Your AI Agent Has a Ceiling. Here&#x27;s Where It Is.</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The One Sentence That Explains Every Multi-Agent Failure I've Seen",
+  "datePublished": "2026-07-23",
+  "description": "A child agent knows only what the parent writes into its prompt. That's the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. The bug that tau",
+  "wordCount": 615,
+  "url": "https://sagart-cactus.github.io/articles/one-sentence-explains-every-multi-agent-failure-ive-seen/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/one-sentence-explains-every-multi-agent-failure-ive-seen/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

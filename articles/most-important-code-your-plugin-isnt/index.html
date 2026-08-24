@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The most important code in your plugin isn&#x27;t code · Sagar Trivedi</title>
+<meta name="description" content="You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The most important code in your plugin isn&#x27;t code · Sagar Trivedi">
+<meta property="og:description" content="You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The most important code in your plugin isn&#x27;t code · Sagar Trivedi">
+<meta name="twitter:description" content="You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The most important code in your plugin isn&#x27;t code</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-22">22 June 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises something else instead. </p>
+<p> Nine times out of ten, the tool is fine. The problem is one sentence: the description. </p>
+<p> Every resource about Claude Code plugins obsesses over file structure. Almost none of them tell you the single highest-leverage thing you can do, which is write a precise description. Claude's decision to use a skill rests entirely on what that description says. </p>
+<h2>Descriptions are a routing table </h2>
+<p> When a task comes in, Claude does not run your skill because of its name or its folder. It reads the descriptions of everything available and routes the task to whatever fits. </p>
+<p> Watch what changes between a weak description and a strong one: </p>
+<pre><code># Weak. Claude has nothing to match against.
+description: Code review helper
+
+# Strong. Claude knows exactly when this fires.
+description: Reviews code changes for security vulnerabilities and style
+  issues. Use when the user asks to review a PR, audit a diff, check code
+  quality, or before merging any branch.</code></pre>
+<p> The strong one names the triggers. That is the whole game. </p>
+<h2>Say what it is NOT for </h2>
+<p> Here is the move most people skip. A great description includes negative constraints: the situations where the skill should stay out of the way. </p>
+<pre><code>description: Reviews TypeScript code for type safety and runtime errors.
+  Use when reviewing TS files. Do NOT use for JavaScript, Python, or
+  configuration files.</code></pre>
+<p> Without that line, Claude will cheerfully over-apply your skill to contexts where it does nothing useful. The "do not" is as important as the "do." </p>
+<h2>The test that tells you it works </h2>
+<p> There is a dead-simple way to check a description. Describe a scenario to Claude without naming the skill, and see if it reaches for it on its own. If it does, your description is doing its job. If it does not, rewrite it and try again. You are debugging a sentence the same way you would debug a function. </p>
+<h2>This applies to your MCP tools, too </h2>
+<p> The same rule governs every tool you ship through an MCP server. Each tool's description is Claude's decision criterion for calling it, so write them with the same care: </p>
+<pre><code># Weak
+name: create_issue
+description: Creates an issue
+
+# Strong
+name: create_issue
+description: Creates a new GitHub issue in the specified repository. Use
+  when the user asks to file a bug, report a problem, track a task, or
+  create a ticket. Requires repository name and issue title at minimum.</code></pre>
+<h2>The takeaway </h2>
+<p> You will spend hours on directory layout, manifests, and component wiring. Spend a few of those minutes on the descriptions instead. They are the interface between your intent and your AI's behaviour, and they are the part that decides whether any of the rest of it ever runs. </p>
+<p> The most important code in your plugin is the prose. </p>
+<hr/>
+<p> This is one chapter of a much larger field guide. The full interactive version covers skills, agents, the orchestrator model, and the advanced patterns that the usual tutorials never get to, all with animated diagrams. </p>
+<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/most-important-code-your-plugin-isnt-sagar-trivedi-13gbc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/"><span class="dir">Previous</span>Your team&#x27;s standards keep getting ignored. Hooks fix that for good.</a><a class="prevnext next" href="../../articles/plugin-you-didnt-audit-dont-trust/"><span class="dir">Next</span>A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The most important code in your plugin isn't code",
+  "datePublished": "2026-06-22",
+  "description": "You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin",
+  "wordCount": 545,
+  "url": "https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

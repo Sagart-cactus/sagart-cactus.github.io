@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>SprintFoundry now supports Agent Sandboxes · Sagar Trivedi</title>
+<meta name="description" content="Most people think the hard part of AI agents is the model. I don’t. The hard part is giving the agent a real place to work. That’s why I’m excited to share that SprintFoundry now supports Agent Sandbo">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/sprintfoundry-now-supports-agent-sandboxes/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="SprintFoundry now supports Agent Sandboxes · Sagar Trivedi">
+<meta property="og:description" content="Most people think the hard part of AI agents is the model. I don’t. The hard part is giving the agent a real place to work. That’s why I’m excited to share that SprintFoundry now supports Agent Sandbo">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/sprintfoundry-now-supports-agent-sandboxes/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SprintFoundry now supports Agent Sandboxes · Sagar Trivedi">
+<meta name="twitter:description" content="Most people think the hard part of AI agents is the model. I don’t. The hard part is giving the agent a real place to work. That’s why I’m excited to share that SprintFoundry now supports Agent Sandbo">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>SprintFoundry now supports Agent Sandboxes</h1>
+      <p class="post-meta">
+        <time datetime="2026-03-20">20 March 2026</time>
+        <span class="dot">·</span>1 min read
+      </p>
+
+      <div class="post-body">
+<p> Most people think the hard part of AI agents is the model. </p>
+<p> I don’t. </p>
+<p> The hard part is giving the agent a real place to work. </p>
+<p> That’s why I’m excited to share that SprintFoundry now supports Agent Sandboxes. </p>
+<p> An agent sandbox is an isolated environment where an agent can actually do work: read files, run commands, make changes, debug issues, and keep its working state across multiple steps. </p>
+<p> In simple terms, it’s the difference between asking an agent to think about the task vs giving it a proper workspace to execute the task. </p>
+<p> Why this matters: </p>
+<p> Real engineering work is not one prompt and one reply. It’s iterative. It needs files, tools, state, retries, and continuation. </p>
+<p> Without the right runtime, agents stay stuck in demo mode. </p>
+<p> That said, we are not replacing Kubernetes Jobs. </p>
+<p> We are supporting both Kubernetes Jobs and Agent Sandboxes because both matter. </p>
+<p> Kubernetes Jobs are still a great fit when you want: </p>
+<ul><li>simple, predictable, stateless execution </li><li>easy operational control </li><li>established Kubernetes-native patterns </li></ul>
+<p> Agent Sandboxes are better when you want: </p>
+<ul><li>a more durable working environment </li><li>multi-step execution with preserved context </li><li>better support for continuation and handoff </li><li>a runtime that feels closer to how real developers work </li></ul>
+<p> We made the decision to support both because the future is rarely one model only. </p>
+<p> Some workflows need the simplicity and maturity of Jobs. Others need the flexibility and continuity of Sandboxes. </p>
+<p> SprintFoundry should support the right runtime for the right kind of work. </p>
+<p> That’s the bigger idea here: </p>
+<p> The future of AI agents will not be won only by better models. It will be won by better runtimes. </p>
+<p> Still early. But this is a big step toward making SprintFoundry useful for real software delivery, not just agent demos. </p>
+<p> More on Agent Sandboxes: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fagent-sandbox%2Esigs%2Ek8s%2Eio%2F&amp;urlhash=aI_R&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://agent-sandbox.sigs.k8s.io/ </a></p>
+<p> #SprintFoundry #AIAgents #Kubernetes #PlatformEngineering #DevTools #CloudNative </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/sprintfoundry-now-supports-agent-sandboxes-sagar-trivedi-koqgc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/how-turn-20-minute-chore-2-minute-command/"><span class="dir">Previous</span>How to turn a 20-minute chore into a 2-minute command</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "SprintFoundry now supports Agent Sandboxes",
+  "datePublished": "2026-03-20",
+  "description": "Most people think the hard part of AI agents is the model. I don\u2019t. The hard part is giving the agent a real place to work. That\u2019s why I\u2019m excited to share that SprintFoundry now supports Agent Sandbo",
+  "wordCount": 299,
+  "url": "https://sagart-cactus.github.io/articles/sprintfoundry-now-supports-agent-sandboxes/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/sprintfoundry-now-supports-agent-sandboxes/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

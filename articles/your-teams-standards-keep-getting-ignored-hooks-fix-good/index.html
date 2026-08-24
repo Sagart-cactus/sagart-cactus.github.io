@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Your team&#x27;s standards keep getting ignored. Hooks fix that for good. · Sagar Trivedi</title>
+<meta name="description" content="Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Your team&#x27;s standards keep getting ignored. Hooks fix that for good. · Sagar Trivedi">
+<meta property="og:description" content="Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Your team&#x27;s standards keep getting ignored. Hooks fix that for good. · Sagar Trivedi">
+<meta name="twitter:description" content="Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Your team&#x27;s standards keep getting ignored. Hooks fix that for good.</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-19">19 June 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one "I'll fix it later" at a time. </p>
+<p> The reason is simple: standards that depend on a human remembering to apply them will eventually be forgotten. The fix is to ensure they don't depend on a human at all. </p>
+<p> In Claude Code, that mechanism is a hook: an event-driven script that fires automatically on lifecycle events like PreToolUse and PostToolUse. A hook is how "please follow the style guide" becomes a guarantee instead of a request. </p>
+<h2>Every tool call runs the gauntlet </h2>
+<p> Before Claude runs any tool, PreToolUse hooks fire. After it finishes, PostToolUse hooks fire. Each hook receives a JSON description of the call on stdin and can allow it, block it, or hand a structured context back to Claude. </p>
+<p> A PostToolUse hook matched to Write | Edit That runs your linter means code that violates your style never survives. There is no human review step for mechanical checks, because there does not need to be one. </p>
+<h2>The part most people miss </h2>
+<p> Most hook examples stop at "validate or block." That is the boring half. The powerful half is that a hook's stdout is fed straight back to Claude. </p>
+<p> Please don't just fail the build. You hand Claude the exact error, and it fixes it. </p>
+<p> A structure that outputs as actionable data, and it gets even better. Instead of a wall of text, return JSON: </p>
+<pre><code>jq -r '.tool_input.file_path' | xargs eslint --format json 2&gt;/dev/null | \
+  jq '[.[] | select(.errorCount &gt; 0)
+       | {file: .filePath, errors: [.messages[] | {line, message, ruleId}]}]'</code></pre>
+<p> Now Claude knows precisely what to fix and where. No guessing, no re-reading the whole file. </p>
+<h2>Four jobs hooks are built for </h2>
+<p> Once you see hooks as the workflow glue, the uses fall into four buckets: </p>
+<ul><li>Auto-correct: lint and format the instant code is written </li><li>Auto-verify: run tests after any implementation change </li><li>Auto-document: update a changelog after significant edits </li><li>Auto-notify: post to Slack when a milestone lands </li></ul>
+<h2>One warning before you ship </h2>
+<p> Hooks are the most powerful surface in a plugin, which makes them the most dangerous one too. They run shell commands with whatever the input contains. Treat that input as hostile: </p>
+<ul><li>always quote your variables: "$FILE_PATH", never $FILE_PATH </li><li>parse with jq and pull specific fields, never eval the whole blob </li><li>Reject path traversal and shell metacharacters before using a value </li><li>never pipe user-provided content straight into sh or bash </li></ul>
+<p> A hook that enforces your standards is a gift. A careless one is a remote code execution waiting to happen. Build them defensively, and they become the quiet enforcement layer your team always wished it had. </p>
+<hr/>
+<p> This is one chapter of a much larger field guide. The full interactive version covers the entire hook lifecycle, the four automation patterns, and how to compose skills and hooks into one-command workflows, all with animated diagrams. </p>
+<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/your-teams-standards-keep-getting-ignored-hooks-fix-good-trivedi-7dqac" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/stop-re-explaining-your-stack-ai-every-morning/"><span class="dir">Previous</span>Stop re-explaining your stack to your AI every morning</a><a class="prevnext next" href="../../articles/most-important-code-your-plugin-isnt/"><span class="dir">Next</span>The most important code in your plugin isn&#x27;t code</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Your team's standards keep getting ignored. Hooks fix that for good.",
+  "datePublished": "2026-06-19",
+  "description": "Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one",
+  "wordCount": 513,
+  "url": "https://sagart-cactus.github.io/articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/your-teams-standards-keep-getting-ignored-hooks-fix-good/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

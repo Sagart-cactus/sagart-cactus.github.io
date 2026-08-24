@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>What Is MCP and Why Does It Exist? · Sagar Trivedi</title>
+<meta name="description" content="MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. The simplest way to think about it: MCP is a">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/what-mcp-why-does-exist/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="What Is MCP and Why Does It Exist? · Sagar Trivedi">
+<meta property="og:description" content="MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. The simplest way to think about it: MCP is a">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/what-mcp-why-does-exist/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="What Is MCP and Why Does It Exist? · Sagar Trivedi">
+<meta name="twitter:description" content="MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. The simplest way to think about it: MCP is a">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>What Is MCP and Why Does It Exist?</h1>
+      <p class="post-meta">
+        <time datetime="2026-05-23">23 May 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. </p>
+<p> The simplest way to think about it: </p>
+<p> MCP is a common connector between AI agents and external systems. </p>
+<p> That matters because agents are useful when they can do more than generate text. They need to inspect files, call APIs, query databases, search docs, create tickets, run workflows, and ask for missing information. </p>
+<p> Without a shared protocol, every AI host needs custom integrations for every external system it wants to use. Claude, ChatGPT, Cursor, IDE agents, internal assistants, and automation systems can all end up needing their own adapters for the same tools. </p>
+<h2>The Integration Problem </h2>
+<p> Before MCP, each AI host usually had to integrate with each tool directly. </p>
+<p> If you had three AI apps and five tools, you could end up with fifteen custom integrations. </p>
+<p> That is the classic M x N problem: </p>
+<ul><li>M hosts </li><li>N tools </li><li>M x N custom adapters </li></ul>
+<p> As the number of hosts and tools grows, this becomes painful. Security, consent, auth, logging, error handling, and schema design all get repeated in slightly different ways. </p>
+<p> MCP tries to collapse that problem. </p>
+<p> Instead of every host integrating with every tool directly, each host speaks MCP, and each external system exposes an MCP server. </p>
+<p> The result is closer to M + N: </p>
+<ul><li>M hosts that speak MCP </li><li>N servers that expose capabilities through MCP </li><li>A shared protocol between them </li></ul>
+<h2>What MCP Standardises </h2>
+<p> MCP gives hosts and servers a common way to handle: </p>
+<h2>Recommended by LinkedIn</h2>
+<ul><li>Capability discovery </li><li>Tool schemas </li><li>Read-only resources </li><li>Reusable prompts </li><li>User consent flows </li><li>Transport behavior </li><li>Error messages the model can act on </li></ul>
+<p> The important word is discovery. </p>
+<p> An MCP-compatible host does not need a hardcoded list of every capability in advance. It can ask a connected server what tools, resources, prompts, and features are available. </p>
+<p> That is useful because agents often decide step by step. They read the user's request, inspect available capabilities, choose a tool if needed, use the result, and then decide what to do next. </p>
+<h2>A Practical Example </h2>
+<p> Imagine a support agent connected to an order system. </p>
+<p> Instead of giving the model raw API documentation, the MCP server can expose tools such as: </p>
+<ul><li>find_customer_orders </li><li>summarize_order_issue </li><li>prepare_refund_request </li></ul>
+<p> The model sees names, descriptions, and input schemas. It can decide which tool fits the user's request. The host can still ask for confirmation before anything destructive happens. </p>
+<p> That is the difference between a random API wrapper and an agent-friendly integration. </p>
+<h2>What MCP Is Not </h2>
+<p> MCP does not replace your existing APIs. </p>
+<p> Your REST APIs, GraphQL APIs, databases, queues, or internal services still do the real work. The MCP server sits in front of them and presents a smaller, clearer, agent-shaped interface. </p>
+<p> A good MCP server does not expose every endpoint. It exposes the workflows an agent should safely use. </p>
+<h2>The Takeaway </h2>
+<p> MCP exists because agent integrations need a shared shape. </p>
+<p> If APIs are built for developers writing code, MCP is built for agents choosing actions at runtime. </p>
+<p> Full knowledge base: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-mcp%2F&amp;urlhash=0akZ&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://sagart-cactus.github.io/learn-mcp/ </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/what-mcp-why-does-exist-sagar-trivedi-4y8fc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext next" href="../../articles/mcp-architecture-primitives-call-flow/"><span class="dir">Next</span>MCP Architecture, Primitives, and Call Flow</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "What Is MCP and Why Does It Exist?",
+  "datePublished": "2026-05-23",
+  "description": "MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. The simplest way to think about it: MCP is a",
+  "wordCount": 512,
+  "url": "https://sagart-cactus.github.io/articles/what-mcp-why-does-exist/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/what-mcp-why-does-exist/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

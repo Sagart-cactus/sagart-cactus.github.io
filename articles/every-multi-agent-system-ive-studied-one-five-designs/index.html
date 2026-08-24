@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs · Sagar Trivedi</title>
+<meta name="description" content="Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Lea">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/every-multi-agent-system-ive-studied-one-five-designs/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs · Sagar Trivedi">
+<meta property="og:description" content="Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Lea">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/every-multi-agent-system-ive-studied-one-five-designs/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs · Sagar Trivedi">
+<meta name="twitter:description" content="Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Lea">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs</h1>
+      <p class="post-meta">
+        <time datetime="2026-08-03">3 August 2026</time>
+        <span class="dot">·</span>3 min read
+      </p>
+
+      <div class="post-body">
+<p> Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Learning the five shapes changed how fast I could design a new pipeline, so here they are. </p>
+<h2>1. Research fan-out </h2>
+<p> A parent takes a big question, breaks it into five smaller questions, and spawns five researcher agents at once. Each one searches, reads, and returns a tight summary. The parent synthesises. </p>
+<p> Why not one researcher? Because one agent reading twenty sources carries all twenty in its context, and the answer degrades. Five agents each carry four sources and return only the distilled result. The parent reasons over clean summaries instead of raw noise. Bonus: the five run in parallel, so it's faster too. </p>
+<h2>2. Writer plus critic </h2>
+<p> One agent produces the work. A second agent, spawned fresh with no memory of the writing process, reviews it. </p>
+<p> The whole trick is the fresh context. An agent reviewing its own work inside the same session is anchored to its own reasoning and misses its own mistakes, same as people do. The critic never saw the reasoning, only the result, so the review is honest. I use this anywhere the output matters enough to check. </p>
+<h2>3. Generate plus verify </h2>
+<p> For code and anything else that's testable. Agent A writes the implementation. Agent B writes tests from the specification. Agent C runs the tests. The parent loops until green. </p>
+<p> One detail matters more than it looks: B writes tests from the spec, not from A's code. Tests written by reading the implementation inherit the implementation's misunderstandings, and you get circular validation, where the code passes tests that encode its own bugs. Isolation between A and B is what breaks the circle. </p>
+<h2>4. Map-reduce </h2>
+<h2>Recommended by LinkedIn</h2>
+<p> The workhorse for bulk processing. Five hundred documents to analyse. The parent splits them into ten batches, spawns ten children, each child processes its batch and returns structured results, and the parent reduces everything into themes. </p>
+<p> If you've done any data engineering, this is an old friend. The agent version has the same virtues: linear scaling, parallel execution, and no single context ever holding more than a batch worth of material. </p>
+<h2>5. Tool isolation </h2>
+<p> The quiet one, and the one I'd argue is most underrated. Sometimes you split agents not for speed or quality but for safety. The agent that reads untrusted content, like web pages or inbound messages, holds no dangerous tools. The agent that holds dangerous tools, like sending messages or writing files, never touches untrusted content directly. </p>
+<p> You could try to enforce this with prompt instructions in a single agent. "Never send emails based on web content." But an instruction is a request. An agent that doesn't have the email tool is a guarantee. Architecture beats politeness. </p>
+<h2>The part that matters more: when to use none of them </h2>
+<p> The most useful thing I can tell you about these patterns is when to leave them alone. </p>
+<p> If a single agent loop handles your task comfortably, adding agents adds cost, latency, and briefing overhead in exchange for nothing. Decomposition has to earn its place, and it earns it when you can point at a specific pressure: context filling up, quality dropping, work queuing, or tools needing separation. </p>
+<p> And when you do split, split on independence, not on topic. This one bit me. I once considered splitting two closely related judgments about the same input into two agents because they felt like different topics. They weren't independent. Each judgment informed the other, and separating them would have destroyed exactly the cross-inference that made the evaluation good. Correlated judgments belong in one context. Independent workloads belong in separate ones. </p>
+<p> Simple first. Decompose when a pressure demands it. Then pick from the five shapes, because one of them is almost certainly what you need. </p>
+<p> One more article left in this series, and it's the one nobody writes: what happens when agents fail, and why the scariest failure is the one that looks like success. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/every-multi-agent-system-ive-studied-one-five-designs-sagar-trivedi-gvszc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/scariest-ai-agent-failure-one-looks-like-success/"><span class="dir">Previous</span>The Scariest AI Agent Failure Is the One That Looks Like Success</a><a class="prevnext next" href="../../articles/i-assumed-multi-agent-meant-4x-cost-math-said/"><span class="dir">Next</span>I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Every Multi-Agent System I've Studied Is One of These Five Designs",
+  "datePublished": "2026-08-03",
+  "description": "Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Lea",
+  "wordCount": 673,
+  "url": "https://sagart-cactus.github.io/articles/every-multi-agent-system-ive-studied-one-five-designs/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/every-multi-agent-system-ive-studied-one-five-designs/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

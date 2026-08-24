@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Best Practices for Building MCP Servers · Sagar Trivedi</title>
+<meta name="description" content="Building a basic MCP server can be quick. Building one that agents can use safely and effectively takes design. The biggest mistake is treating MCP as an automatic export of your existing API. A good">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/best-practices-building-mcp-servers/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Best Practices for Building MCP Servers · Sagar Trivedi">
+<meta property="og:description" content="Building a basic MCP server can be quick. Building one that agents can use safely and effectively takes design. The biggest mistake is treating MCP as an automatic export of your existing API. A good">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/best-practices-building-mcp-servers/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Best Practices for Building MCP Servers · Sagar Trivedi">
+<meta name="twitter:description" content="Building a basic MCP server can be quick. Building one that agents can use safely and effectively takes design. The biggest mistake is treating MCP as an automatic export of your existing API. A good">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Best Practices for Building MCP Servers</h1>
+      <p class="post-meta">
+        <time datetime="2026-06-05">5 June 2026</time>
+        <span class="dot">·</span>4 min read
+      </p>
+
+      <div class="post-body">
+<p> Building a basic MCP server can be quick. </p>
+<p> Building one that agents can use safely and effectively takes design. </p>
+<p> The biggest mistake is treating MCP as an automatic export of your existing API. A good MCP server is not a giant list of endpoints. It is a focused, agent-friendly interface. </p>
+<h2>Start With the Agent Story </h2>
+<p> Do not start by listing every API endpoint. </p>
+<p> Start with the workflows you want the agent to support. </p>
+<p> For example: </p>
+<pre><code>As a support engineer, I want the agent to find a customer's recent orders, identify the damaged one, and prepare a refund with confirmation.</code></pre>
+<p> That story suggests a small number of useful tools. </p>
+<p> It does not suggest exposing every customer, order, payment, shipment, and inventory endpoint separately. </p>
+<h2>Keep the Tool Surface Small </h2>
+<p> Large tool lists make model selection harder. </p>
+<p> As a practical default, aim for five to eight tools per server. Be cautious once a server has more than ten to twelve tools. </p>
+<p> If the domain is too large, split it. </p>
+<p> Examples: </p>
+<ul><li>billing-mcp </li><li>inventory-mcp </li><li>support-mcp </li><li>repo-mcp </li></ul>
+<p> One server should have one coherent job. </p>
+<h2>Design Workflow Tools </h2>
+<p> Prefer workflow-shaped tools over raw CRUD tools. </p>
+<p> Instead of: </p>
+<ul><li>list_orders </li><li>get_order </li><li>get_customer </li><li>get_payment </li><li>create_refund </li></ul>
+<p> Consider: </p>
+<ul><li>find_refundable_order </li><li>prepare_refund </li><li>submit_refund_after_confirmation </li></ul>
+<p> The MCP server can call multiple internal APIs behind the scenes and return one clean, agent-shaped result. </p>
+<h2>Write Tool Descriptions for the Model </h2>
+<p> Tool descriptions are not just docs. </p>
+<p> They are instructions the model uses to decide what to call. </p>
+<p> A good tool description is: </p>
+<ul><li>Action-first </li><li>Short </li><li>Clear about side effects </li><li>Clear about when to use it </li><li>Clear about when not to use it </li></ul>
+<p> Avoid vague descriptions like: </p>
+<pre><code>Gets data from the order service.</code></pre>
+<p> Prefer: </p>
+<pre><code>Find recent customer orders by email address. Use this before preparing a refund or investigating a delivery issue. Does not modify data.</code></pre>
+<h2>Return Less, But Better </h2>
+<p> Raw API responses often contain too much. </p>
+<p> An MCP tool result goes into the model's context, so every extra field costs attention. </p>
+<p> Return what the model needs for the next decision: </p>
+<ul><li>Key identifiers </li><li>Relevant status </li><li>A concise summary </li><li>Possible next actions </li><li>Warnings or missing permissions </li></ul>
+<p> Offer a separate detail tool if deeper inspection is needed. </p>
+<h2>Recommended by LinkedIn</h2>
+<h2>Treat Errors as Guidance </h2>
+<p> Errors should help the agent recover. </p>
+<p> Instead of: </p>
+<pre><code>403 Forbidden</code></pre>
+<p> Return: </p>
+<pre><code>Permission denied. This action requires the billing:refund scope. Ask the user to reconnect with refund permission before retrying.</code></pre>
+<p> That gives the model something useful to do next. </p>
+<h2>Design Session Boundaries Deliberately </h2>
+<p> Session management is one of the most important production architecture choices for MCP servers. </p>
+<p> The practical default: </p>
+<p> Use one MCP session per user and agent session. </p>
+<p> That means each active agent conversation gets its own MCP session, tied to the user and the current agent workflow. </p>
+<p> Avoid sharing one MCP session across multiple users, agents, or conversations. Shared sessions create hard-to-debug risks: </p>
+<ul><li>Cross-user data leakage </li><li>Auth confusion </li><li>Mixed audit trails </li><li>Concurrent state bugs </li><li>One agent polluting another agent's context </li></ul>
+<p> Session boundaries are also security boundaries. </p>
+<p> If User A's agent and User B's agent share the same MCP session, it becomes much harder to answer basic production questions: </p>
+<ul><li>Whose token is being used? </li><li>Which user approved this action? </li><li>Which agent called this tool? </li><li>Which workflow owns this cursor, cache, or intermediate state? </li></ul>
+<p> Keep those boundaries clear. </p>
+<h2>Externalise Durable State </h2>
+<p> Some MCP flows need a state. </p>
+<p> Examples: </p>
+<ul><li>Pagination cursors </li><li>Long-running job IDs </li><li>Workflow checkpoints </li><li>Temporary upload references </li><li>Tool progress </li><li>User approval state </li></ul>
+<p> Do not rely only on in-memory session state for anything important. </p>
+<p> For production servers, store durable state outside the server process in a database, queue, cache, or workflow system. The MCP session can hold lightweight coordination state, but the important parts should survive restarts, deploys, and load balancing. </p>
+<p> This makes horizontal scaling easier. A request can land on any healthy server instance, and the instance can recover the needed state from the shared store. </p>
+<h2>Stateful vs Stateless Tradeoffs </h2>
+<p> Stateful sessions can be useful. </p>
+<p> They let the server pay the initialisation cost once, keep bidirectional flows open, and support compact follow-up calls. They can also make streaming, notifications, elicitation, and multi-step workflows smoother. </p>
+<p> But stateful sessions have real operational cost: </p>
+<ul><li>Sticky routing becomes harder </li><li>Rolling deploys can interrupt sessions </li><li>Restarts can lose context </li><li>Load balancing becomes more complex </li><li>Memory use grows with open sessions </li></ul>
+<p> For most production deployments, design the MCP server so the process is as stateless as practical, while session metadata and durable workflow state live in external storage. </p>
+<p> If you need to share an expensive resource across agents, share the resource, not the MCP session. </p>
+<h2>Build for Production </h2>
+<p> A production MCP server needs the same discipline as any other service: </p>
+<ul><li>Health checks </li><li>Readiness probes </li><li>Timeouts </li><li>Structured logs </li><li>Metrics </li><li>Audit trails </li><li>Contract tests </li><li>Versioned schemas </li><li>Least-privilege auth </li><li>Graceful shutdown </li></ul>
+<p> MCP is new, but the operational basics are not. </p>
+<h2>The Takeaway </h2>
+<p> Design MCP servers as products for agents. </p>
+<p> Keep them small, workflow-focused, secure, observable, and easy for the model to understand. </p>
+<p> Full knowledge base: <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-mcp%2F&amp;urlhash=0akZ&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">https://sagart-cactus.github.io/learn-mcp/ </a></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/best-practices-building-mcp-servers-sagar-trivedi-laqtc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/mcp-security-risks-you-should-understand/"><span class="dir">Previous</span>MCP Security Risks You Should Understand</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Best Practices for Building MCP Servers",
+  "datePublished": "2026-06-05",
+  "description": "Building a basic MCP server can be quick. Building one that agents can use safely and effectively takes design. The biggest mistake is treating MCP as an automatic export of your existing API. A good",
+  "wordCount": 819,
+  "url": "https://sagart-cactus.github.io/articles/best-practices-building-mcp-servers/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/best-practices-building-mcp-servers/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

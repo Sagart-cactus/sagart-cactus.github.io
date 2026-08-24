@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem · Sagar Trivedi</title>
+<meta name="description" content="Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem · Sagar Trivedi">
+<meta property="og:description" content="Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem · Sagar Trivedi">
+<meta name="twitter:description" content="Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem</h1>
+      <p class="post-meta">
+        <time datetime="2026-04-20">20 April 2026</time>
+        <span class="dot">·</span>9 min read
+      </p>
+
+      <div class="post-body">
+<blockquote>Welcome back to our journey through Codex's architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of MCP's real power. </blockquote>
+<p> Here's the thing: Codex as a tool for other agents is cool. But what if Codex, while solving problems, could call hundreds of external tools? What if it could discover plugins, invoke APIs, query databases, and collaborate with other AI services in real time? </p>
+<p> This is Part 6. This is where Codex becomes more than an agent. It becomes an agent platform. </p>
+<h2>The Eureka Moment: MCP as USB for AI </h2>
+<p> Think about USB. In the '90s, every device had proprietary connectors. Printers, keyboards, and cameras are all incompatible. Then USB came along. One protocol. One shape. Suddenly, any device could talk to any computer. </p>
+<p> Model Context Protocol (MCP) is USB for AI. </p>
+<h2>What is MCP? </h2>
+<p> MCP is a standardised protocol that lets AI models (Claude, others) request information from, or invoke tools on, external systems. It's not specific to Codex. It's not specific to OpenAI. It's an open specification that any AI agent can speak. </p>
+<p> Here's the protocol at its core: </p>
+<p> It's JSON-RPC 2.0 over stdio (or HTTP, or WebSocket). Messages flow in both directions. The agent asks, the server responds. The server never initiates, the agent is always in control. </p>
+<h2>Why MCP Matters for Codex </h2>
+<p> Without MCP, Codex could only: </p>
+<ul><li>Run shell commands </li><li>Read files </li><li>Apply patches </li></ul>
+<p> With MCP, Codex can: </p>
+<ul><li>Query your company's API </li><li>Read from Jira, GitHub, Slack, Asana </li><li>Run custom linters and type checkers </li><li>Execute Python scripts that return structured data </li><li>Call specialized AI models (Claude for reasoning, DALL-E for images, Grok for indexing) </li><li>Trigger CI/CD pipelines </li><li>Deploy code to production </li></ul>
+<p> Each of these is a tool server, an MCP server that exposes capabilities. Codex connects to them all, discovers their tools, and knows when and how to use them. </p>
+<hr/>
+<h2>Deep Dive 1: Codex as MCP Client </h2>
+<p> In Part 5, we saw Codex as an MCP server. Now flip it: Codex is also an MCP client. </p>
+<h2>The Architecture </h2>
+<p> When you start Codex, before it talks to Claude, it: </p>
+<ol><li>Reads config from ~/.codex/config.toml </li><li>Spawns MCP servers (from the [mcp_servers] section) </li><li>Discovers their tools (via list_tools request) </li><li>Injects tool definitions into Claude's context </li><li>Routes tool calls to the correct server </li><li>Returns results to Claude </li></ol>
+<h2>rmcp-client: The Orchestrator </h2>
+<p> The rmcp_client crate (in /codex-rs/rmcp-client/src/rmcp_client.rs) is Codex's MCP client. Let's understand its key responsibilities. </p>
+<p> Initialization &amp; Discovery: </p>
+<pre><code>pub struct RMcpClient {
+    servers: HashMap&lt;String, ChildProcess&gt;,
+    tool_registry: ToolRegistry,
+}
+
+impl RMcpClient {
+    pub async fn initialize(&amp;mut self) -&gt; Result&lt;()&gt; {
+        // 1. Spawn all configured MCP servers
+        for (name, config) in self.config.mcp_servers {
+            let process = Command::new(&amp;config.command)
+                .args(&amp;config.args)
+                .spawn()?;
+
+            self.servers.insert(name.clone(), process);
+        }
+
+        // 2. Discover tools from each server
+        for (name, server) in &amp;mut self.servers {
+            let tools = server.list_tools().await?;
+            self.tool_registry.register(name.clone(), tools);
+        }
+
+        Ok(())
+    }
+}</code></pre>
+<p> Tool Call Routing: </p>
+<p> When Claude says "I need to use the shell-tool," the routing logic determines which MCP server handles it: </p>
+<pre><code>pub async fn call_tool(
+    &amp;mut self,
+    tool_name: &amp;str,
+    arguments: serde_json::Value,
+) -&gt; Result&lt;serde_json::Value&gt; {
+    // 1. Look up which server provides this tool
+    let server_name = self.tool_registry.find_provider(tool_name)?;
+
+    // 2. Get the server's connection
+    let server = &amp;mut self.servers[server_name];
+
+    // 3. Make the tool call
+    let result = server.call_tool(tool_name, arguments).await?;
+
+    // 4. Return result to Claude
+    Ok(result)
+}</code></pre>
+<p> Connection Management: </p>
+<p> The client maintains persistent connections to servers: </p>
+<pre><code>pub struct McpServerConnection {
+    process: Child,
+    stdin: BufWriter&lt;ChildStdin&gt;,
+    reader: BufReader&lt;ChildStdout&gt;,
+    request_id_counter: u64,
+}
+
+impl McpServerConnection {
+    async fn send_request(&amp;mut self, method: &amp;str, params: Value) -&gt; Result&lt;Value&gt; {
+        let request_id = self.request_id_counter;
+        self.request_id_counter += 1;
+
+        let message = json!({
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "method": method,
+            "params": params,
+        });
+
+        // Send to server stdin
+        self.stdin.write_all(message.to_string().as_bytes()).await?;
+        self.stdin.flush().await?;
+
+        // Wait for response (matching on request_id)
+        loop {
+            let response = self.reader.read_line(&amp;mut self.buffer).await?;
+            let msg: JsonRpcMessage = serde_json::from_str(&amp;response)?;
+
+            if msg.id == request_id {
+                return Ok(msg.result);
+            }
+        }
+    }
+}</code></pre>
+<hr/>
+<h2>Deep Dive 2: Connector Management via Config </h2>
+<p> MCP servers are configured in ~/.codex/config.toml. The connectors crate (in /codex-rs/connectors/src/lib.rs) manages their lifecycle. </p>
+<h2>Configuration Format </h2>
+<pre><code>[mcp_servers]
+
+# Built-in shell tool
+[mcp_servers.shell-tool]
+command = "bash"
+args = ["-i"]
+
+# GitHub connector
+[mcp_servers.github]
+command = "npx"
+args = ["-y", "@anthropic-sdks/github-mcp-server"]
+env = { GITHUB_TOKEN = "$CODEX_GITHUB_TOKEN" }
+
+# Custom API server
+[mcp_servers.internal-api]
+command = "/usr/local/bin/my-mcp-server"
+args = ["--port", "9876"]</code></pre>
+<h2>The ConnectorManager </h2>
+<p> The ConnectorManager (in connectors/src/lib.rs) handles: </p>
+<ol><li>Loading connectors from the directory </li><li>Caching tool lists (TTL-based) </li><li>OAuth handling for authenticated connectors </li></ol>
+<pre><code>pub struct AllConnectorsCacheKey {
+    chatgpt_base_url: String,
+    account_id: Option&lt;String&gt;,
+    chatgpt_user_id: Option&lt;String&gt;,
+    is_workspace_account: bool,
+}
+
+const CONNECTORS_CACHE_TTL: Duration = Duration::from_secs(3600); // 1 hour
+
+pub fn cached_all_connectors(cache_key: &amp;AllConnectorsCacheKey) -&gt; Option&lt;Vec&lt;AppInfo&gt;&gt; {
+    let mut cache_guard = ALL_CONNECTORS_CACHE.lock().unwrap();
+    let now = Instant::now();
+
+    if let Some(cached) = cache_guard.as_ref() {
+        if cached.key == *cache_key &amp;&amp; cached.expires_at &gt; now {
+            return Some(cached.connectors.clone());
+        }
+    }
+
+    None
+}</code></pre>
+<p> Why cache? Because discovering tools from 10 servers takes time. Codex caches the list for 1 hour, then refreshes. </p>
+<hr/>
+<h2>Deep Dive 3: The Skills System </h2>
+<p> Here's a clever twist: not all tools are external. Some are embedded in the Codex binary itself. These are called Skills. </p>
+<h2>System Skills vs. User Skills </h2>
+<p> System Skills: Embedded, built-in tools that come with Codex. Located in /codex-rs/skills/src/assets/samples/. Examples: </p>
+<ul><li>bash: Run shell commands </li><li>skill-creator: Create new skills </li><li>git-helper: Common git operations </li></ul>
+<p> User Skills: Custom tools that you write. Located in ~/.codex/skills/. Examples: </p>
+<ul><li>deploy-to-staging: Deploy your app </li><li>run-tests: Run your test suite </li><li>check-api-health: Check your API status </li></ul>
+<h2>How Skills Work </h2>
+<p> The codex-rs/skills/src/lib.rs crate handles skill installation: </p>
+<pre><code>pub fn install_system_skills(codex_home: &amp;Path) -&gt; Result&lt;(), SystemSkillsError&gt; {
+    let skills_root = codex_home.join("skills");
+    let system_cache = skills_root.join(".system");
+
+    // Calculate fingerprint of embedded skills
+    let expected_fingerprint = embedded_system_skills_fingerprint();
+
+    // Check if already installed
+    if system_cache.exists()
+        &amp;&amp; read_marker(&amp;system_cache).ok() == Some(expected_fingerprint)
+    {
+        return Ok(()); // Skip, already up to date
+    }
+
+    // Write embedded skills to disk
+    write_embedded_dir(&amp;SYSTEM_SKILLS_DIR, &amp;system_cache)?;
+
+    // Write marker file to detect future updates
+    fs::write(
+        system_cache.join(".codex-system-skills.marker"),
+        format!("{}\n", expected_fingerprint)
+    )?;
+
+    Ok(())
+}</code></pre>
+<h2>Skills Manager Discovery </h2>
+<p> At startup, Codex discovers both system and user skills: </p>
+<pre><code>pub fn discover_skills(codex_home: &amp;Path) -&gt; Result&lt;Vec&lt;Skill&gt;&gt; {
+    let mut skills = Vec::new();
+
+    // 1. System skills
+    let system_path = codex_home.join("skills").join(".system");
+    for entry in fs::read_dir(&amp;system_path)? {
+        let skill = load_skill_from_dir(&amp;entry?.path())?;
+        skills.push(skill);
+    }
+
+    // 2. User skills
+    let user_path = codex_home.join("skills");
+    for entry in fs::read_dir(&amp;user_path)? {
+        if entry.path().is_dir() &amp;&amp; entry.file_name() != ".system" {
+            let skill = load_skill_from_dir(&amp;entry?.path())?;
+            skills.push(skill);
+        }
+    }
+
+    Ok(skills)
+}</code></pre>
+<h2>Recommended by LinkedIn</h2>
+<h2>Skill Injection </h2>
+<p> Skills are injected into Claude's context as tools. Each skill is a YAML/TOML file (e.g., deploy-to-staging/SKILL.md) that describes: </p>
+<pre><code>---
+name: deploy-to-staging
+description: Deploy the app to staging environment
+tools:
+  - name: run-deploy
+    description: Execute deployment
+    input_schema:
+      type: object
+      properties:
+        branch:
+          type: string
+          description: Git branch to deploy
+---
+
+# Skill implementation (Python, Bash, etc.)
+...</code></pre>
+<p> When Claude executes a skill, Codex injects the skill's context (environment variables, working directory, secrets) and runs it. </p>
+<hr/>
+<h2>Deep Dive 4: Shell-tool-MCP Internals </h2>
+<p> Now let's go deep on the most important MCP server: shell-tool-mcp (in /shell-tool-mcp/). This is where Codex can execute arbitrary commands, but safely. </p>
+<h2>The Patched Bash </h2>
+<p> The shell-tool-mcp package bundles patched Bash binaries built for multiple glibc versions: </p>
+<ul><li>Ubuntu 24.04, 22.04, 20.04 </li><li>Debian 12, 11 </li><li>CentOS/RHEL 9 </li><li>macOS 15, 14, 13 </li></ul>
+<p> Why patched? Because Codex needs to intercept process execution at the kernel level. Here's how: </p>
+<h2>EXEC_WRAPPER Environment Variable </h2>
+<p> When Bash starts, it looks for an EXEC_WRAPPER environment variable: </p>
+<pre><code>export EXEC_WRAPPER=/path/to/wrapper
+bash</code></pre>
+<p> Every time a shell command is about to execve() (the system call to spawn a new process), the patched Bash calls the wrapper first: </p>
+<p><br/></p>
+<pre><code>execve("/bin/ls", [...])
+    ↓ (patched bash intercepts)
+EXEC_WRAPPER called
+    ↓
+"Is /bin/ls allowed?"
+    ↓ (check rules)
+Yes → proceed
+No → fail with error</code></pre>
+<p> This is much more secure than trying to regex-match commands. Bash is asking the wrapper whether to execute. </p>
+<h2>Rules Files </h2>
+<p> Users define escalation rules in .rules files: </p>
+<pre><code># .rules in your project
+
+- path: "/bin/ls"
+  decision: allow
+
+- path: "/usr/bin/python3"
+  decision: prompt
+  message: "Running Python. OK?"
+
+- path: "/bin/rm"
+  decision: forbidden
+  message: "rm is not allowed in this sandbox"
+
+# Glob patterns work too
+- path: "/usr/local/bin/*"
+  decision: allow</code></pre>
+<p> The shell-tool-mcp server evaluates rules: </p>
+<pre><code>async function checkExecutionAllowed(
+    command: string,
+    path: string,
+    rules: Rule[]
+): Promise&lt;Decision&gt; {
+    // Find matching rule
+    for (const rule of rules) {
+        if (minimatch(path, rule.path)) {
+            switch (rule.decision) {
+                case "allow":
+                    // Escalate and run outside sandbox
+                    return { allowed: true, escalate: true };
+
+                case "prompt":
+                    // Ask human for approval via MCP elicitation
+                    return { allowed: false, requiresApproval: true };
+
+                case "forbidden":
+                    // Fail with error
+                    return { allowed: false, escalate: false };
+            }
+        }
+    }
+
+    // No matching rule → allow by default (but keep sandbox)
+    return { allowed: true, escalate: false };
+}</code></pre>
+<hr/>
+<h2>Deep Dive 5: Tool Call Flow </h2>
+<p> Let's trace a complete tool call from start to finish. </p>
+<h2>Scenario: Claude Needs to List Files </h2>
+<p> This entire flow happens in milliseconds, with full observability. Every command is logged, every decision is audited. </p>
+<hr/>
+<h2>The Plugin Ecosystem </h2>
+<p> Here's where things get exciting. Anyone can build an MCP server. </p>
+<h2>Building Your Own MCP Server </h2>
+<p> Let's say you want to create a Jira connector: </p>
+<pre><code>// jira-mcp-server.ts
+import { MCPServer } from "@anthropic-sdks/mcp-sdk";
+
+const server = new MCPServer({
+    name: "jira",
+    version: "1.0.0",
+});
+
+server.tool("fetch_issue", {
+    description: "Get a Jira issue by key",
+    input_schema: {
+        type: "object",
+        properties: {
+            issue_key: { type: "string", description: "e.g., PROJ-123" },
+        },
+        required: ["issue_key"],
+    },
+    async handler(params) {
+        const response = await fetch(
+            `https://your-jira.atlassian.net/rest/api/3/issue/${params.issue_key}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.JIRA_TOKEN}`,
+                },
+            }
+        );
+        return await response.json();
+    },
+});
+
+server.tool("create_issue", {
+    description: "Create a new Jira issue",
+    input_schema: { ... },
+    async handler(params) { ... }
+});
+
+server.listen();</code></pre>
+<p> Now add to your config.toml: </p>
+<pre><code>[mcp_servers.jira]
+command = "node"
+args = ["/path/to/jira-mcp-server.js"]
+env = { JIRA_TOKEN = "$JIRA_API_TOKEN" }</code></pre>
+<p> Restart Codex, and Claude can now: </p>
+<ul><li>Search Jira </li><li>Create issues </li><li>Add comments </li><li>Transition workflows </li></ul>
+<p> All without modifying Codex itself. That's the power of MCP. </p>
+<h2>The Ecosystem Vision </h2>
+<p> Imagine: </p>
+<ul><li>GitHub MCP: PR review, branch creation, workflow triggers </li><li>Slack MCP: Send messages, query channels, post threads </li><li>Datadog MCP: Query logs, create incidents, check metrics </li><li>Vercel MCP: Deploy, check build status, manage environment variables </li><li>Your Company's MCP: Query internal APIs, check compliance, access business logic </li></ul>
+<p> Codex becomes a central hub that talks to all your tools. Claude, inside Codex, can orchestrate workflows across your entire tech stack. </p>
+<h2>Security: The Rules Gauntlet </h2>
+<p> With great power (many tools) comes great responsibility. How does Codex keep you safe? </p>
+<h2>Layers of Defense </h2>
+<ol><li>Rules Files: Per-project .rules files define what's allowed </li><li>Process Sandboxing: Each MCP server runs in isolation </li><li>Approval Workflows: Prompt rules require human sign-off </li><li>Audit Logging: Every tool call is logged with context </li><li>Token Management: Secrets injected via environment, never logged </li></ol>
+<p> Example rules file: </p>
+<pre><code># .rules
+
+# Shell commands
+- command: "/bin/rm"
+  decision: forbidden
+
+- command: "/usr/bin/python3"
+  decision: prompt
+
+- command: "/bin/ls"
+  decision: allow
+
+# API calls
+- api: "github.com/*"
+  decision: allow
+
+- api: "internal-api.company.com/admin/*"
+  decision: forbidden
+
+- api: "internal-api.company.com/data/*"
+  decision: prompt</code></pre>
+<p> Codex learns these rules over time and generally avoids requesting forbidden actions. </p>
+<hr/>
+<h2>The Cliffhanger: What Next? </h2>
+<p> We've explored how Codex connects to tools. We've seen skills, MCP servers, and the ecosystem potential. </p>
+<p> But we haven't asked: What about scaling? </p>
+<p> What if you're running Codex in production? In CI/CD? With thousands of tool calls per day? How does it stay fast? How does it handle failures, retry logic, and connection pooling? </p>
+<p> What about security at scale? How do you manage rules across a whole organisation? How do you audit who ran what? How do you prevent rogue tools from exfiltrating data? </p>
+<p> In Part 7, we'll explore deployment, scaling, and the production gauntlet. We'll see how Codex goes from a beautiful system in a dev's terminal to a bulletproof service handling enterprise workloads. </p>
+<p> With great power comes great responsibility. How does Codex keep you safe? The safety net goes deeper than you think... </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/swiss-army-knife-mcp-tools-plugin-ecosystem-sagar-trivedi-chqmc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/"><span class="dir">Previous</span>Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server</a><a class="prevnext next" href="../../articles/part-7-safety-net/"><span class="dir">Next</span>Part 7: The Safety Net</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem",
+  "datePublished": "2026-04-20",
+  "description": "Welcome back to our journey through Codex's architecture. In Part 5, we explored how Codex manifests in four different frontends\u2014TUI, exec, app-server, MCP server. But we only touched the surface of M",
+  "wordCount": 1946,
+  "url": "https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

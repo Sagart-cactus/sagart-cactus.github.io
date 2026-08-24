@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The 10,000-Foot View: What Is Codex CLI and Why Should You Care? · Sagar Trivedi</title>
+<meta name="description" content="The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The 10,000-Foot View: What Is Codex CLI and Why Should You Care? · Sagar Trivedi">
+<meta property="og:description" content="The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The 10,000-Foot View: What Is Codex CLI and Why Should You Care? · Sagar Trivedi">
+<meta name="twitter:description" content="The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The 10,000-Foot View: What Is Codex CLI and Why Should You Care?</h1>
+      <p class="post-meta">
+        <time datetime="2026-03-24">24 March 2026</time>
+        <span class="dot">·</span>6 min read
+      </p>
+
+      <div class="post-body">
+<h2>The Very Smart Intern in a Padded Room </h2>
+<p> Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and even explain their work. But there's one catch: they're not allowed to touch your computer directly. They work in a completely isolated sandbox. Everything they do is monitored, logged, and can be instantly reverted. </p>
+<p> That's Codex CLI. </p>
+<p> When you type a natural language prompt, "Add a login form to my Next.js app" or "Fix this memory leak in my Rust code", Codex CLI springs into action. It reads your files, reasons about your codebase, writes code, runs commands, edits files, tests changes, and iterates until the job is done. All while operating in a tightly controlled sandbox that prevents it from doing anything malicious or destructive. </p>
+<p> But here's what makes it fascinating: Codex CLI is open-source. It's built from Rust, Node.js, TypeScript, and Python. Its architecture is modular, elegant, and carefully designed to run a sophisticated AI agent on your machine, without requiring cloud calls for every keystroke. This series will dissect that architecture piece by piece. </p>
+<p> Today, we're starting with the bird's-eye view. </p>
+<h2>What Does Codex CLI Actually Do? </h2>
+<p> Let's demystify the black box with a concrete example. </p>
+<p> You run this command: </p>
+<pre><code>codex "add a dark mode toggle to my React app"</code></pre>
+<p> Behind the scenes, here's what happens: </p>
+<ol><li>Understand the context. Codex reads your project structure, your package.json , your existing components, and any files you've explicitly shown it. </li><li>Plan the work. The AI reasons about the changes needed: "I need to update the theme provider, add a toggle button, modify the CSS, and test the feature." </li><li>Execute the plan. Codex writes code in temporary locations, runs your build system, tests the changes, and checks for errors. </li><li>Refine and iterate. If tests fail, Codex sees the errors, understands what went wrong, and fixes it. This loop continues until everything works. </li><li>Show you the results. You can see the final changes, review them, request adjustments, and merge them when you're satisfied. </li></ol>
+<p> All of this happens locally on your machine. No data is sent to the cloud except for the minimum necessary API calls to OpenAI's language models. Your proprietary code never leaves your computer. </p>
+<h2>Enter: The Four Buildings </h2>
+<p> Codex CLI isn't a monolith. It's a carefully orchestrated collection of modular components. We think of them as four architectural "buildings," each with a distinct purpose: </p>
+<h2>Building 1: The Rust Core (codex-rs) </h2>
+<p> The heart of everything. Think of this as the engine room of a ship. </p>
+<p> Inside /codex-rs, you'll find 60+ Rust crates that handle: </p>
+<ul><li>Core AI orchestration (codex-core): the brain that reasons about code and plans actions </li><li>Terminal UI (codex-tui): the interactive interface where you type prompts and see results </li><li>Sandboxing (linux-sandbox, process-hardening): the padlocked vault that keeps dangerous operations isolated </li><li>Language tooling (lsp-bridge): understanding code structure via Language Server Protocol </li><li>Secrets management (secrets): keeping API keys and credentials encrypted </li><li>API communication (rmcp-client): talking to OpenAI's models </li><li>And dozens more: handling everything from ANSI color codes to artifact management to package manager integration </li></ul>
+<blockquote>Why Rust? Performance, safety, and control. The core needs to be blazingly fast and memory-safe. Rust forces you to think about resource ownership and thread safety at compile time. No garbage collection pauses, no surprise memory leaks. When you're sandboxing code execution, safety is non-negotiable. </blockquote>
+<h2>Building 2: The CLI Launcher (codex-cli) </h2>
+<p> A thin shell. When you run codex in your terminal, you're invoking this Node.js layer. </p>
+<p> Why not just run the Rust binary directly? This thin launcher handles: </p>
+<ul><li>Platform-specific binary distribution (macOS arm64, Linux x86_64, etc.) </li><li>Update checks ("Is there a newer version?") </li><li>Shell integration and configuration file loading </li><li>A smooth user experience before the Rust engine fully wakes up </li></ul>
+<p> It's small, fast, and does one job well: get out of the way and let the core do its thing. </p>
+<h2>Building 3: The SDK (sdk/) </h2>
+<p> This is where embedability lives. Inside /sdk, you'll find: </p>
+<ul><li>TypeScript SDK: for integrating Codex into VS Code, Cursor, Windsurf, or any IDE </li><li>Python SDK: for building custom agents and tools with Codex's architecture </li><li>Python runtime: for safe Python code execution in the sandbox </li></ul>
+<h2>Recommended by LinkedIn</h2>
+<p> The SDK abstracts the core's complexity behind clean, language-specific APIs. Want to build a Slack bot that uses Codex? Want to integrate code generation into your own CI/CD pipeline? The SDK is your friend. </p>
+<h2>Building 4: The MCP Server (shell-tool-mcp) </h2>
+<p> MCP stands for Model Context Protocol, OpenAI's standard for tools and resources. </p>
+<p> This building exposes Codex's capabilities as a set of well-defined tools. It's how IDEs and other applications talk to the core. It's also a perfect example of scalable architecture: a single protocol, multiple clients, all sharing the same underlying engine. </p>
+<h2>The Architecture in One Diagram </h2>
+<p> Here's how these four buildings talk to each other: </p>
+<p> Every frontend, whether it's the interactive terminal UI, a headless invocation, or an IDE plugin, connects to the same battle-tested core. The core orchestrates everything: file I/O, subprocess execution, API calls, and sandbox management. </p>
+<h2>The Queue That Powers Everything </h2>
+<p> If the core is the engine, the Submission Queue and Event Queue are the transmission. </p>
+<p> Here's a simplified mental model: </p>
+<ol><li>You type a prompt. It becomes a "submission", a request to Codex to do something. </li><li>The submission enters the queue. The orchestrator breaks it into steps: "Parse the request, read the files, call the AI, execute the command, verify the results, ask for human input." </li><li>Each step generates events. "File read complete," "API call succeeded," "Command output received," "User needs to approve changes." </li><li>Events feed back into the system. The orchestrator consumes events, updates state, and decides on the next action. </li></ol>
+<p> This queue-based architecture is resilient. If something fails, Codex can see the failure event and decide whether to retry, ask for help, or escalate. If you interrupt a long-running operation, the queue cleanly stops processing new events. </p>
+<p> We'll dive deep into this pattern in Article 2 when we discuss the Protocol. </p>
+<h2>Why This Matters </h2>
+<p> At this point, you might be thinking: "This is neat, but why should I care?" </p>
+<p> Here's why: </p>
+<blockquote>For users: Codex CLI is fast, local, and safe. You're not uploading your codebase to a cloud service. You're not waiting for network latency on every keystroke. You're running a sophisticated AI agent on your own hardware, with full transparency into what it's doing. </blockquote>
+<blockquote>For developers: The architecture is genuinely beautiful. It's modular (you can understand one building at a time), it's testable (each crate can be tested in isolation), and it's extensible (want to add a new frontend? Plug it into the core). If you want to understand how modern AI agents work—beyond the hype—Codex CLI is an excellent case study. </blockquote>
+<blockquote>For the open-source community: This is a real, production-grade codebase that OpenAI is maintaining and evolving. It's not a toy or a proof-of-concept. The decisions made here—about safety, performance, and modularity—reflect hard-won lessons from running AI agents at scale. </blockquote>
+<h2>The Puzzle Starts Here </h2>
+<p> You now have the map. You know the four buildings. You understand the three-layer model: frontends, core, and external systems. </p>
+<p> But we've left several mysteries unsolved: </p>
+<ul><li>What is the Protocol? How does the core actually communicate with all those frontends? What's the message format? (Hint: it's elegant and inspired by a specific standard.) </li><li>How does sandboxing actually work? We've mentioned it a dozen times, but how do you actually prevent a subprocess from accessing the filesystem? What about on Windows vs. Linux vs. macOS? </li><li>What's happening inside the AI orchestrator? How does Codex decide what action to take next? How does it handle ambiguity or conflicting goals? </li><li>How do you handle context? Your codebase is huge, but you can't fit it all into the context window. How does Codex decide what to read and what to ignore? </li><li>How does the queue work in practice? Let's trace a real submission from start to finish. </li></ul>
+<p> These questions are the spine of this series. In Article 2, we'll open up the Protocol layer and see how information flows. We'll trace a single prompt through the system and watch it transform into code. </p>
+<h2>Until Next Time </h2>
+<p> You're now equipped with the mental model you need. Codex CLI is four modular buildings sharing a common core, with a queue-based event system orchestrating the work. It's a deeply engineered system designed for safety, performance, and clarity. </p>
+<p> In the next article, we'll get into the Protocol—the language that binds everything together. We'll see how a prompt becomes a series of discrete steps, and how each step feeds back into the system. </p>
+<p><br/></p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext next" href="../../articles/nervous-system-how-components-talk/"><span class="dir">Next</span>The Nervous System: How Components Talk</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The 10,000-Foot View: What Is Codex CLI and Why Should You Care?",
+  "datePublished": "2026-03-24",
+  "description": "The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev",
+  "wordCount": 1419,
+  "url": "https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

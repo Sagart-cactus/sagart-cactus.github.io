@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Building on the Giant: SDKs, APIs, and What&#x27;s Next · Sagar Trivedi</title>
+<meta name="description" content="Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Building on the Giant: SDKs, APIs, and What&#x27;s Next · Sagar Trivedi">
+<meta property="og:description" content="Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Building on the Giant: SDKs, APIs, and What&#x27;s Next · Sagar Trivedi">
+<meta name="twitter:description" content="Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Building on the Giant: SDKs, APIs, and What&#x27;s Next</h1>
+      <p class="post-meta">
+        <time datetime="2026-05-08">8 May 2026</time>
+        <span class="dot">·</span>15 min read
+      </p>
+
+      <div class="post-body">
+<h2>Standing on the Shoulders of Giants </h2>
+<p> We've climbed seven mountains together. </p>
+<p> In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous system: the message queues, the submission queue, and the event queue that keep everything alive. Article 3 dissected the brain itself, the orchestrator that reasons about code and makes decisions. Article 4 showed us how the sandbox keeps the dangerous parts locked up. Article 5 revealed the four frontends, the terminal executor, the MCP server, and the fplugin framework. Article 6 explored the tools: file operations, command execution, code generation, and memory. Article 7 taught us about the safety mechanisms: approval policies, audit logs, and security boundaries. </p>
+<p> All of that power, the orchestration, the reasoning, the sandboxing, the tools, would be useless if it were locked away in a Rust binary that only spoke directly to a terminal or IDE. </p>
+<p> This is where Building 3: The SDK comes in. </p>
+<p> The SDKs are the translation layer. They take everything we've learned in the previous seven articles and package it into clean, language-specific APIs that developers can actually use. TypeScript developers get a JavaScript-native interface. Python developers get Pydantic models and async generators. Anyone can extend Codex with custom MCP servers. </p>
+<p> In this final article, we're going to see how it all connects, how a developer uses the SDK to spin up a thread, send a prompt, listen to events, and process results. We'll build a small automation script together. And then we'll talk about what comes next: the future of an architecture this well-designed. </p>
+<hr/>
+<p><br/></p>
+<h2>The TypeScript SDK: From High-Level API to Streaming Events </h2>
+<p> Let's start with concrete code. Here's the simplest way to use Codex from TypeScript: </p>
+<pre><code>import { Codex } from '@openai/codex';
+
+const codex = new Codex({
+  apiKey: process.env.OPENAI_API_KEY,
+  baseUrl: 'https://api.openai.com/v1',
+});
+
+const thread = codex.startThread();
+const result = await thread.run("Add a login form to my React app");
+
+console.log(result.finalResponse);
+result.items.forEach(item =&gt; {
+  console.log(`[${item.type}]`, item);
+});</code></pre>
+<p> This looks simple from the outside. But it's worth understanding what's happening underneath. </p>
+<h2>The Class Hierarchy </h2>
+<p> The Codex class is the entry point. When you construct it, it creates a CodexExec instance, a wrapper around the actual CLI binary. The CLI binary lives in an npm package (@openai/codex-darwin-arm64, @openai/codex-linux-x64, etc.) that contains the compiled Rust app-server for your platform. </p>
+<pre><code>export class Codex {
+  private exec: CodexExec;
+
+  constructor(options: CodexOptions = {}) {
+    const { codexPathOverride, env, config } = options;
+    this.exec = new CodexExec(codexPathOverride, env, config);
+    this.options = options;
+  }
+
+  startThread(options: ThreadOptions = {}): Thread {
+    return new Thread(this.exec, this.options, options);
+  }
+
+  resumeThread(id: string, options: ThreadOptions = {}): Thread {
+    return new Thread(this.exec, this.options, options, id);
+  }
+}</code></pre>
+<p> When you call startThread() or resumeThread(), you get a Thread object. This is where the real action happens. </p>
+<h2>Thread: The Workhorse </h2>
+<p> The Thread class has two primary methods: </p>
+<ol><li>run(input, options) : Send a prompt and wait for a complete result. Useful for synchronous workflows. </li><li>runStreamed(input, options) : Send a prompt and listen to events as they stream in. Useful for progress updates and real-time monitoring. </li></ol>
+<p> Here's what runStreamed() looks like: </p>
+<pre><code>async runStreamed(
+  input: Input,
+  turnOptions: TurnOptions = {}
+): Promise&lt;StreamedTurn&gt; {
+  return { events: this.runStreamedInternal(input, turnOptions) };
+}
+
+private async *runStreamedInternal(
+  input: Input,
+  turnOptions: TurnOptions = {},
+): AsyncGenerator&lt;ThreadEvent&gt; {
+  // Create temporary output schema file if needed
+  const { schemaPath, cleanup } = await createOutputSchemaFile(
+    turnOptions.outputSchema
+  );
+
+  // Normalize the input (text and/or images)
+  const { prompt, images } = normalizeInput(input);
+
+  // Spawn the CLI with `exec --experimental-json`
+  const generator = this._exec.run({
+    input: prompt,
+    threadId: this._id,
+    images,
+    model: options?.model,
+    sandboxMode: options?.sandboxMode,
+    // ... more options
+  });
+
+  try {
+    for await (const item of generator) {
+      let parsed: ThreadEvent;
+      try {
+        parsed = JSON.parse(item) as ThreadEvent;
+      } catch (error) {
+        throw new Error(`Failed to parse item: ${item}`, { cause: error });
+      }
+
+      // Capture the thread ID from the first event
+      if (parsed.type === "thread.started") {
+        this._id = parsed.thread_id;
+      }
+
+      yield parsed;
+    }
+  } finally {
+    await cleanup();
+  }
+}</code></pre>
+<p> The magic is in the spawning. When you call this._exec.run(), it spawns a subprocess: </p>
+<pre><code>codex exec --experimental-json \
+  --model gpt-4o \
+  --config approval_policy=auto \
+  --output-schema /tmp/schema.json \
+  "Add a login form to my React app"</code></pre>
+<p> The --experimental-json flag tells the CLI to emit JSONL (JSON Lines) format instead of text. Each line is a complete JSON object representing an event. </p>
+<h2>Event Types and Item Types </h2>
+<p> Every event that comes back is strongly typed. Here's the event union: </p>
+<pre><code>export type ThreadEvent =
+  | ThreadStartedEvent
+  | TurnStartedEvent
+  | TurnCompletedEvent
+  | TurnFailedEvent
+  | ItemStartedEvent
+  | ItemUpdatedEvent
+  | ItemCompletedEvent
+  | ThreadErrorEvent;</code></pre>
+<p> And here's what you'll see inside the ItemStartedEvent: </p>
+<pre><code>export type ThreadItem =
+  | AgentMessageItem
+  | ReasoningItem
+  | CommandExecutionItem
+  | FileChangeItem
+  | McpToolCallItem
+  | WebSearchItem
+  | TodoListItem
+  | ErrorItem;</code></pre>
+<p> Each item type carries detailed information. A CommandExecutionItem includes the command line, stdout/stderr, and exit code. A FileChangeItem includes the list of file paths that changed and whether the patch succeeded. An AgentMessageItem contains the final response text or structured output. </p>
+<h2>Building a Simple Automation Script </h2>
+<p> Let's build a practical example: a script that watches for TODO comments in code and auto-fixes them. </p>
+<pre><code>import { Codex } from '@openai/codex';
+import * as fs from 'fs/promises';
+
+async function fixTodos() {
+  const codex = new Codex();
+
+  // Find all TODO comments in the codebase
+  const todoPattern = /TODO: (.+?)$/gm;
+  const files = await fs.readdir('.', { recursive: true });
+  const todos: { file: string; comment: string }[] = [];
+
+  for (const file of files) {
+    if (file.includes('node_modules')) continue;
+    try {
+      const content = await fs.readFile(file, 'utf-8');
+      let match;
+      while ((match = todoPattern.exec(content)) !== null) {
+        todos.push({ file, comment: match[1] });
+      }
+    } catch {
+      // Not a text file, skip
+    }
+  }
+
+  if (todos.length === 0) {
+    console.log('No TODOs found');
+    return;
+  }
+
+  // Create a summary for Codex
+  const prompt = `
+I found ${todos.length} TODO comments in the codebase:
+${todos.map(t =&gt; `- ${t.file}: ${t.comment}`).join('\n')}
+
+Please fix these issues one by one. For each TODO:
+1. Read the file
+2. Understand the issue
+3. Implement a fix
+4. Test the changes
+5. Move to the next TODO
+  `.trim();
+
+  console.log('Starting Codex thread...');
+  const thread = codex.startThread({
+    workingDirectory: process.cwd(),
+    sandboxMode: 'write',
+  });
+
+  // Listen to events
+  const result = await thread.runStreamed(prompt);
+
+  let todoListItem: any = null;
+  let fileChanges = 0;
+
+  for await (const event of result.events) {
+    switch (event.type) {
+      case 'item.started':
+        if (event.item.type === 'command_execution') {
+          console.log(`Running: ${event.item.command}`);
+        }
+        if (event.item.type === 'todo_list') {
+          console.log('\nTodo list updated:');
+        }
+        break;
+
+      case 'item.updated':
+        if (event.item.type === 'command_execution') {
+          console.log(`Output: ${event.item.aggregated_output.slice(0, 100)}...`);
+        }
+        if (event.item.type === 'todo_list') {
+          todoListItem = event.item;
+        }
+        break;
+
+      case 'item.completed':
+        if (event.item.type === 'file_change') {
+          fileChanges++;
+          console.log(`File changes: ${fileChanges}`);
+        }
+        break;
+
+      case 'turn.completed':
+        console.log(`\nTurn completed. Tokens used: ${event.usage.input_tokens} in, ${event.usage.output_tokens} out`);
+        break;
+
+      case 'error':
+        console.error(`Error: ${event.message}`);
+        break;
+    }
+  }
+
+  if (todoListItem) {
+    console.log('\nFinal progress:');
+    todoListItem.items.forEach((item: any) =&gt; {
+      console.log(`${item.completed ? '✓' : '○'} ${item.text}`);
+    });
+  }
+}
+
+fixTodos().catch(console.error);</code></pre>
+<p> This script demonstrates the power of the streaming API: you can watch progress in real-time, update a UI, or make decisions based on what's happening. </p>
+<hr/>
+<h2>The Python SDK: JSON-RPC Over Stdio </h2>
+<p> The Python SDK takes a different approach. Instead of spawning the CLI with --experimental-json, the Python SDK launches the app-server binary directly and communicates with it via JSON-RPC 2.0 over stdio. </p>
+<p> Why the difference? The Python SDK is designed for deeper integration, it can send multiple turns to the same thread without respawning the process, and it has access to lower-level primitives like approval handlers. </p>
+<p><br/></p>
+<h2>The Client Architecture </h2>
+<pre><code>from codex_app_server import Codex
+
+# Use as a context manager
+with Codex() as codex:
+    thread = codex.thread_start()
+
+    # Send a turn
+    turn_result = codex.thread_turn(
+        thread_id=thread.thread_id,
+        input="Fix this bug in my Python code",
+    )
+
+    # Process the result
+    for item in turn_result.items:
+        if item.type == "command_execution":
+            print(f"Command: {item.command}")
+            print(f"Exit code: {item.exit_code}")
+        elif item.type == "agent_message":
+            print(f"Response: {item.text}")</code></pre>
+<p> The Python SDK uses Pydantic models (auto-generated from the schema in /codex-rs/app-server-protocol/). This means you get full type hints and validation automatically. </p>
+<p> Here's what's happening under the hood: </p>
+<ol><li>The Codex() context manager spawns a subprocess running the app-server binary </li><li>It opens stdin and stdout pipes to that process </li><li>All communication uses JSON-RPC 2.0 messages </li><li>When you call thread_start(), it sends an RPC message like: </li></ol>
+<pre><code>{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "thread/start",
+  "params": {
+    "model": "gpt-4o"
+  }
+}</code></pre>
+<ol><li>The app-server processes it, orchestrates a new thread, and streams back notifications </li><li>The Python SDK buffers these and returns them as Python objects </li></ol>
+<h2>Auto-Generated Types from the Protocol </h2>
+<p> The Python SDK is built on a foundation of protocol definitions. In /codex-rs/app-server-protocol/schema/v2.json, there's a complete OpenAPI/JSON Schema definition of all types. </p>
+<p> A build script reads this schema and generates: </p>
+<ul><li>v2_types.py: All the data types as Pydantic models </li><li>v2_all.py: Convenience imports </li><li>notification_registry.py: A mapping of notification type names to their Python classes </li></ul>
+<p> This means when the app-server sends back a notification like: </p>
+<pre><code>{
+  "method": "notification/item_completed",
+  "params": {
+    "item": {
+      "type": "file_change",
+      "id": "item-123",
+      "changes": [{"path": "main.py", "kind": "update"}],
+      "status": "completed"
+    }
+  }
+}</code></pre>
+<p> The Python SDK automatically deserializes it into a FileChangeItem object with full type safety. </p>
+<h2>A Real Example: Batch Code Generation </h2>
+<p> Let's build a script that reads a CSV of feature requests and generates code for each: </p>
+<pre><code>from codex_app_server import Codex, ThreadStartParams
+import csv
+import json
+
+def process_features(csv_file: str):
+    """Process a CSV of feature requests and generate code for each."""
+
+    features = []
+    with open(csv_file) as f:
+        reader = csv.DictReader(f)
+        features = list(reader)
+
+    results = {}
+
+    with Codex() as codex:
+        for feature in features:
+            feature_id = feature['id']
+            description = feature['description']
+            priority = feature['priority']
+
+            print(f"\nProcessing feature {feature_id}: {description}")
+
+            # Start a new thread for each feature
+            thread = codex.thread_start(
+                ThreadStartParams(
+                    model='gpt-4o',
+                    sandbox_mode='write',
+                )
+            )
+
+            # Build the prompt
+            prompt = f"""
+Feature ID: {feature_id}
+Priority: {priority}
+Description: {description}
+
+Please implement this feature. When done:
+1. Write the code
+2. Add tests
+3. Update documentation
+4. Commit the changes with a clear message
+            """.strip()
+
+            # Send the turn
+            turn = codex.thread_turn(
+                thread_id=thread.thread_id,
+                input=prompt,
+            )
+
+            # Extract results
+            result = {
+                'feature_id': feature_id,
+                'files_modified': 0,
+                'commands_run': 0,
+                'final_response': '',
+                'errors': [],
+            }
+
+            for item in turn.items:
+                if item.type == 'file_change':
+                    result['files_modified'] += len(item.changes)
+                elif item.type == 'command_execution':
+                    result['commands_run'] += 1
+                    if item.exit_code != 0:
+                        result['errors'].append(item.aggregated_output)
+                elif item.type == 'agent_message':
+                    result['final_response'] = item.text
+
+            results[feature_id] = result
+
+            # Print summary
+            print(f"  Files modified: {result['files_modified']}")
+            print(f"  Commands run: {result['commands_run']}")
+            if result['errors']:
+                print(f"  Errors: {len(result['errors'])}")
+
+    # Output results as JSON
+    with open('results.json', 'w') as f:
+        json.dump(results, f, indent=2)
+
+    print(f"\nProcessed {len(features)} features. Results saved to results.json")
+
+if __name__ == '__main__':
+    process_features('features.csv')</code></pre>
+<p> This script demonstrates several key features of the Python SDK: </p>
+<ul><li>Persistent connection: The Codex() context manager keeps a single app-server process alive </li><li>Multiple threads: Each feature gets its own thread, but they share the same app-server </li><li>Type-safe models: The turn result automatically has all the items with proper types </li><li>Structured data: You can easily extract metrics and results from the items </li></ul>
+<hr/>
+<h2>Extending Codex with Custom MCP Servers </h2>
+<p> Now here's where it gets really powerful. The architecture isn't just about using Codex as-is. It's about extending it. </p>
+<p> MCP (Model Context Protocol) is OpenAI's standard for tools and resources. If you want Codex to do something special, call your internal APIs, query your database, interact with your CI/CD system, you build an MCP server for it. </p>
+<h2>Anatomy of a Custom MCP Server </h2>
+<p> An MCP server is a subprocess that: </p>
+<ol><li>Speaks JSON-RPC 2.0 over stdio </li><li>Implements the MCP protocol (list tools, call tools, etc.) </li><li>Connects to Codex's agent process </li></ol>
+<p> Here's a minimal example: an MCP server that queries your company's database. </p>
+<h2>Recommended by LinkedIn</h2>
+<pre><code>from mcp.server import Server
+from mcp.types import Tool, TextContent
+import sqlite3
+
+server = Server("company-db-server")
+
+@server.call_tool()
+async def query_database(query: str) -&gt; str:
+    """Execute a SQL query against the company database."""
+    try:
+        conn = sqlite3.connect('/company/db.sqlite')
+        cursor = conn.cursor()
+
+        # Safety: only allow SELECT queries
+        if not query.strip().upper().startswith('SELECT'):
+            raise ValueError("Only SELECT queries are allowed")
+
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        conn.close()
+
+        return json.dumps(rows)
+    except Exception as e:
+        return json.dumps({"error": str(e)})
+
+@server.list_tools()
+async def list_tools():
+    return [
+        Tool(
+            name="query_database",
+            description="Execute a SELECT query against the company database",
+            input_schema={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "SQL SELECT query"}
+                },
+                "required": ["query"]
+            }
+        )
+    ]
+
+if __name__ == "__main__":
+    server.run()</code></pre>
+<p> Then you register it with Codex: </p>
+<pre><code>codex --mcp-server company-db-server="python /path/to/mcp_server.py"</code></pre>
+<p> Now, when Codex encounters a task that needs to query the database, it can call your MCP server. The sandboxing still applies, the MCP server runs in a controlled environment, and its outputs are validated. </p>
+<p> You can build MCP servers for: </p>
+<ul><li>Internal APIs: Product management systems, customer databases, billing systems </li><li>Specialized tools: Image generation, ML model inference, video processing </li><li>Domain-specific knowledge: Your company's conventions, frameworks, or standards </li><li>Secrets management: Securely passing credentials to tools without exposing them in the filesystem </li></ul>
+<hr/>
+<h2>Architecture Patterns Worth Stealing </h2>
+<p> Over the course of these eight articles, we've seen some genuinely clever design patterns. Even if you never touch Codex's code, these patterns are worth understanding, they'll make you a better architect. </p>
+<p><br/></p>
+<h2>1. SQ/EQ Decoupling: Separation of Concerns </h2>
+<p> The Submission Queue and Event Queue are separate. When you submit a prompt, it doesn't immediately execute. The orchestrator: </p>
+<ol><li>Accepts the submission </li><li>Breaks it into logical steps </li><li>Executes those steps one by one </li><li>Emits events for each step </li></ol>
+<p> This is not the classic request-response pattern. It's more like an async state machine. The benefits: </p>
+<ul><li>Pausable workflows: You can pause a long-running task and resume it later </li><li>Observable execution: Every step generates an event, so you know exactly what's happening </li><li>Recoverable: If something fails, you can see the failure event and retry </li><li>Nestable: A step can itself spawn sub-steps with their own events </li></ul>
+<p> If you're building complex workflows or orchestration systems, this pattern is gold. </p>
+<h2>2. Platform-Specific Sandbox Abstraction </h2>
+<p> Codex runs on macOS, Linux, and Windows. Each platform has different sandboxing capabilities: </p>
+<ul><li>Linux: Uses namespaces and seccomp (best-in-class security) </li><li>macOS: Uses sandbox profiles (good, but less granular) </li><li>Windows: Uses job objects and capability restrictions (emerging) </li></ul>
+<p> The code doesn't have platform-specific conditionals scattered everywhere. Instead, there's a Sandbox trait that different platforms implement. The orchestrator talks to the trait, not the implementation. </p>
+<pre><code>pub trait Sandbox {
+  fn execute(&amp;self, command: &amp;str) -&gt; Result&lt;CommandOutput&gt;;
+  fn read_file(&amp;self, path: &amp;Path) -&gt; Result&lt;Vec&lt;u8&gt;&gt;;
+  fn write_file(&amp;self, path: &amp;Path, contents: &amp;[u8]) -&gt; Result&lt;()&gt;;
+}
+
+impl Sandbox for LinuxSandbox { /* ... */ }
+impl Sandbox for MacOSSandbox { /* ... */ }
+impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
+<p> This is the Adapter pattern in action. If you're building cross-platform systems, this approach prevents your codebase from becoming a maze of #[cfg(...)] attributes. </p>
+<h2>3. Policy-as-Code: ExecPolicy </h2>
+<p> The approval policy isn't hard-coded. It's a data structure that the orchestrator evaluates at decision points. </p>
+<p> An ExecPolicy can say things like: </p>
+<ul><li>"Auto-approve all file reads, but require human approval for file writes" </li><li>"Auto-approve commands in specific directories, but block command execution outside them" </li><li>"Log all network access but allow it" </li></ul>
+<p> At runtime, when the orchestrator reaches a decision point ("Should I execute this command?"), it evaluates the policy. The policy can be configured via CLI flags, config files, or environment variables. </p>
+<p> This is declarative security. It's easier to audit than code, easier to override for testing, and easier to update without recompiling. </p>
+<h2>4. Hexagonal Architecture: Ports and Adapters </h2>
+<p> Codex's codebase is organized around the hexagon: </p>
+<ul><li>Core domain (center): The orchestrator, the AI reasoning, the algorithms </li><li>Ports (interfaces): What the core needs from the outside (a way to read files, a way to call APIs, etc.) </li><li>Adapters (implementations): Different ways to fulfill the ports </li></ul>
+<p> For example: </p>
+<ul><li>Port: "I need to execute a shell command" </li><li>Adapters: Linux implementation (uses seccomp), macOS implementation (uses sandbox profile), and a test mock (returns canned responses) </li></ul>
+<p> The core orchestrator doesn't care which adapter is plugged in. This makes the code: </p>
+<ul><li>Testable: Plug in a mock adapter for unit tests </li><li>Portable: Add a new platform by adding a new adapter </li><li>Focused: The core logic isn't tangled with implementation details </li></ul>
+<hr/>
+<h2>The Series Retrospective: What We've Built </h2>
+<p> Let's take a step back. Over eight articles, what have we actually learned? </p>
+<p><a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 1: The 10,000-Foot View </a> introduced you to Codex as a concept and showed you the four buildings. </p>
+<p><a href="https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c/?trackingId=HqRTl8rmd4ryAfFIkr89QA%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 2: The Nervous System </a> taught you about the Submission Queue and Event Queue, the message-passing backbone that keeps everything alive. </p>
+<p><a href="https://www.linkedin.com/pulse/brain-inside-core-engine-sagar-trivedi-7gkec/?trackingId=Glxzem1rnUwHo10196Hhhw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 3: The Brain </a> dissected the orchestrator itself, how it reasons about code, makes decisions, and coordinates everything. </p>
+<p><a href="https://www.linkedin.com/pulse/vault-how-every-command-runs-sandbox-sagar-trivedi-jse4c/?trackingId=iiirjwhaaR3OWLmWuzGvOw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 4: The Vault </a> showed you the sandboxing layer, how dangerous operations are isolated, and what happens inside a sandbox. </p>
+<p><a href="https://www.linkedin.com/pulse/part-5-four-windows-one-brain-tui-exec-app-server-mcp-sagar-trivedi-xnmlc/?trackingId=0D44JpFOtUQaw8Xkn5Q%2BFw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 5: Four Windows </a> revealed the different frontends, how you can interact with Codex via terminal, headless execution, MCP server, or IDE plugins. </p>
+<p><a href="https://www.linkedin.com/pulse/swiss-army-knife-mcp-tools-plugin-ecosystem-sagar-trivedi-chqmc/?trackingId=vcvszCabY72CpBDBnPxmIA%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 6: The Swiss Army Knife </a> explored the tools: reading and writing files, executing commands, calling the AI, web search, and memory management. </p>
+<p><a href="https://www.linkedin.com/pulse/part-7-safety-net-sagar-trivedi-tcjxc/?trackingId=MeJShJb56o97HTkz60iY%2Fg%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 7: The Safety Net </a> deep-dived into safety mechanisms: approval policies, audit logging, and the constraints that keep everything secure. </p>
+<p><a href="https://www.linkedin.com/pulse/building-giant-sdks-apis-whats-next-sagar-trivedi-vmvsc/?trackingId=OwVhsusCp%2F3DLGE1nHfVrg%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 8: Building on the Giant </a> (this article) showed you the SDKs and how to extend Codex with custom MCP servers. </p>
+<p> Together, these eight articles form a complete mental model of how a sophisticated AI coding agent works. </p>
+<p> You understand: </p>
+<ul><li>Why it's built in Rust (performance and safety) </li><li>How it communicates internally (message queues and events) </li><li>How it makes decisions (orchestration and state machines) </li><li>How it stays secure (sandboxing and approval policies) </li><li>How you can use it (SDKs and APIs) </li><li>How you can extend it (MCP servers) </li></ul>
+<hr/>
+<h2>The Next Frontier: What Comes Next </h2>
+<p> Codex is built on a foundation that's designed to scale. The architecture isn't just "here's an AI coding agent." It's "here's a pattern for building trustworthy AI systems that work locally on your machine." </p>
+<p> What comes next? </p>
+<p> Better reasoning models. As language models improve, not just in scale, but in reasoning capability, Codex will be able to tackle harder problems. The orchestration layer is already there to handle more complex decision-making. </p>
+<p> Richer tool ecosystems. The MCP standard is extensible. Over time, we'll see thousands of MCP servers built by the community. Your codebase will be able to integrate with everything: your company's internal tools, open-source services, specialized domain tools. </p>
+<p> Multi-agent coordination. What happens when you have multiple AI agents working together? The same queue-based architecture that coordinates a single agent's actions can coordinate multiple agents. Imagine a code generation agent, a testing agent, and a documentation agent working in concert. </p>
+<p> Fine-tuning and specialization. The architecture is designed so that the core reasoning engine can be swapped out. Need a model specialized for your domain? Plug it in. Need offline capability? Use a smaller model locally. </p>
+<p> Formal verification. Some tasks don't need an AI agent; they need a verified algorithm. The same approval policies that let humans check AI-generated code can let formal verification systems check it too. </p>
+<p> Decentralized computing. The architecture is designed for a single machine, but it could scale to a network. Imagine spawning sandboxed execution environments across multiple machines, with the orchestrator coordinating them. </p>
+<p> The beautiful thing about a well-designed architecture is that it's forward-compatible. Codex's core patterns, message queues, sandboxing, policy evaluation, modular adapters, don't depend on any specific technology. As the AI landscape evolves, the architecture will evolve with it. </p>
+<hr/>
+<h2>A Satisfying Conclusion (Not an Ending) </h2>
+<p> We began this series with a simple image: "an incredibly talented software engineer in a padded room." </p>
+<p> By now, you understand what that really means. It's not magic. It's careful orchestration. It's a Rust core that reasons about code and plans actions. It's a queue that serializes requests and events. It's a sandbox that isolates dangerous operations. It's approval policies that let humans stay in control. It's SDKs that make it accessible. It's MCP servers that extend it. </p>
+<p> Codex CLI is open-source. The code is on GitHub. You can read it, understand it, modify it, and build on it. Some of you will. You'll add support for new languages, new tools, new frontends. You'll integrate it into your IDEs, your CI/CD pipelines, your internal tools. </p>
+<p> That's the real gift of an architecture this well-designed: it doesn't try to solve everything. It solves one thing (orchestrating a sophisticated AI agent) in a way that's extensible, understandable, and trustworthy. </p>
+<p> The future of AI coding isn't in cloud-hosted black boxes. It's in local, transparent systems that you understand and control. </p>
+<p> And now, you do. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/building-giant-sdks-apis-whats-next-sagar-trivedi-vmvsc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/part-7-safety-net/"><span class="dir">Previous</span>Part 7: The Safety Net</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Building on the Giant: SDKs, APIs, and What's Next",
+  "datePublished": "2026-05-08",
+  "description": "Standing on the Shoulders of Giants We've climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst",
+  "wordCount": 3353,
+  "url": "https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>

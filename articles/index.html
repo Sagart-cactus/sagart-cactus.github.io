@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Writing · Sagar Trivedi</title>
+<meta name="description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Writing · Sagar Trivedi">
+<meta property="og:description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Writing · Sagar Trivedi">
+<meta name="twitter:description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../">Sagar Trivedi</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+    <h1>Writing</h1>
+    <p class="lede">I write about the parts of AI systems that decide whether they survive
+    production: evaluation, failure modes, cost, and the protocols and tooling underneath.
+    25 articles, about 26,000 words.</p>
+  </header>
+
+  <main id="main">
+      <section class="group" aria-labelledby="g-48980">
+        <h2 id="g-48980">Agents, evaluation and retrieval</h2>
+        <ul class="entries">
+          <li>
+            <a class="entry" href="why-rag-exists-context-window-red-herring/">
+              <span class="entry-title">Why RAG Exists: The Context Window Is a Red Herring</span>
+              <span class="entry-meta"><time datetime="2026-08-24">24 August 2026</time>
+                <span class="dot">·</span>4 min</span>
+            </a>
+            <p class="entry-excerpt">The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It…</p>
+          </li>
+          <li>
+            <a class="entry" href="scariest-ai-agent-failure-one-looks-like-success/">
+              <span class="entry-title">The Scariest AI Agent Failure Is the One That Looks Like Success</span>
+              <span class="entry-meta"><time datetime="2026-08-06">6 August 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">Everyone designs for the crash. Almost nobody designs for the lie. After running multi-agent pipelines in production for a while, I&#x27;ve come to sort failures into three kinds. Only one of them announce…</p>
+          </li>
+          <li>
+            <a class="entry" href="every-multi-agent-system-ive-studied-one-five-designs/">
+              <span class="entry-title">Every Multi-Agent System I&#x27;ve Studied Is One of These Five Designs</span>
+              <span class="entry-meta"><time datetime="2026-08-03">3 August 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">Somewhere along the way, while reading about and building multi-agent systems, I noticed the variety is mostly an illusion. Underneath, nearly everything is one of five shapes, sometimes combined. Lea…</p>
+          </li>
+          <li>
+            <a class="entry" href="i-assumed-multi-agent-meant-4x-cost-math-said/">
+              <span class="entry-title">I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.</span>
+              <span class="entry-meta"><time datetime="2026-07-27">27 July 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">When I first sketched a multi-agent redesign of one of my pipelines, I did the obvious math and almost abandoned the idea. The pipeline evaluates items in bulk. Say a thousand items. The single-agent…</p>
+          </li>
+          <li>
+            <a class="entry" href="one-sentence-explains-every-multi-agent-failure-ive-seen/">
+              <span class="entry-title">The One Sentence That Explains Every Multi-Agent Failure I&#x27;ve Seen</span>
+              <span class="entry-meta"><time datetime="2026-07-23">23 July 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">A child agent knows only what the parent writes into its prompt. That&#x27;s the sentence. Everything else in this article is just me convincing you to take it as seriously as it deserves. The bug that tau…</p>
+          </li>
+          <li>
+            <a class="entry" href="your-ai-agent-has-ceiling-heres-where/">
+              <span class="entry-title">Your AI Agent Has a Ceiling. Here&#x27;s Where It Is.</span>
+              <span class="entry-meta"><time datetime="2026-07-20">20 July 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal…</p>
+          </li>
+        </ul>
+      </section>
+      <section class="group" aria-labelledby="g-26501">
+        <h2 id="g-26501">Model Context Protocol</h2>
+        <ul class="entries">
+          <li>
+            <a class="entry" href="what-mcp-why-does-exist/">
+              <span class="entry-title">What Is MCP and Why Does It Exist?</span>
+              <span class="entry-meta"><time datetime="2026-05-23">23 May 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">MCP stands for Model Context Protocol. It is an open protocol that gives AI applications a standard way to connect with tools, data, and reusable prompts. The simplest way to think about it: MCP is a…</p>
+          </li>
+          <li>
+            <a class="entry" href="mcp-architecture-primitives-call-flow/">
+              <span class="entry-title">MCP Architecture, Primitives, and Call Flow</span>
+              <span class="entry-meta"><time datetime="2026-05-26">26 May 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">MCP becomes much easier once you separate the three ideas: The roles in the system The capabilities a server exposes The lifecycle of a request Together, these form the mental model you need before bu…</p>
+          </li>
+          <li>
+            <a class="entry" href="mcp-just-rest-ai/">
+              <span class="entry-title">MCP Is Not Just REST for AI</span>
+              <span class="entry-meta"><time datetime="2026-05-29">29 May 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.…</p>
+          </li>
+          <li>
+            <a class="entry" href="mcp-security-risks-you-should-understand/">
+              <span class="entry-title">MCP Security Risks You Should Understand</span>
+              <span class="entry-meta"><time datetime="2026-06-02">2 June 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">MCP servers sit between agents and real systems. That makes them powerful. It also makes them sensitive. If an MCP server can read private data, create tickets, update records, trigger workflows, or m…</p>
+          </li>
+          <li>
+            <a class="entry" href="best-practices-building-mcp-servers/">
+              <span class="entry-title">Best Practices for Building MCP Servers</span>
+              <span class="entry-meta"><time datetime="2026-06-05">5 June 2026</time>
+                <span class="dot">·</span>4 min</span>
+            </a>
+            <p class="entry-excerpt">Building a basic MCP server can be quick. Building one that agents can use safely and effectively takes design. The biggest mistake is treating MCP as an automatic export of your existing API. A good…</p>
+          </li>
+        </ul>
+      </section>
+      <section class="group" aria-labelledby="g-61681">
+        <h2 id="g-61681">Inside Codex CLI, an eight-part series</h2>
+        <ul class="entries">
+          <li>
+            <a class="entry" href="10000-foot-view-what-codex-cli-why-should-you-care/">
+              <span class="entry-title">The 10,000-Foot View: What Is Codex CLI and Why Should You Care?</span>
+              <span class="entry-meta"><time datetime="2026-03-24">24 March 2026</time>
+                <span class="dot">·</span>6 min</span>
+            </a>
+            <p class="entry-excerpt">The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev…</p>
+          </li>
+          <li>
+            <a class="entry" href="nervous-system-how-components-talk/">
+              <span class="entry-title">The Nervous System: How Components Talk</span>
+              <span class="entry-meta"><time datetime="2026-03-29">29 March 2026</time>
+                <span class="dot">·</span>9 min</span>
+            </a>
+            <p class="entry-excerpt">Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed comma…</p>
+          </li>
+          <li>
+            <a class="entry" href="brain-inside-core-engine/">
+              <span class="entry-title">The Brain: Inside the Core Engine</span>
+              <span class="entry-meta"><time datetime="2026-04-03">3 April 2026</time>
+                <span class="dot">·</span>5 min</span>
+            </a>
+            <p class="entry-excerpt">Part 3 of &quot;Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI&quot; We&#x27;ve journeyed from the 10,000-foot view of Codex&#x27;s architecture down to the nervous system that carries signals between com…</p>
+          </li>
+          <li>
+            <a class="entry" href="vault-how-every-command-runs-sandbox/">
+              <span class="entry-title">The Vault: How Every Command Runs in a Sandbox</span>
+              <span class="entry-meta"><time datetime="2026-04-09">9 April 2026</time>
+                <span class="dot">·</span>9 min</span>
+            </a>
+            <p class="entry-excerpt">We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen…</p>
+          </li>
+          <li>
+            <a class="entry" href="part-5-four-windows-one-brain-tui-exec-app-server-mcp/">
+              <span class="entry-title">Part 5: Four Windows Into One Brain
+TUI, Exec, App Server, and MCP Server</span>
+              <span class="entry-meta"><time datetime="2026-04-17">17 April 2026</time>
+                <span class="dot">·</span>9 min</span>
+            </a>
+            <p class="entry-excerpt">Welcome back to our deep dive into Codex, the OpenAI CLI agent that&#x27;s reshaping how developers interact with AI. In Part 4, we explored how Codex manages execution—sandboxes, approvals, and rollback.…</p>
+          </li>
+          <li>
+            <a class="entry" href="swiss-army-knife-mcp-tools-plugin-ecosystem/">
+              <span class="entry-title">The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem</span>
+              <span class="entry-meta"><time datetime="2026-04-20">20 April 2026</time>
+                <span class="dot">·</span>9 min</span>
+            </a>
+            <p class="entry-excerpt">Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M…</p>
+          </li>
+          <li>
+            <a class="entry" href="part-7-safety-net/">
+              <span class="entry-title">Part 7: The Safety Net</span>
+              <span class="entry-meta"><time datetime="2026-04-25">25 April 2026</time>
+                <span class="dot">·</span>12 min</span>
+            </a>
+            <p class="entry-excerpt">Hooks, Policies, and the Approval Chain Welcome to Part 7 of our journey into Codex&#x27;s architecture. We&#x27;ve explored the brain, the nervous system, the vaults, the frontends, and the plugin ecosystem. N…</p>
+          </li>
+          <li>
+            <a class="entry" href="building-giant-sdks-apis-whats-next/">
+              <span class="entry-title">Building on the Giant: SDKs, APIs, and What&#x27;s Next</span>
+              <span class="entry-meta"><time datetime="2026-05-08">8 May 2026</time>
+                <span class="dot">·</span>15 min</span>
+            </a>
+            <p class="entry-excerpt">Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst…</p>
+          </li>
+        </ul>
+      </section>
+      <section class="group" aria-labelledby="g-92718">
+        <h2 id="g-92718">Agent tooling and team practice</h2>
+        <ul class="entries">
+          <li>
+            <a class="entry" href="stop-re-explaining-your-stack-ai-every-morning/">
+              <span class="entry-title">Stop re-explaining your stack to your AI every morning</span>
+              <span class="entry-meta"><time datetime="2026-06-16">16 June 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.…</p>
+          </li>
+          <li>
+            <a class="entry" href="your-teams-standards-keep-getting-ignored-hooks-fix-good/">
+              <span class="entry-title">Your team&#x27;s standards keep getting ignored. Hooks fix that for good.</span>
+              <span class="entry-meta"><time datetime="2026-06-19">19 June 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one…</p>
+          </li>
+          <li>
+            <a class="entry" href="most-important-code-your-plugin-isnt/">
+              <span class="entry-title">The most important code in your plugin isn&#x27;t code</span>
+              <span class="entry-meta"><time datetime="2026-06-22">22 June 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin…</p>
+          </li>
+          <li>
+            <a class="entry" href="plugin-you-didnt-audit-dont-trust/">
+              <span class="entry-title">A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust</span>
+              <span class="entry-meta"><time datetime="2026-06-25">25 June 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p…</p>
+          </li>
+          <li>
+            <a class="entry" href="how-turn-20-minute-chore-2-minute-command/">
+              <span class="entry-title">How to turn a 20-minute chore into a 2-minute command</span>
+              <span class="entry-meta"><time datetime="2026-06-29">29 June 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">Picture the task you have done so many times, your hands move on their own. The PR review. The pre-deploy checklist. The support-ticket triage. None of it is hard. All of it is friction, repeated, for…</p>
+          </li>
+          <li>
+            <a class="entry" href="sprintfoundry-now-supports-agent-sandboxes/">
+              <span class="entry-title">SprintFoundry now supports Agent Sandboxes</span>
+              <span class="entry-meta"><time datetime="2026-03-20">20 March 2026</time>
+                <span class="dot">·</span>1 min</span>
+            </a>
+            <p class="entry-excerpt">Most people think the hard part of AI agents is the model. I don’t. The hard part is giving the agent a real place to work. That’s why I’m excited to share that SprintFoundry now supports Agent Sandbo…</p>
+          </li>
+        </ul>
+      </section>
+  </main>
+
+  <footer>
+    <p><a href="../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../">Resume</a>
+      <a href="https://www.linkedin.com/in/sagartrivedi/recent-activity/articles/">LinkedIn</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+
+</body>
+</html>

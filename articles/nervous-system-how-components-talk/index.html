@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>The Nervous System: How Components Talk · Sagar Trivedi</title>
+<meta name="description" content="Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed comma">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/articles/nervous-system-how-components-talk/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Nervous System: How Components Talk · Sagar Trivedi">
+<meta property="og:description" content="Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed comma">
+<meta property="og:url" content="https://sagart-cactus.github.io/articles/nervous-system-how-components-talk/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="The Nervous System: How Components Talk · Sagar Trivedi">
+<meta name="twitter:description" content="Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed comma">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>The Nervous System: How Components Talk</h1>
+      <p class="post-meta">
+        <time datetime="2026-03-29">29 March 2026</time>
+        <span class="dot">·</span>9 min read
+      </p>
+
+      <div class="post-body">
+<blockquote>Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed commands on the other. Clean. Simple. But wrong in the best way. </blockquote>
+<p> Today, we're cracking that box open. Not to see the engine yet, that comes next. Instead, we're studying the nervous system: the protocol that carries signals between every part of the system. Understanding this layer is crucial because it's where the magic of decoupling happens. This is the difference between a monolith and a living, breathing system. </p>
+<p> Let me start with a surprisingly accurate metaphor. </p>
+<h2>The Restaurant Kitchen Analogy </h2>
+<p> Imagine a restaurant. A busy one. On one side, waiters take orders from diners. On the other side, chefs work at stations: prep, grill, and plating. In the middle: a ticket system. </p>
+<p> The waiter doesn't shout across the kitchen. They don't interrupt the chef mid-flip. Instead, they write an order ticket and place it in the pass. The ticket has everything the chef needs: what to make, when it was ordered, and any special requests. The kitchen works through tickets in sequence. </p>
+<p> When the dish is ready, the chef rings a bell. Or nowadays, the POS system sends a notification. The food waits in the window. A runner picks it up and delivers it to the table. </p>
+<p> The kitchen doesn't know which diner ordered what. The diner doesn't see the chaos of the kitchen. The ticket system, the nervous system, connects them without coupling them. </p>
+<p> Codex works exactly like this. And the protocol that implements it? It's called SQ/EQ: the Submission Queue and the Event Queue. </p>
+<h2>Submissions: The Order Tickets </h2>
+<p> When you send a command to Codex, you're not directly talking to the core engine. You're writing a Submission. </p>
+<pre><code>pub struct Submission {
+    pub id: String,                           // Unique ID to correlate with responses
+    pub op: Op,                               // The operation (the "order")
+    pub trace: Option&lt;W3cTraceContext&gt;,     // W3C trace context for observability
+}</code></pre>
+<p> That's it. Three fields. But they pack a punch. </p>
+<p> The id field is a UUID that ties your submission to the events that come back. You send a Submission with id: "abc-123", and when the system responds, it'll reference that same ID. This is how we keep track of what's what in an async, streaming world. </p>
+<p> The trace field is optional but powerful. It carries W3C trace context, the industry standard for distributed tracing. If your Codex instance is part of a larger system (maybe a web service, maybe a monitoring pipeline), this traces the entire request from browser to backend to agent and back. It's observability baked into the protocol itself. No retrofitting needed. </p>
+<p> The op field is the real treasure. It's an enum that represents every possible action the agent can take: </p>
+<h2>The Op Enum: Orders in the Kitchen </h2>
+<pre><code>pub enum Op {
+    UserTurn { items: Vec&lt;UserInput&gt;, ... },
+    UserInput { items: Vec&lt;UserInput&gt;, ... },
+    Interrupt,
+    ExecApproval { decision: ReviewDecision, ... },
+    PatchApproval { decision: ReviewDecision, ... },
+    Shutdown,
+    ListMcpTools,
+    Undo,
+    ThreadRollback { num_turns: u32 },
+    // ... many more
+}</code></pre>
+<p> Let's focus on the main ones: </p>
+<p> UserTurn (or UserInput): This is the bread and butter. The user types a prompt, asks for a change, uploads a file, whatever. This becomes a UserTurn submission with all the context: the current working directory, the approval policy ("ask me before running dangerous commands"), the sandbox policy ("restrict file access to this folder"), the model to use, and optional reasoning settings. It's a complete, self-contained request. </p>
+<p> Interrupt: The chef needs to stop mid-order. You hit Ctrl+C. This becomes an Interrupt op. The agent aborts the current turn but doesn't nuke background processes. </p>
+<p> ExecApproval and PatchApproval: The waiter comes back with a question: "The chef wants to know if they should run rm -rf / —approve?" You respond with ReviewDecision::Approved or ReviewDecision::Rejected. These ops carry your decision back to the kitchen. </p>
+<p> Shutdown: Time to close. Codex cleans up and exits. </p>
+<p> The beauty of this enum-based design is extensibility. Need a new operation? Add a variant to Op. The protocol doesn't change at the transport layer. New clients and old clients can coexist, each understanding what they need to. </p>
+<hr/>
+<h2>Events: The Kitchen Responds </h2>
+<p> While submissions flow in, events flow out. They're the kitchen's response to your orders. </p>
+<pre><code>pub enum EventMsg {
+    TurnStarted(TurnStartedEvent),
+    AgentMessage(AgentMessageEvent),
+    AgentReasoning(AgentReasoningEvent),
+    ExecCommandBegin(ExecCommandBeginEvent),
+    ExecCommandOutputDelta(ExecCommandOutputDeltaEvent),
+    ExecCommandEnd(ExecCommandEndEvent),
+    ExecApprovalRequest(ExecApprovalRequestEvent),
+    RequestPermissions(RequestPermissionsEvent),
+    TurnComplete(TurnCompleteEvent),
+    // ... dozens more
+}</code></pre>
+<p> Here's the critical insight: events are not responses to submissions. They're not synchronous. The kitchen doesn't send back a single response to a single order. Instead, it emits a stream of events as work progresses. </p>
+<p> You submit a form UserTurn with an ID abc-123, and the system starts cooking. Within milliseconds, you get: </p>
+<ol><li>TurnStarted: The kitchen is accepting the order. </li><li>AgentMessage: The agent starts thinking and outputs text. Streaming. Delta by delta. </li><li>ExecCommandBegin: The agent wants to run a shell command. </li><li>ExecCommandOutputDelta: Output from the command. Line by line. </li><li>ExecApprovalRequest: Wait, the agent wants to delete a directory. Should we approve? </li><li>(You respond with an ExecApproval submission.) </li><li>ExecCommandEnd: The command finished. </li><li>AgentMessage: More agent output. </li><li>TurnComplete: The turn is done. Here's the summary. </li></ol>
+<p> All of this is streaming. In real-time. No waiting for the full turn to complete before you get feedback. </p>
+<h2>Recommended by LinkedIn</h2>
+<h2>The Hierarchy: Threads, Turns, Items </h2>
+<p> Codex introduces a nested structure that mirrors how conversations work: </p>
+<pre><code>Thread (a conversation)
+  └── Turn (a back-and-forth)
+      ├── Item (UserMessage)
+      ├── Item (AgentMessage)
+      ├── Item (Reasoning)
+      ├── Item (WebSearch)
+      ├── Item (CommandExecution - implicit in events)
+      └── Item (FileChange - implicit in events)</code></pre>
+<p> A Thread is a conversation. It has an ID, a history, and context. You might have multiple threads open at once, one for each project, for example. </p>
+<p> A Turn is a single round trip. You give the agent a prompt; it thinks, executes commands, updates files, and responds. That's one turn. </p>
+<p> An Item is a discrete piece of work within a turn. The user's message is an item. The agent's response is an item. The agent's reasoning (if using reasoning models) is an item. A web search the agent performed is an item. Each item has its own ID, its own lifecycle. </p>
+<p> This hierarchy lets the UI (or any frontend) render conversation in a granular way. You can stream in agent text character by character. You can show shell output as it arrives. You can display reasoning and toggle it collapsed. All without waiting. </p>
+<h2>The Async Channels: The Real Magic </h2>
+<p> How do submissions and events flow? Through async Rust channels. </p>
+<p> At the core, Codex runs something like this: </p>
+<pre><code>// Frontend sends submissions here
+let (tx_sub, rx_sub) = mpsc::channel::();
+
+// Core sends events here
+let (tx_event, rx_event) = mpsc::channel::();
+
+// The core engine
+tokio::spawn(async move {
+    while let Some(submission) = rx_sub.recv().await {
+        match submission.op {
+            Op::UserTurn { items, cwd, model, ... } =&gt; {
+                // Emit a TurnStarted event
+                tx_event.send(EventMsg::TurnStarted(...)).await?;
+
+                // Process the turn (call the model, execute commands, etc.)
+                // Emit AgentMessage, ExecCommandBegin, etc. as work progresses
+
+                // Emit TurnComplete when done
+                tx_event.send(EventMsg::TurnComplete(...)).await?;
+            }
+            Op::Interrupt =&gt; {
+                // Stop the current turn
+                tx_event.send(EventMsg::TurnAborted(...)).await?;
+            }
+            // ... handle other operations
+        }
+    }
+});
+
+// Frontend receives events here
+while let Some(event) = rx_event.recv().await {
+    // Update UI, log, store, whatever
+    println!("{:?}", event);
+}</code></pre>
+<p> This is the nervous system in action. The frontend and core are decoupled by channels. The frontend doesn't wait for a response, it just sends a submission and listens on the event stream. The core doesn't need to know about the frontend, it just receives submissions and emits events. </p>
+<p> Multiple frontends can connect to the same core. The web interface, the TUI, a CI/CD pipeline, all listening to the same event stream, all sending submissions to the same queue. Or you can have multiple cores, each with its own channel setup. The protocol is agnostic. </p>
+<hr/>
+<h2>Why This Design Is Brilliant </h2>
+<p> Let's zoom out and appreciate what this architecture gives us: </p>
+<h2>Design Benefits </h2>
+<ul><li>Decoupling: The frontend doesn't know about the core's implementation. The core doesn't know about the frontend's UI framework. They speak a protocol, nothing more. You can swap the frontend without touching the core. You can reimplement the core without breaking clients. </li><li>Concurrency: Async channels let many operations happen in parallel. While the agent is thinking, you can already be sending the next submission (an approval, a file edit, whatever). Events arrive as they're ready, not in lockstep. </li><li>Streaming: Because events aren't "responses" but a stream, you get real-time feedback. The agent's text arrives character by character. Shell output streams in line by line. The UI feels responsive, not blocky. </li><li>Testability: Want to test the core logic? Mock the submission channel and inspect the events. Want to test the frontend? Inject a dummy event stream. No need for a full end-to-end setup. </li><li>Observability: W3C trace context flows through every submission, connecting the entire request lifecycle. Logs, metrics, and traces can all follow the same breadcrumb trail. </li><li>Extensibility: New operations? New events? Add them to the enum. Old and new systems can coexist because they're negotiating over a well-defined protocol, not tightly coupled code. </li></ul>
+<hr/>
+<h2>The SQ/EQ Protocol in Real Life </h2>
+<p> To see this in action, imagine you're using Codex to refactor some code: </p>
+<ol><li>You submit: Op::UserTurn { items: ["Refactor this function for readability"], cwd: "/project", model: "claude-opus" } </li><li>The core receives the submission in rx_sub. </li><li>Immediately, the core emits EventMsg::TurnStarted, and your frontend shows a loading spinner. </li><li>The model is called. As it generates text, the core emits EventMsg::AgentMessage with deltas. Your UI shows the text appearing word by word. </li><li>The model proposes a code edit. The core emits EventMsg::ExecCommandBegin and starts applying the patch. </li><li>But wait, the patch affects a critical file. Your approval policy says "ask me first." The core emits EventMsg::ExecApprovalRequest with details of the patch. </li><li>Your UI interrupts and asks: "Apply this patch?" You hit "approve." </li><li>You submit: Op::ExecApproval { id: "xyz", decision: ReviewDecision::Approved } </li><li>The core receives this in the submission queue and proceeds. It emits EventMsg::PatchApplyEnd when done. </li><li>The turn continues. More agent output, maybe a web search, maybe a command. Each step emits events. </li><li>Finally, EventMsg::TurnComplete arrives with the full summary, token usage, reasoning summary if applicable. </li></ol>
+<p> All of this, from your initial prompt to the final summary, is tracked by submission and event IDs. It's traceable, loggable, and, most importantly, real-time. </p>
+<hr/>
+<h2>What's Hidden Here </h2>
+<p> You might notice we're not talking about what the core actually does. How does it call the model? How does it execute shell commands? Where does the approval logic live? How are files changed? </p>
+<p> That's the engine. And that's next. </p>
+<p> Right now, you know how signals travel through the system. You know the highway. Next, we'll see what's driving on it, the Core Engine that receives submissions, thinks, decides, and emits events that ripple through the entire system. </p>
+<hr/>
+<h2>Key Takeaways </h2>
+<ul><li>The SQ/EQ protocol decouples frontends from the core using async channels. </li><li>Submissions are the incoming orders: each has a UUID, an operation (Op enum), and optional trace context. </li><li>Events are the outgoing signals: a stream, not a single response, allowing real-time feedback. </li><li>The hierarchy (Thread → Turn → Item) mirrors conversation structure and enables granular rendering. </li><li>This design enables multiple frontends, streaming, testability, and observability. </li><li>W3C trace context propagates through the entire system for end-to-end tracing. </li></ul>
+<p> The nervous system is elegant, and it's the foundation for everything else. Without it, Codex would be a monolithic black box. With it, it's a living system where many actors, UIs, models, tools, users, coordinate in real-time. Next time: We enter the Core Engine. Where submissions turn into thoughts. Where the model is invoked, where approvals are enforced, and where files are changed. This is where the real magic happens. Get ready. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/10000-foot-view-what-codex-cli-why-should-you-care/"><span class="dir">Previous</span>The 10,000-Foot View: What Is Codex CLI and Why Should You Care?</a><a class="prevnext next" href="../../articles/brain-inside-core-engine/"><span class="dir">Next</span>The Brain: Inside the Core Engine</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "The Nervous System: How Components Talk",
+  "datePublished": "2026-03-29",
+  "description": "Last time, we saw the 10,000-foot view of Codex: the orchestrator that lets you command an AI agent to build, debug, and explore code. We saw it as a black box with users on one end and executed comma",
+  "wordCount": 1957,
+  "url": "https://sagart-cactus.github.io/articles/nervous-system-how-components-talk/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagart-cactus.github.io/articles/nervous-system-how-components-talk/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagart-cactus.github.io/"
+  }
+}
+</script>
+</body>
+</html>
