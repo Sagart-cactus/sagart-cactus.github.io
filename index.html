@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Sagar Trivedi · Applied AI Architect</title>
+<meta name="description" content="Sagar Trivedi, Applied AI Architect. Fourteen years across software, infrastructure and platform engineering, now leading enterprise AI adoption: discovery, architecture, evaluation, secure deployment and measurable production outcomes.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagart-cactus.github.io/">
+
+<!-- Open Graph / Twitter -->
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Sagar Trivedi · Applied AI Architect">
+<meta property="og:description" content="I take enterprise AI from evaluation to production adoption: architecture, evaluation, secure deployment, cost control and governance.">
+<meta property="og:url" content="https://sagart-cactus.github.io/">
+<meta property="og:locale" content="en_US">
+<meta property="profile:first_name" content="Sagar">
+<meta property="profile:last_name" content="Trivedi">
+<!-- <meta property="og:image" content="https://sagart-cactus.github.io/og.png"> PLACEHOLDER: 1200x630 preview image -->
+<!-- <meta property="og:image:alt" content="Sagar Trivedi · Applied AI Architect"> -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sagar Trivedi · Applied AI Architect">
+<meta name="twitter:description" content="I take enterprise AI from evaluation to production adoption: architecture, evaluation, secure deployment, cost control and governance.">
+<!-- <meta name="twitter:site" content="@handle"> PLACEHOLDER: X/Twitter handle, or delete -->
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+
+<script>
+  /* Applied before paint so a stored theme choice does not flash. */
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+
+<style>
+/* ---------------------------------------------------------------
+   Tokens
+   --------------------------------------------------------------- */
+:root {
+  --bg:          #fcfcfa;
+  --bg-inset:    #f2f1ec;
+  --text:        #1a1a18;
+  --text-muted:  #5c5c56;
+  --rule:        #dedcd4;
+  --rule-strong: #c6c3b8;
+  --accent:      #9c3d17;
+  --accent-soft: rgba(156, 61, 23, 0.10);
+
+  --font-sans: "IBM Plex Sans", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, "SF Mono",
+               Menlo, Consolas, monospace;
+
+  --measure: 720px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #131313;
+    --bg-inset:    #1c1c1b;
+    --text:        #ecece6;
+    --text-muted:  #9a9a92;
+    --rule:        #2e2e2c;
+    --rule-strong: #454541;
+    --accent:      #e8916a;
+    --accent-soft: rgba(232, 145, 106, 0.14);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:          #131313;
+  --bg-inset:    #1c1c1b;
+  --text:        #ecece6;
+  --text-muted:  #9a9a92;
+  --rule:        #2e2e2c;
+  --rule-strong: #454541;
+  --accent:      #e8916a;
+  --accent-soft: rgba(232, 145, 106, 0.14);
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------
+   Base
+   --------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.65;
+  font-feature-settings: "kern" 1;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+@media (min-width: 40em) { body { font-size: 17px; } }
+
+.wrap {
+  max-width: var(--measure);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 4rem;
+}
+
+@media (min-width: 40em) { .wrap { padding: 4.5rem 2rem 6rem; } }
+
+/* ---------------------------------------------------------------
+   Typography
+   --------------------------------------------------------------- */
+h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.25; }
+
+h1 {
+  font-size: clamp(1.85rem, 7vw, 2.5rem);
+  letter-spacing: -0.022em;
+}
+
+h2 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+h3 {
+  font-size: 1.05rem;
+  letter-spacing: -0.008em;
+}
+
+p { margin: 0 0 1rem; }
+p:last-child { margin-bottom: 0; }
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-soft);
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+a:hover { border-bottom-color: currentColor; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+}
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+  z-index: 10;
+  padding: 0.5rem 0.85rem;
+  background: var(--bg-inset);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------
+   Header
+   --------------------------------------------------------------- */
+.masthead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.role {
+  margin: 0.6rem 0 0;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.role .sep {
+  color: var(--rule-strong);
+  padding: 0 0.4rem;
+}
+
+.location {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.contact {
+  margin: 1.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  font-size: 0.92rem;
+}
+
+.contact li { display: flex; align-items: baseline; gap: 0.5rem; }
+
+.contact .label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Theme toggle */
+.toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-top: 0.3rem;
+  padding: 0;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.toggle:hover {
+  color: var(--accent);
+  border-color: var(--rule-strong);
+  background: var(--bg-inset);
+}
+
+.toggle svg { width: 16px; height: 16px; display: block; }
+.toggle .moon { display: none; }
+:root[data-theme="dark"] .toggle .moon { display: block; }
+:root[data-theme="dark"] .toggle .sun { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .toggle .moon { display: block; }
+  :root:not([data-theme="light"]) .toggle .sun { display: none; }
+}
+
+/* ---------------------------------------------------------------
+   Sections
+   --------------------------------------------------------------- */
+main > section {
+  margin-top: 3.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+}
+
+@media (min-width: 40em) {
+  main > section { margin-top: 4rem; }
+}
+
+.section-body { margin-top: 1.5rem; }
+
+.lede {
+  font-size: 1.06rem;
+  line-height: 1.7;
+}
+
+/* Roles */
+.role-entry + .role-entry {
+  margin-top: 2.75rem;
+  padding-top: 2.25rem;
+  border-top: 1px solid var(--rule);
+}
+
+.role-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.75rem; }
+
+.job-title {
+  margin: 0.3rem 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.employer {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.tenure {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.current {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  padding: 0.2rem 0.45rem;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.role-intro { margin-top: 1rem; }
+
+.subhead {
+  margin: 1.75rem 0 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* Title progression within one employer */
+ul.stints {
+  margin: 1rem 0 1.35rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+ul.stints > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+ul.stints > li:first-child { border-top: none; padding-top: 0; }
+
+ul.stints .stint-date {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+/* Push dates to the right only when title and date share a line. */
+@media (min-width: 30em) {
+  ul.stints .stint-date { margin-left: auto; }
+}
+
+/* Bullet lists */
+ul.bullets {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.bullets > li {
+  position: relative;
+  padding-left: 1.15rem;
+  margin-bottom: 0.7rem;
+}
+
+ul.bullets > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--rule-strong);
+}
+
+ul.bullets > li:last-child { margin-bottom: 0; }
+
+/* Open source */
+.project { margin-bottom: 1.75rem; }
+.project:last-child { margin-bottom: 0; }
+
+.project h3 {
+  font-size: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 0.7rem;
+}
+
+.project h3 a { border-bottom-color: transparent; }
+.project h3 a:hover { border-bottom-color: currentColor; }
+
+.project .kind {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.project p {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* Writing */
+.article-group { margin-bottom: 1.85rem; }
+.article-group:last-of-type { margin-bottom: 0; }
+
+.article-group h3 {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.6rem;
+}
+
+ul.article-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.95rem;
+}
+
+ul.article-list > li {
+  position: relative;
+  padding-left: 1.15rem;
+  margin-bottom: 0.35rem;
+  line-height: 1.5;
+}
+
+ul.article-list > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--rule-strong);
+}
+
+ul.article-list a {
+  color: var(--text);
+  border-bottom-color: var(--rule);
+}
+
+ul.article-list a:hover {
+  color: var(--accent);
+  border-bottom-color: currentColor;
+}
+
+.all-articles {
+  margin-top: 1.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.95rem;
+}
+
+/* Definition-style blocks: skills, education */
+.pairs {
+  margin: 0;
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 40em) {
+  .pairs { grid-template-columns: 11rem 1fr; gap: 1rem 1.5rem; }
+}
+
+.pairs dt {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-top: 0.15rem;
+}
+
+.pairs dd { margin: 0.2rem 0 0; }
+
+@media (min-width: 40em) { .pairs dd { margin-top: 0; } }
+
+/* Footer */
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+footer p { margin: 0; }
+footer .name { color: var(--text); }
+
+footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Print: single column, ink-efficient, link URLs made visible
+   --------------------------------------------------------------- */
+@media print {
+  :root {
+    --bg: #ffffff;
+    --bg-inset: #ffffff;
+    --text: #000000;
+    --text-muted: #333333;
+    --rule: #bbbbbb;
+    --rule-strong: #999999;
+    --accent: #000000;
+    --accent-soft: transparent;
+  }
+
+  @page { margin: 14mm 15mm; }
+
+  body {
+    background: #fff;
+    color: #000;
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .wrap { max-width: none; padding: 0; }
+
+  .toggle, .skip { display: none !important; }
+
+  a {
+    color: #000;
+    border-bottom: none;
+    text-decoration: underline;
+  }
+
+  /* Expose destinations for printed copies. The contact list is skipped,
+     its link text is already the URL. Article titles are skipped too, or the
+     writing section would fill a page with LinkedIn slugs. */
+  .project h3 a::after,
+  .all-articles a::after,
+  footer nav a::after {
+    content: " (" attr(href) ")";
+    font-family: var(--font-mono);
+    font-size: 8pt;
+    color: #444;
+    text-decoration: none;
+    word-break: break-all;
+  }
+
+  main > section {
+    margin-top: 1.25rem;
+    padding-top: 0.85rem;
+  }
+
+  .section-body { margin-top: 0.75rem; }
+
+  .role-entry + .role-entry {
+    margin-top: 1.1rem;
+    padding-top: 0.9rem;
+  }
+
+  .current {
+    background: transparent;
+    border: 1px solid #999;
+    color: #000;
+  }
+
+  h1 { font-size: 20pt; }
+  h2 { font-size: 8.5pt; color: #333; }
+  h3 { font-size: 11pt; }
+  .lede { font-size: 10.5pt; }
+
+  ul.article-list { font-size: 9.5pt; }
+  .article-group { margin-bottom: 0.85rem; }
+
+  /* Keep headings with their content and avoid orphaned bullets. */
+  h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
+  /* Only units short enough to fit in a partial page. Applying this to
+     `section` or `.role-entry` leaves most of a page blank, because an entry
+     taller than the remaining space gets pushed to the next page whole. */
+  .project, .article-group, ul.stints, li, .pairs > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  footer { margin-top: 1.25rem; padding-top: 0.75rem; }
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+
+  <header>
+    <div class="masthead">
+      <div>
+        <h1>Sagar Trivedi</h1>
+        <p class="role">Applied AI Architect<span class="sep">·</span>Enterprise AI Adoption</p>
+        <p class="location">Bangkok, Thailand · Indian citizen</p>
+      </div>
+
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="contact">
+      <li><span class="label">LinkedIn</span> <a href="https://linkedin.com/in/sagartrivedi" rel="me">linkedin.com/in/sagartrivedi</a></li>
+      <li><span class="label">GitHub</span> <a href="https://github.com/Sagart-cactus" rel="me">github.com/Sagart-cactus</a></li>
+      <!-- PLACEHOLDER: email. Fill in the address below and uncomment to publish it, then do the
+           same for the footer nav link and add an "email" field to the JSON-LD block. Note that
+           HTML comments are served in the public page source, so do not park a real address here
+           while it is commented out.
+      <li><span class="label">Email</span> <a href="mailto:you@example.com">you@example.com</a></li>
+      -->
+    </ul>
+  </header>
+
+  <main id="main">
+
+    <section aria-labelledby="summary-heading">
+      <h2 id="summary-heading">Summary</h2>
+      <div class="section-body">
+        <p class="lede">
+          I have spent more than fourteen years across software, infrastructure and platform
+          engineering. For the last several I have been the technical counterpart stakeholders work
+          with when an AI idea has to become something a business can actually run: discovery and
+          use-case selection, architecture across models, data, integration, security and
+          governance, then the evaluation and telemetry that show whether it works. I lead that work
+          now at Honest, and I did the client-facing version of it at Thoughtworks,
+          embedded with engineering leaders. I also build tooling that puts AI capability directly in
+          the hands of people who do not write code.
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="experience-heading">
+      <h2 id="experience-heading">Experience</h2>
+      <div class="section-body">
+
+        <article class="role-entry">
+          <div class="role-head">
+            <h3>Honest</h3>
+            <span class="current">Current</span>
+          </div>
+          <p class="job-title">Senior DevOps Engineer, AI &amp; Platform</p>
+          <p class="tenure">Mar 2024 – Present · Bangkok, Thailand</p>
+
+          <p class="role-intro">
+            I lead three concurrent initiatives: AI enablement and implementation, high-availability
+            engineering, and PCI DSS certification.
+          </p>
+
+          <h4 class="subhead">AI delivery and adoption</h4>
+          <ul class="bullets">
+            <li>
+              Lead the technical side of an AI initiative delivering a customer-care copilot,
+              partnering across product, operations, engineering, risk, compliance and quality
+              control to move it from prototype into daily use.
+            </li>
+            <li>
+              Designed the phased path from human evaluation to a human-in-the-loop production
+              workflow, spanning streaming ingestion, warehousing, retrieval over customer and
+              knowledge context, model serving and monitoring.
+            </li>
+            <li>
+              Built and operate the evaluation stack: an LLM-as-judge harness scoring response
+              grounding, knowledge-base synchronisation, model-comparison runs, dashboards and
+              recurring audits.
+            </li>
+            <li>
+              Calibrated the judge against human review, reaching 94–97% precision on flagged cases
+              across two audits.
+            </li>
+            <li>
+              Ran a paired golden-set evaluation with both arms regenerated and McNemar significance
+              testing, which supported a model change that reduced hallucination rate by roughly 35%
+              relative and cut response verbosity by 27%.
+            </li>
+            <li>
+              Instrumented quality, latency, tokens, retries and cost per request through Prometheus
+              and Grafana, with model-aware attribution.
+            </li>
+            <li>
+              Designed a prompt and context caching strategy that serves 98.5% of input tokens from
+              cache, bringing cost per request down to a fraction of a cent, roughly a 7× reduction
+              against the uncached baseline.
+            </li>
+            <li>
+              Introduced cost per prevented error as the decision metric for model selection,
+              replacing cost per token.
+            </li>
+          </ul>
+
+          <h4 class="subhead">Platform and reliability</h4>
+          <ul class="bullets">
+            <li>Run Kubernetes and GitOps delivery across AWS and GCP with Terraform, Helm and Argo CD.</li>
+            <li>Held 99.965% uptime over a 90-day window, with buffered ingestion and reliable recovery after restarts.</li>
+            <li>Own FinOps across rightsizing, commitment planning and cost attribution, cutting annual cloud spend substantially across both clouds.</li>
+            <li>Lead high-availability engineering and the PCI DSS certification workstream in a regulated environment.</li>
+          </ul>
+        </article>
+
+        <article class="role-entry">
+          <h3>Thoughtworks</h3>
+          <p class="tenure">Dec 2021 – Feb 2024 · India</p>
+
+          <ul class="stints">
+            <li><span>Lead Infrastructure Consultant</span> <span class="stint-date">Aug 2023 – Feb 2024</span></li>
+            <li><span>Senior Infrastructure Consultant</span> <span class="stint-date">Dec 2021 – Aug 2023</span></li>
+          </ul>
+
+          <ul class="bullets">
+            <li>
+              Embedded with client engineering teams as their primary technical counterpart,
+              translating ambiguous business priorities into cloud, network and platform
+              architectures that fit legacy, regulatory and organisational constraints.
+            </li>
+            <li>
+              Headed a platform team, set the roadmap and architecture standards, and mentored
+              architects and senior engineers while staying hands-on in delivery.
+            </li>
+            <li>
+              Partnered with a client Head of Engineering on a transformation strategy covering
+              technical debt, security and reliability, and introduced FinOps practices that reduced
+              their cloud spend.
+            </li>
+            <li>
+              Wrote cost-optimisation positions for executive audiences and ran workshops that turned
+              technical guidance into repeatable capability the client could carry on themselves.
+            </li>
+            <li>
+              As Senior Infrastructure Consultant, established the cloud and infrastructure practice,
+              standardised CI/CD patterns, and built long-term platform partnerships with senior
+              client stakeholders.
+            </li>
+          </ul>
+        </article>
+
+        <article class="role-entry">
+          <h3>Cactus Communications</h3>
+          <p class="tenure">May 2014 – Dec 2021 · 7 years · Mumbai, India</p>
+
+          <ul class="stints">
+            <li><span>DevOps Architect</span> <span class="stint-date">Jul 2020 – Dec 2021</span></li>
+            <li><span>DevOps Engineer</span> <span class="stint-date">Aug 2019 – Jul 2020</span></li>
+            <li><span>Software Architect</span> <span class="stint-date">Jun 2016 – Aug 2019</span></li>
+            <li><span>Software Developer</span> <span class="stint-date">May 2014 – May 2016</span></li>
+          </ul>
+
+          <ul class="bullets">
+            <li>
+              Owned DevOps and security operations for multiple business units, translated product
+              requirements into platform strategy, and led an AWS monolith-to-microservices
+              transition using Terraform and Jenkins.
+            </li>
+            <li>
+              Built automated delivery platforms and operated secure, high-availability microservices
+              across AWS networking, compute, containers, messaging, APIs, databases, storage,
+              caching and analytics.
+            </li>
+            <li>
+              Owned application architecture and migration strategy earlier in the role, partnering
+              with product teams on roadmap decisions and mentoring the engineering team.
+            </li>
+            <li>
+              Delivered revenue-critical enterprise web applications and integrations, owning
+              maintainability, reliability, security, availability and performance.
+            </li>
+          </ul>
+        </article>
+
+        <article class="role-entry">
+          <h3>Tech5 Solutions</h3>
+          <p class="job-title">Chief Technical Analyst</p>
+          <p class="tenure">Apr 2011 – Apr 2014 · Mumbai, India</p>
+          <p class="role-intro">
+            Translated client business needs into functional designs and worked with development
+            teams to deliver systems on time and within budget.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="oss-heading">
+      <h2 id="oss-heading">Open Source</h2>
+      <div class="section-body">
+        <p>Projects I build and maintain.</p>
+        <!-- PLACEHOLDER: verify each repository slug below matches the real repo name. -->
+
+        <article class="project">
+          <h3>
+            <a href="https://github.com/Sagart-cactus/SprintFoundry">SprintFoundry</a>
+            <span class="kind">TypeScript · multi-agent delivery</span>
+          </h3>
+          <p>
+            An orchestrator that turns GitHub, Linear and Jira tickets into tested, reviewed pull
+            requests through specialised product, architecture, development, QA, security and DevOps
+            agents. Runs on Claude Agent SDK and OpenAI Codex runtimes with sandboxed execution,
+            explicit planning, deterministic validation, human review gates, Kubernetes deployment,
+            live monitoring, and cost and runtime visibility through OpenTelemetry.
+          </p>
+        </article>
+
+        <article class="project">
+          <h3>
+            <a href="https://github.com/Sagart-cactus/TriSeek">TriSeek</a>
+            <span class="kind">Rust · code search MCP server</span>
+          </h3>
+          <p>
+            A local-first, read-only MCP server with a trigram-indexed search engine measured up to
+            16.9× faster than ripgrep on large repositories. The tool surface is deliberately bounded
+            to search and context, with no file editing and no shell execution. A session memo layer,
+            validated across replayed sessions with no false negatives, cuts redundant context reads
+            across coding-agent workflows, and context is portable across Claude Code, Codex,
+            OpenCode and Pi.
+          </p>
+        </article>
+
+        <article class="project">
+          <h3>
+            <a href="https://github.com/Sagart-cactus/skill-miner">Skill Miner</a>
+            <span class="kind">AI enablement</span>
+          </h3>
+          <p>
+            Mines past agent sessions to generate reusable, shareable team skills. The resulting
+            skills are in use by non-engineering teams, including marketing and credit risk.
+          </p>
+        </article>
+
+        <article class="project">
+          <h3>
+            <a href="https://github.com/Sagart-cactus/optipod">OptiPod</a>
+            <span class="kind">Kubernetes operator</span>
+          </h3>
+          <p>
+            GitOps-safe Kubernetes resource rightsizing operator. Resolves the conflict where
+            vertical autoscaling and Argo CD fight over resource definitions.
+          </p>
+        </article>
+
+        <article class="project">
+          <h3>
+            <a href="https://github.com/Sagart-cactus/claude-k8s-plugin">claude-k8s-plugin</a>
+            <span class="kind">Developer tooling</span>
+          </h3>
+          <p>
+            Claude Code plugin for scaffolding Kubernetes operators and admission webhooks.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+    <section aria-labelledby="skills-heading">
+      <h2 id="skills-heading">Skills</h2>
+      <div class="section-body">
+        <dl class="pairs">
+          <dt>AI systems</dt>
+          <dd>LLM evaluation and judging, human-calibrated review, agent orchestration, MCP servers, prompt and context design, caching and cost optimisation, retrieval design, guardrails</dd>
+
+          <dt>Architecture</dt>
+          <dd>APIs, distributed systems, data integration, event streaming, identity, security, privacy</dd>
+
+          <dt>Platform &amp; cloud</dt>
+          <dd>Kubernetes, Docker, Argo CD, Terraform, Helm, GitOps, Jenkins, AWS, GCP, Vertex AI</dd>
+
+          <dt>Observability &amp; reliability</dt>
+          <dd>Prometheus, Grafana, OpenTelemetry, SLOs, incident response, high availability</dd>
+
+          <dt>Languages</dt>
+          <dd>Python, Go, Rust, TypeScript, Bash</dd>
+
+          <dt>Working with customers</dt>
+          <dd>Executive and engineering discovery, use-case prioritisation, architecture roadmaps, prototypes and proofs of value, technical workshops, enablement and mentoring, FinOps, regulated-environment compliance</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section aria-labelledby="writing-heading">
+      <h2 id="writing-heading">Writing</h2>
+      <div class="section-body">
+        <p>
+          I write about the parts of AI systems that decide whether they survive production:
+          evaluation, failure modes, cost, and the protocols and tooling underneath.
+        </p>
+
+        <div class="article-group">
+          <h3>Agents, evaluation and retrieval</h3>
+          <ul class="article-list">
+            <li><a href="https://www.linkedin.com/pulse/why-rag-exists-context-window-red-herring-sagar-trivedi-t4ync">Why RAG Exists: The Context Window Is a Red Herring</a></li>
+            <li><a href="https://www.linkedin.com/pulse/scariest-ai-agent-failure-one-looks-like-success-sagar-trivedi-th4kc">The Scariest AI Agent Failure Is the One That Looks Like Success</a></li>
+            <li><a href="https://www.linkedin.com/pulse/every-multi-agent-system-ive-studied-one-five-designs-sagar-trivedi-gvszc">Every Multi-Agent System I've Studied Is One of These Five Designs</a></li>
+            <li><a href="https://www.linkedin.com/pulse/i-assumed-multi-agent-meant-4x-cost-math-said-sagar-trivedi-nmzsc">I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.</a></li>
+            <li><a href="https://www.linkedin.com/pulse/one-sentence-explains-every-multi-agent-failure-ive-seen-trivedi-jjo1c">The One Sentence That Explains Every Multi-Agent Failure I've Seen</a></li>
+            <li><a href="https://www.linkedin.com/pulse/your-ai-agent-has-ceiling-heres-where-sagar-trivedi-kapbc">Your AI Agent Has a Ceiling. Here's Where It Is.</a></li>
+          </ul>
+        </div>
+
+        <div class="article-group">
+          <h3>Model Context Protocol</h3>
+          <ul class="article-list">
+            <li><a href="https://www.linkedin.com/pulse/what-mcp-why-does-exist-sagar-trivedi-4y8fc">What Is MCP and Why Does It Exist?</a></li>
+            <li><a href="https://www.linkedin.com/pulse/mcp-architecture-primitives-call-flow-sagar-trivedi-0pgic">MCP Architecture, Primitives, and Call Flow</a></li>
+            <li><a href="https://www.linkedin.com/pulse/mcp-just-rest-ai-sagar-trivedi-2o1pc">MCP Is Not Just REST for AI</a></li>
+            <li><a href="https://www.linkedin.com/pulse/mcp-security-risks-you-should-understand-sagar-trivedi-nosjc">MCP Security Risks You Should Understand</a></li>
+            <li><a href="https://www.linkedin.com/pulse/best-practices-building-mcp-servers-sagar-trivedi-laqtc">Best Practices for Building MCP Servers</a></li>
+          </ul>
+        </div>
+
+        <div class="article-group">
+          <h3>Inside Codex CLI, an eight-part series</h3>
+          <ul class="article-list">
+            <li><a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c">The 10,000-Foot View: What Is Codex CLI and Why Should You Care?</a></li>
+            <li><a href="https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c">The Nervous System: How Components Talk</a></li>
+            <li><a href="https://www.linkedin.com/pulse/brain-inside-core-engine-sagar-trivedi-7gkec">The Brain: Inside the Core Engine</a></li>
+            <li><a href="https://www.linkedin.com/pulse/vault-how-every-command-runs-sandbox-sagar-trivedi-jse4c">The Vault: How Every Command Runs in a Sandbox</a></li>
+            <li><a href="https://www.linkedin.com/pulse/part-5-four-windows-one-brain-tui-exec-app-server-mcp-sagar-trivedi-xnmlc">Four Windows Into One Brain: TUI, Exec, App Server, and MCP Server</a></li>
+            <li><a href="https://www.linkedin.com/pulse/swiss-army-knife-mcp-tools-plugin-ecosystem-sagar-trivedi-chqmc">The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem</a></li>
+            <li><a href="https://www.linkedin.com/pulse/part-7-safety-net-sagar-trivedi-tcjxc">The Safety Net: Hooks, Policies, and the Approval Chain</a></li>
+            <li><a href="https://www.linkedin.com/pulse/building-giant-sdks-apis-whats-next-sagar-trivedi-vmvsc">Building on the Giant: SDKs, APIs, and What's Next</a></li>
+          </ul>
+        </div>
+
+        <div class="article-group">
+          <h3>Agent tooling and team practice</h3>
+          <ul class="article-list">
+            <li><a href="https://www.linkedin.com/pulse/stop-re-explaining-your-stack-ai-every-morning-sagar-trivedi-sx7kc">Stop re-explaining your stack to your AI every morning</a></li>
+            <li><a href="https://www.linkedin.com/pulse/your-teams-standards-keep-getting-ignored-hooks-fix-good-trivedi-7dqac">Your team's standards keep getting ignored. Hooks fix that for good.</a></li>
+            <li><a href="https://www.linkedin.com/pulse/most-important-code-your-plugin-isnt-sagar-trivedi-13gbc">The most important code in your plugin isn't code</a></li>
+            <li><a href="https://www.linkedin.com/pulse/plugin-you-didnt-audit-dont-trust-sagar-trivedi-xae2c">A plugin you didn't audit is a plugin you don't trust</a></li>
+            <li><a href="https://www.linkedin.com/pulse/how-turn-20-minute-chore-2-minute-command-sagar-trivedi-yettc">How to turn a 20-minute chore into a 2-minute command</a></li>
+            <li><a href="https://www.linkedin.com/pulse/sprintfoundry-now-supports-agent-sandboxes-sagar-trivedi-koqgc">SprintFoundry now supports Agent Sandboxes</a></li>
+          </ul>
+        </div>
+
+        <p class="all-articles">
+          <a href="https://www.linkedin.com/in/sagartrivedi/recent-activity/articles/">All articles on LinkedIn</a>
+        </p>
+      </div>
+    </section>
+
+    <section aria-labelledby="education-heading">
+      <h2 id="education-heading">Certification &amp; Education</h2>
+      <div class="section-body">
+        <dl class="pairs">
+          <dt>Certification</dt>
+          <dd>AWS Certified Solutions Architect – Professional</dd>
+
+          <dt>Education</dt>
+          <dd>B.E., Information Technology, Mumbai University, 2005–2008<br>Diploma, Computer Technology, 2002–2005</dd>
+
+          <dt>Languages</dt>
+          <dd>English, Hindi, Marathi</dd>
+        </dl>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p><span class="name">Sagar Trivedi</span> · Last updated <time datetime="2026-08">August 2026</time></p>
+    <nav aria-label="Profile links">
+      <a href="https://linkedin.com/in/sagartrivedi">LinkedIn</a>
+      <a href="https://github.com/Sagart-cactus">GitHub</a>
+      <!-- PLACEHOLDER: <a href="mailto:you@example.com">Email</a> -->
+    </nav>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+
+  function syncLabel() {
+    var next = isDark() ? 'light' : 'dark';
+    btn.setAttribute('aria-label', 'Switch to ' + next + ' theme');
+  }
+
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+
+  /* Follow the system if the visitor has not chosen explicitly. */
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+
+  syncLabel();
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Sagar Trivedi",
+  "jobTitle": "Applied AI Architect",
+  "url": "https://sagart-cactus.github.io/",
+  "description": "Applied AI Architect with more than fourteen years across software, infrastructure and platform engineering. Leads enterprise AI adoption: discovery, architecture, evaluation, secure deployment, cost control and governance.",
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Bangkok",
+    "addressCountry": "TH"
+  },
+  "sameAs": [
+    "https://linkedin.com/in/sagartrivedi",
+    "https://github.com/Sagart-cactus"
+  ],
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "University of Mumbai"
+  },
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "name": "AWS Certified Solutions Architect – Professional",
+    "credentialCategory": "certification",
+    "recognizedBy": { "@type": "Organization", "name": "Amazon Web Services" }
+  },
+  "knowsLanguage": ["English", "Hindi", "Marathi"],
+  "knowsAbout": [
+    "LLM evaluation",
+    "Agent orchestration",
+    "Model Context Protocol",
+    "Retrieval-augmented generation",
+    "Enterprise AI adoption",
+    "Solutions architecture",
+    "Kubernetes",
+    "GitOps",
+    "Terraform",
+    "Site reliability engineering",
+    "FinOps",
+    "Observability"
+  ]
+}
+</script>
+</body>
+</html>
