@@ -105,14 +105,13 @@ the live repositories and return 200; note that the OptiPod repo is lowercase `o
 link uses that. Dates, titles, education, certification and the article list are filled in from your
 resume and LinkedIn.
 
-## One thing to reconcile
+## Note on the hallucination figure
 
-Your resume says the model change moved hallucination **from 18% to 13%**, which is a 27.8% relative
-reduction. Your brief for this site said **roughly 35% relative**. Those do not describe the same
-number. The page currently uses "roughly 35% relative", since that was your wording for the site,
-and it keeps the absolute production error rate off a public page. Worth settling before an
-interviewer does the arithmetic. The same bullet also claims a 27% verbosity cut, which is
-suspiciously close to 27.8%, so the two figures may have been crossed somewhere.
+Settled: the measured change is **18% to 13%**, a 27.8% relative reduction. The page says "roughly
+28% relative", which keeps the absolute production error rates off a public page while stating a
+number that survives arithmetic. An earlier draft said "roughly 35% relative"; that was wrong and
+has been corrected. If you quote this result anywhere else, 28% relative (or the raw 18% to 13%) is
+the defensible form.
 
 ## What was tailored for this role, and what was held back
 
