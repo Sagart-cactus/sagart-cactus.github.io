@@ -1,5 +1,7 @@
 # Personal resume site
 
+**Published at <https://sagart-cactus.github.io/>**
+
 A single static page, positioned for the OpenAI **Applied AI Architect** role (Technical Success,
 Delhi / Mumbai / Bangalore). No build step, no framework, no dependencies beyond one Google Fonts
 stylesheet (IBM Plex Sans + IBM Plex Mono). It opens correctly from `file://` and deploys by
@@ -42,30 +44,27 @@ Just open the file, or serve it if you prefer a real origin:
 python3 -m http.server 8000
 ```
 
-## Deploying to GitHub Pages
+## GitHub Pages
 
-Pages serves `index.html` from the repository root, so no configuration is needed.
+Already live. Because the repository is named `sagart-cactus.github.io`, it is a GitHub user site:
+Pages enabled itself on first push and serves from `main` at the root path, with HTTPS enforced.
+There was no Settings step.
+
+To publish a change, just push:
 
 ```bash
-git init
-git add index.html README.md
-git commit -m "Add resume site"
-git branch -M main
-git remote add origin git@github.com:Sagart-cactus/<repo>.git
-git push -u origin main
+git add index.html && git commit -m "Update resume" && git push
 ```
 
-Then in the repository, go to **Settings → Pages**, set **Source** to *Deploy from a branch*, and
-choose `main` / `/ (root)`. The site appears at `https://sagart-cactus.github.io/<repo>/` within a
-minute or two.
+The rebuild takes about half a minute. To check whether it has finished:
 
-Two things worth knowing:
+```bash
+gh api repos/Sagart-cactus/sagart-cactus.github.io/pages --jq .status
+```
 
-- If you name the repository `Sagart-cactus.github.io`, it publishes at the bare
-  `https://sagart-cactus.github.io/` instead of under a subpath.
-- For a custom domain, add it under **Settings → Pages → Custom domain**, commit the `CNAME` file
-  Pages creates, and point a `CNAME` DNS record at `sagart-cactus.github.io`. Leave **Enforce HTTPS**
-  on.
+For a custom domain later, add it under **Settings → Pages → Custom domain**, commit the `CNAME`
+file Pages creates, and point a `CNAME` DNS record at `sagart-cactus.github.io`. Leave **Enforce
+HTTPS** on, and update the canonical link, `og:url` and JSON-LD `url` in `index.html` to match.
 
 ## Deploying to Vercel
 
@@ -93,20 +92,18 @@ Run `grep -n PLACEHOLDER index.html` to list them in place.
    comments are served in the public page source, so a real address parked in a commented-out block
    is still scrapeable, and publishing an address on a public page invites spam either way. Decide
    deliberately rather than leaving it half-done.
-2. **Site URL.** Appears three times, all currently `https://example.com/`: the
-   `<link rel="canonical">`, the `og:url` meta tag, and `"url"` in the JSON-LD block.
-3. **Open source repository slugs.** The five project links assume
-   `github.com/Sagart-cactus/<ProjectName>`. Check each one resolves and fix any that differ. This
-   is the most likely thing on the page to 404.
-4. **Last updated.** The footer says "August 2026" in both the visible text and the `datetime`
-   attribute.
-5. **Open Graph image** *(optional)*. Two commented meta tags. Without one, link previews show a
+2. **Last updated.** The footer says "August 2026" in both the visible text and the `datetime`
+   attribute. Worth changing whenever you edit the page.
+3. **Open Graph image** *(optional)*. Two commented meta tags. Without one, link previews show a
    text-only card. If you add a 1200×630 PNG, also switch `twitter:card` from `summary` to
    `summary_large_image`.
-6. **Twitter handle** *(optional)*. A commented `twitter:site` tag; delete it if you do not want one.
+4. **Twitter handle** *(optional)*. A commented `twitter:site` tag; delete it if you do not want one.
 
-Dates, titles, education, certification and the article list are all filled in from your resume and
-LinkedIn, so nothing is left to supply there.
+Everything else is done. The site URL is set to `https://sagart-cactus.github.io/` in all three
+places (canonical link, `og:url`, JSON-LD `url`). All five open-source links were checked against
+the live repositories and return 200; note that the OptiPod repo is lowercase `optipod`, and the
+link uses that. Dates, titles, education, certification and the article list are filled in from your
+resume and LinkedIn.
 
 ## One thing to reconcile
 
