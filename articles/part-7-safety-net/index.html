@@ -20,13 +20,14 @@
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/site.css">
-
+<meta property="article:published_time" content="2026-04-25">
+<meta property="article:author" content="Sagar Trivedi">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -69,7 +70,7 @@
 <p> Welcome to Part 7 of our journey into Codex's architecture. We've explored the brain, the nervous system, the vaults, the frontends, and the plugin ecosystem. Now we arrive at something equally fundamental, yet often invisible: the safety layer. </p>
 <p> Here's a hard truth: AI agents can do remarkable things. But an agent without guardrails is a loaded gun in a china shop. The difference between a tool that's useful and one that's dangerous often comes down to a single question: Does a human remain in control? </p>
 <p> This is Part 7. This is where Codex earns your trust. </p>
-<hr/>
+<hr>
 <h2>The Philosophy: AI Assists, Humans Decide </h2>
 <p> Before we talk about code, let's talk about principles. </p>
 <p> When you use Codex, you're not handing off control. You're delegating with oversight. The agent can suggest, plan, execute—but at every critical juncture, there's a human with their hand on the brake. </p>
@@ -80,7 +81,7 @@
 <p> This is why Codex has a layered defense model. It's not one safety mechanism—it's five, working in concert: </p>
 <ol><li>Policy — declarative rules you set </li><li>Approval — interactive prompts for edge cases </li><li>Sandbox — OS-level isolation </li><li>Hooks — event listeners for audit and monitoring </li><li>Secrets — automatic redaction of sensitive data </li></ol>
 <p> Let's dive into each layer. </p>
-<hr/>
+<hr>
 <h2>Layer 1: The ExecPolicy DSL — Policy as Code </h2>
 <p> At the foundation of Codex's safety sits execpolicy, a domain-specific language for declaring what code can and cannot do. </p>
 <h2>The .execpolicy File </h2>
@@ -154,7 +155,7 @@ deny network 192.168.1.1:22       # Block SSH to internal network</code></pre>
 <p> This is optional but powerful. You can say: </p>
 <ul><li>"Yes, do it this once" — immediate execution, no policy change </li><li>"Yes, do it and remember for next time" — immediate execution, plus rule added </li></ul>
 <p> The policy file is human-readable and version-controlled. You can review your own decisions later, or audit what rules your team has accumulated. </p>
-<hr/>
+<hr>
 <h2>Layer 2: The Approval Chain — Interactive Prompts in Action </h2>
 <p> When a command hits prompt, Codex doesn't just silently block. It asks you. </p>
 <p> But asking is an art. Here's how Codex does it: </p>
@@ -170,9 +171,9 @@ deny network 192.168.1.1:22       # Block SSH to internal network</code></pre>
 <p> Next time Codex tries this, it's pre-approved. </p>
 <h2>Approval Context Matters </h2>
 <p> Codex doesn't show approvals in isolation. It shows you the full turn: </p>
-<p><br/></p>
+<p><br></p>
 <p> This context helps you make informed decisions. You see the bigger picture, not just the dangerous command. </p>
-<hr/>
+<hr>
 <h2>Layer 3: Lifecycle Hooks — Event-Driven Monitoring </h2>
 <p> While policies enforce what can happen, hooks let you observe what does happen. </p>
 <p> Hooks are event listeners that fire at specific moments in a Codex session. They're fully pluggable—you can write your own. </p>
@@ -253,7 +254,7 @@ if payload['hook_event']['event_type'] == 'after_tool_use':
         with open('/home/user/.codex/command.log', 'a') as f:
             f.write(log_line)</code></pre>
 <p> Hooks fail gracefully. If a hook crashes, Codex logs the error but continues—it doesn't let monitoring break your workflow. </p>
-<hr/>
+<hr>
 <h2>Layer 4: Secret Detection — Preventing Data Leaks </h2>
 <p> One of the deadliest mistakes an AI agent can make is exposing a secret: an API key, database password, or auth token. </p>
 <p> Codex's secrets module watches for this. It: </p>
@@ -268,14 +269,14 @@ if payload['hook_event']['event_type'] == 'after_tool_use':
 <p> If a secret is detected, Codex: </p>
 <ol><li>Logs a warning </li><li>Redacts it in the hook </li><li>Never stores the raw value — Only the fact that a secret was present </li></ol>
 <p> This is passive detection. Codex doesn't stop the command—secrets are useful sometimes. But it ensures they don't leak into logs, Slack messages, or audit trails. </p>
-<hr/>
+<hr>
 <h2>Layer 5: Process Hardening — OS-Level Security </h2>
 <p> Beyond policies and hooks, Codex hardens the process itself at the OS level. </p>
 <h2>What Process Hardening Does </h2>
 <p> When Codex starts, before it runs any user code, it: </p>
 <ol><li>Disables core dumps </li><li>Disables ptrace attach (Linux/macOS) </li><li>Removes dangerous environment variables </li><li>Sets restrictive file permissions </li></ol>
 <p> All of this happens before main() using the ctor crate, ensuring it's the very first thing Codex does. </p>
-<hr/>
+<hr>
 <h2>Layer 6: Shell Escalation Detection </h2>
 <p> One of the trickiest attacks: getting Codex to run sudo (privilege escalation). </p>
 <p> If an attacker can trick Codex into running sudo, suddenly your entire system is at risk. The shell-escalation crate detects and manages this. </p>
@@ -300,7 +301,7 @@ impl Stopwatch {
     }
 }</code></pre>
 <p> This prevents a situation where you approve something, walk away, and return to find the system has been escalated without your continued consent. </p>
-<hr/>
+<hr>
 <h2>The Layered Defense in Practice: A Real Scenario </h2>
 <p> Let's walk through a real execution to see all layers working together: </p>
 <h2>The Scenario </h2>
@@ -343,7 +344,7 @@ sudo systemctl restart myapp
 
 Or I can deploy using Docker Compose:
   docker-compose -f prod.yml restart</code></pre>
-<hr/>
+<hr>
 <h2>The Amendment API: Learning from Experience </h2>
 <p> Here's what makes this different from typical security models: policies evolve with use. </p>
 <p> Each time you say "Yes, and remember this for next time," Codex appends to your policy file: </p>
@@ -362,7 +363,7 @@ allow prefix npm run deploy</code></pre>
 <pre><code>$ git diff ~/.codex/execpolicy
 +allow prefix docker push myregistry/app:latest</code></pre>
 <p> Over time, your policy becomes a record of your trust decisions. New team members can see what's been approved. Auditors can review your decisions. </p>
-<hr/>
+<hr>
 <h2>Composing Policies: System, User, Project </h2>
 <p> Policies compose in layers: </p>
 <ol><li>System policy (strict defaults) </li><li>User policy (your personal preferences) </li><li>Project policy (.codex/execpolicy in your repo) </li></ol>
@@ -371,7 +372,7 @@ allow prefix npm run deploy</code></pre>
 Project: allow network registry.npmjs.org:443
 Result:  npm install works, everything else is blocked</code></pre>
 <p> This is principle of least privilege in practice: default deny, then selectively allow based on context. </p>
-<hr/>
+<hr>
 <h2>Hooks in the Wild: Real Monitoring Scenarios </h2>
 <p> Here are common hooks teams use: </p>
 <h2>Slack Notifications for Risky Commands </h2>
@@ -405,12 +406,12 @@ args = ["./hooks/audit-logger.py"]</code></pre>
 <p> Hooks write to a SQLite database for offline analysis: </p>
 <pre><code>$ sqlite3 ~/.codex/audit.db "SELECT COUNT(*) FROM commands WHERE success = 0"
 3 failed commands today</code></pre>
-<hr/>
+<hr>
 <h2>The Missing Layer: What Codex Cannot Protect Against </h2>
 <p> Before we finish, let's be honest about what safety layers can't do: </p>
 <ol><li>Fundamental trust: If you approve a malicious command, it runs. Trust is the base layer. </li><li>Supply chain attacks: If a dependencies contains malware, Codex can't detect it. </li><li>Man-in-the-middle: If your network is compromised, secrets can leak. </li><li>Physical security: If someone has physical access to your machine, all bets are off. </li></ol>
 <p> Codex's safety layers assume you're operating in a reasonably secure environment. They're a multiplier, not a replacement, for good security practices. </p>
-<hr/>
+<hr>
 <h2>A Cliffhanger: Building on Top of Codex </h2>
 <p> You now understand how Codex works end-to-end: </p>
 <ul><li>Part 1-2: The architecture and protocol </li><li>Part 3: How Codex reasons </li><li>Part 4-5: How data is stored and accessed </li><li>Part 6: How plugins extend it </li><li>Part 7: How it stays safe </li></ul>
@@ -422,7 +423,7 @@ args = ["./hooks/audit-logger.py"]</code></pre>
 <p> In Part 8—the final part—we'll explore the SDKs. We'll build a custom MCP server from scratch, integrate Codex into a CI/CD pipeline, and create a monitoring dashboard. </p>
 <p> The power to build is yours. The safety is built in. The future is open. </p>
 <p> See you in Part 8. </p>
-<hr/>
+<hr>
 <h2>Key Takeaways </h2>
 <ol><li>Human-in-the-loop is not just philosophy—it's architecture. Every risky command can be caught and approved. </li><li>Policies are code. You write them once, version-control them, and they evolve with your needs. </li><li>Five layers of defense: Policy → Approval → Sandbox → Hooks → Secrets. No single point of failure. </li><li>Hooks are your telescope into Codex. Monitor, audit, and understand what's happening in real-time. </li><li>Escalation is trackable and blockable. Privilege escalation requires both a policy and active user approval. </li><li>Policies compose. System defaults + user preferences + project rules = context-aware security. </li><li>Transparency wins. Everything is logged, auditable, and reversible. Trust but verify. </li></ol>
 <p> Codex isn't a tool you blindly trust. It's a system you understand, configure, and control. </p>
@@ -475,7 +476,7 @@ args = ["./hooks/audit-logger.py"]</code></pre>
   "headline": "Part 7: The Safety Net",
   "datePublished": "2026-04-25",
   "description": "Hooks, Policies, and the Approval Chain Welcome to Part 7 of our journey into Codex's architecture. We've explored the brain, the nervous system, the vaults, the frontends, and the plugin ecosystem. N",
-  "wordCount": 2694,
+  "wordCount": 2697,
   "url": "https://sagart-cactus.github.io/articles/part-7-safety-net/",
   "mainEntityOfPage": {
     "@type": "WebPage",

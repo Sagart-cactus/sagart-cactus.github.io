@@ -20,13 +20,14 @@
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/site.css">
-
+<meta property="article:published_time" content="2026-05-08">
+<meta property="article:author" content="Sagar Trivedi">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -72,8 +73,8 @@
 <p> This is where Building 3: The SDK comes in. </p>
 <p> The SDKs are the translation layer. They take everything we've learned in the previous seven articles and package it into clean, language-specific APIs that developers can actually use. TypeScript developers get a JavaScript-native interface. Python developers get Pydantic models and async generators. Anyone can extend Codex with custom MCP servers. </p>
 <p> In this final article, we're going to see how it all connects, how a developer uses the SDK to spin up a thread, send a prompt, listen to events, and process results. We'll build a small automation script together. And then we'll talk about what comes next: the future of an architecture this well-designed. </p>
-<hr/>
-<p><br/></p>
+<hr>
+<p><br></p>
 <h2>The TypeScript SDK: From High-Level API to Streaming Events </h2>
 <p> Let's start with concrete code. Here's the simplest way to use Codex from TypeScript: </p>
 <pre><code>import { Codex } from '@openai/codex';
@@ -296,11 +297,11 @@ Please fix these issues one by one. For each TODO:
 
 fixTodos().catch(console.error);</code></pre>
 <p> This script demonstrates the power of the streaming API: you can watch progress in real-time, update a UI, or make decisions based on what's happening. </p>
-<hr/>
+<hr>
 <h2>The Python SDK: JSON-RPC Over Stdio </h2>
 <p> The Python SDK takes a different approach. Instead of spawning the CLI with --experimental-json, the Python SDK launches the app-server binary directly and communicates with it via JSON-RPC 2.0 over stdio. </p>
 <p> Why the difference? The Python SDK is designed for deeper integration, it can send multiple turns to the same thread without respawning the process, and it has access to lower-level primitives like approval handlers. </p>
-<p><br/></p>
+<p><br></p>
 <h2>The Client Architecture </h2>
 <pre><code>from codex_app_server import Codex
 
@@ -438,7 +439,7 @@ if __name__ == '__main__':
     process_features('features.csv')</code></pre>
 <p> This script demonstrates several key features of the Python SDK: </p>
 <ul><li>Persistent connection: The Codex() context manager keeps a single app-server process alive </li><li>Multiple threads: Each feature gets its own thread, but they share the same app-server </li><li>Type-safe models: The turn result automatically has all the items with proper types </li><li>Structured data: You can easily extract metrics and results from the items </li></ul>
-<hr/>
+<hr>
 <h2>Extending Codex with Custom MCP Servers </h2>
 <p> Now here's where it gets really powerful. The architecture isn't just about using Codex as-is. It's about extending it. </p>
 <p> MCP (Model Context Protocol) is OpenAI's standard for tools and resources. If you want Codex to do something special, call your internal APIs, query your database, interact with your CI/CD system, you build an MCP server for it. </p>
@@ -495,10 +496,10 @@ if __name__ == "__main__":
 <p> Now, when Codex encounters a task that needs to query the database, it can call your MCP server. The sandboxing still applies, the MCP server runs in a controlled environment, and its outputs are validated. </p>
 <p> You can build MCP servers for: </p>
 <ul><li>Internal APIs: Product management systems, customer databases, billing systems </li><li>Specialized tools: Image generation, ML model inference, video processing </li><li>Domain-specific knowledge: Your company's conventions, frameworks, or standards </li><li>Secrets management: Securely passing credentials to tools without exposing them in the filesystem </li></ul>
-<hr/>
+<hr>
 <h2>Architecture Patterns Worth Stealing </h2>
 <p> Over the course of these eight articles, we've seen some genuinely clever design patterns. Even if you never touch Codex's code, these patterns are worth understanding, they'll make you a better architect. </p>
-<p><br/></p>
+<p><br></p>
 <h2>1. SQ/EQ Decoupling: Separation of Concerns </h2>
 <p> The Submission Queue and Event Queue are separate. When you submit a prompt, it doesn't immediately execute. The orchestrator: </p>
 <ol><li>Accepts the submission </li><li>Breaks it into logical steps </li><li>Executes those steps one by one </li><li>Emits events for each step </li></ol>
@@ -532,7 +533,7 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
 <ul><li>Port: "I need to execute a shell command" </li><li>Adapters: Linux implementation (uses seccomp), macOS implementation (uses sandbox profile), and a test mock (returns canned responses) </li></ul>
 <p> The core orchestrator doesn't care which adapter is plugged in. This makes the code: </p>
 <ul><li>Testable: Plug in a mock adapter for unit tests </li><li>Portable: Add a new platform by adding a new adapter </li><li>Focused: The core logic isn't tangled with implementation details </li></ul>
-<hr/>
+<hr>
 <h2>The Series Retrospective: What We've Built </h2>
 <p> Let's take a step back. Over eight articles, what have we actually learned? </p>
 <p><a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 1: The 10,000-Foot View </a> introduced you to Codex as a concept and showed you the four buildings. </p>
@@ -546,7 +547,7 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
 <p> Together, these eight articles form a complete mental model of how a sophisticated AI coding agent works. </p>
 <p> You understand: </p>
 <ul><li>Why it's built in Rust (performance and safety) </li><li>How it communicates internally (message queues and events) </li><li>How it makes decisions (orchestration and state machines) </li><li>How it stays secure (sandboxing and approval policies) </li><li>How you can use it (SDKs and APIs) </li><li>How you can extend it (MCP servers) </li></ul>
-<hr/>
+<hr>
 <h2>The Next Frontier: What Comes Next </h2>
 <p> Codex is built on a foundation that's designed to scale. The architecture isn't just "here's an AI coding agent." It's "here's a pattern for building trustworthy AI systems that work locally on your machine." </p>
 <p> What comes next? </p>
@@ -557,7 +558,7 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
 <p> Formal verification. Some tasks don't need an AI agent; they need a verified algorithm. The same approval policies that let humans check AI-generated code can let formal verification systems check it too. </p>
 <p> Decentralized computing. The architecture is designed for a single machine, but it could scale to a network. Imagine spawning sandboxed execution environments across multiple machines, with the orchestrator coordinating them. </p>
 <p> The beautiful thing about a well-designed architecture is that it's forward-compatible. Codex's core patterns, message queues, sandboxing, policy evaluation, modular adapters, don't depend on any specific technology. As the AI landscape evolves, the architecture will evolve with it. </p>
-<hr/>
+<hr>
 <h2>A Satisfying Conclusion (Not an Ending) </h2>
 <p> We began this series with a simple image: "an incredibly talented software engineer in a padded room." </p>
 <p> By now, you understand what that really means. It's not magic. It's careful orchestration. It's a Rust core that reasons about code and plans actions. It's a queue that serializes requests and events. It's a sandbox that isolates dangerous operations. It's approval policies that let humans stay in control. It's SDKs that make it accessible. It's MCP servers that extend it. </p>
@@ -613,7 +614,7 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
   "headline": "Building on the Giant: SDKs, APIs, and What's Next",
   "datePublished": "2026-05-08",
   "description": "Standing on the Shoulders of Giants We've climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst",
-  "wordCount": 3353,
+  "wordCount": 3358,
   "url": "https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/",
   "mainEntityOfPage": {
     "@type": "WebPage",

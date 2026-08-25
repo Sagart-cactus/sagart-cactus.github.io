@@ -23,13 +23,14 @@ TUI, Exec, App Server, and MCP Server · Sagar Trivedi">
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/site.css">
-
+<meta property="article:published_time" content="2026-04-17">
+<meta property="article:author" content="Sagar Trivedi">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -72,7 +73,7 @@ TUI, Exec, App Server, and MCP Server</h1>
 <blockquote>Welcome back to our deep dive into Codex, the OpenAI CLI agent that's reshaping how developers interact with AI. In Part 4, we explored how </blockquote>
 <p> Codex manages execution—sandboxes, approvals, and rollback. But here's the thing: execution is just one face of a much larger organism. Codex isn't a single product. It's an architecture that manifests in four completely different ways, each optimised for a different user or integration. Same core logic. Four entirely different experiences. </p>
 <p> This is Part 5, where the design elegance emerges. </p>
-<hr/>
+<hr>
 <h2>The Power of Decoupling: One Brain, Four Windows </h2>
 <p> Imagine a surgeon with four pairs of hands, each controlled by the same brain but configured for different specialities: </p>
 <ul><li>One hand holds a scalpel (for precision TUI work) </li><li>One hand holds a hammer (for headless CI automation) </li><li>One hand types on a keyboard (for IDE integration via JSON-RPC) </li><li>One hand reaches out to other agents (as an MCP tool) </li></ul>
@@ -80,7 +81,7 @@ TUI, Exec, App Server, and MCP Server</h1>
 <p> At the centre sits the core execution engine—the same state machine, event loop, thread management that we explored in Parts 3 and 4. Around it: four completely different frontends. </p>
 <ul><li>TUI (codex-tui): A rich, interactive terminal interface with vim bindings, real-time markdown rendering, diff views, and approval dialogs. </li><li>Exec (codex-exec): Headless CLI for CI/CD pipelines and automation. Two output modes: pretty terminal or machine-readable JSONL. </li><li>App Server: JSON-RPC 2.0 server over stdio or WebSocket. This is what VS Code/Cursor extensions talk to. </li><li>MCP Server: The "reverse integration"—Codex becomes a tool for other AI agents via the Model Context Protocol. </li></ul>
 <p> The beauty isn't just code reuse. It's that adding a new frontend is trivial. You don't touch the core. You just consume the protocol. </p>
-<hr/>
+<hr>
 <h2>Deep Dive 1: The TUI—Ratatui's Interactive Terminal </h2>
 <p> The TUI is Codex's primary interactive experience, and it's built on ratatui, a Rust-based terminal UI framework. Let's understand its anatomy. </p>
 <h2>App State Machine &amp; Event Loop </h2>
@@ -127,7 +128,7 @@ TUI, Exec, App Server, and MCP Server</h1>
 <p> Users can review the full diff, see the context, and approve, deny, or set a preset policy (e.g., "always approve file reads"). </p>
 <h2>Diff Views </h2>
 <p> The diff_render.rs module renders git diffs with context, line numbers, and color-coding. Deletions are red, additions are green. Users can scroll through a proposed patch before approving. </p>
-<hr/>
+<hr>
 <h2>Deep Dive 2: The Headless Exec—For CI and Automation </h2>
 <p> Now shift gears. You're in a GitHub Actions workflow. You can't open an interactive terminal. You need Codex to: </p>
 <ol><li>Run the agent </li><li>Output machine-readable results </li><li>Exit cleanly </li></ol>
@@ -161,7 +162,7 @@ TUI, Exec, App Server, and MCP Server</h1>
         }
     }
 }</code></pre>
-<hr/>
+<hr>
 <h2>Deep Dive 3: The App Server—JSON-RPC 2.0 for IDEs </h2>
 <p> Now here's where things get really interesting. VS Code. Cursor. Any IDE that wants to integrate Codex. </p>
 <p> They don't want to shell out and parse JSONL. They want a bidirectional protocol—a real conversation where the IDE sends requests and Codex sends responses. </p>
@@ -225,7 +226,7 @@ const response = await client.request("turn/start", {
 client.subscribe("turn/event", (event) =&gt; {
     console.log(event.chunk); // Render in editor
 });</code></pre>
-<hr/>
+<hr>
 <h2>Deep Dive 4: The MCP Server—Codex as a Tool for Others </h2>
 <p> Here's the twist: what if Codex itself becomes a tool that other AI agents can call? </p>
 <p> This is the MCP Server (codex-mcp-server). It implements the Model Context Protocol, turning Codex into a callable function for Claude, Claude-in-VS-Code, or any other MCP-aware agent. </p>
@@ -316,27 +317,27 @@ impl CodexToolRunner {
     }
 }</code></pre>
 <p> The parent agent (Claude) sees this and decides: Does the user want me to approve? Or should I ask? </p>
-<hr/>
+<hr>
 <h2>How Adding a New Frontend Works </h2>
 <p> Say you want to add a web UI (codex-web). Here's the recipe: </p>
 <ol><li>Consume the App Server protocol: Implement the JSON-RPC 2.0 client, connect to the app-server via WebSocket, and send/receive the standard methods. </li><li>Build the frontend: React, Vue, whatever. Your app reads thread/start responses, renders threads, sends turn/start messages. </li><li>Deploy: Run codex-app-server ws://0.0.0.0:8080 in the background. Point your web UI at it. </li></ol>
 <p> That's it. The core doesn't change. The app-server doesn't change. You're just calling an existing protocol. </p>
-<hr/>
+<hr>
 <h2>The Architecture Pattern: Hexagonal Design </h2>
 <p> This is hexagonal architecture (a.k.a. ports and adapters): </p>
 <p> Benefits: </p>
 <ul><li>Core stays focused: Authentication, execution, state management. No UI concerns. </li><li>Frontends are independent: TUI can evolve without touching exec or MCP. </li><li>Easy to test: Mock the core, verify each frontend independently. </li><li>Easy to scale: Run multiple app-servers, share the same core backend. </li></ul>
-<hr/>
+<hr>
 <h2>The Cliffhanger: Codex Using Tools </h2>
 <p> Here's the thing: we've seen Codex as a tool for other agents. But what about the reverse? </p>
 <p> What if Codex—while solving a problem—could call other tools? What if it could invoke external APIs, query databases, or collaborate with other agents in real time? </p>
 <p> This is where MCP gets really interesting. </p>
 <p> In Part 6, we'll explore how Codex becomes a full MCP client—not just a server. We'll see how it discovers tools, orchestrates complex workflows, and becomes part of a larger ecosystem of AI agents. </p>
 <p> Codex won't just be a tool. It will use tools. And that changes everything. </p>
-<hr/>
+<hr>
 <p> Series Navigation: </p>
 <ul><li>Part 1: Architecture Overview </li><li>Part 2: The Protocol &amp; Message Flow </li><li>Part 3: Thread, Core, and the State Machine </li><li>Part 4: Execution, Approval, and Rollback </li><li>Part 5: Four Windows Into One Brain ← You are here </li><li>Part 6: MCP Tools &amp; Ecosystem Integration </li><li>Part 7: Scaling, Deployment, and Production </li><li>Part 8: The Future of AI Agents </li></ul>
-<hr/>
+<hr>
 <p> This article is part of "Anatomy of an AI Coding Agent: Dissecting the OpenAI Codex CLI," a technical deep dive into Rust, async design, and modern AI architecture. </p>
       </div>
 

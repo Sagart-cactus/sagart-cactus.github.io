@@ -20,13 +20,14 @@
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <link rel="stylesheet" href="../../assets/site.css">
-
+<meta property="article:published_time" content="2026-04-09">
+<meta property="article:author" content="Sagar Trivedi">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -73,7 +74,7 @@
 <p> Without sandboxing, you'd have a disaster. With sandboxing, you have a contained experiment. The command runs. It can see the workspace. It can download files, read configs, modify code. But it cannot escape. It cannot delete your home directory. It cannot steal SSH keys from ~/.ssh. It cannot phone home to report your source code. </p>
 <p> The sandbox is the moat. The chain-of-trust. </p>
 <p> But it's not just about preventing catastrophe. Sandboxing also enables transparency. When you see a command execute, you know it ran in a restricted environment. You know what it could access. You know what it couldn't touch. This asymmetry, bounded capability, is what makes AI-assisted development feel safe. </p>
-<hr/>
+<hr>
 <h2>The ExecPolicy DSL: Rules Before Action </h2>
 <p> Before any command executes, even inside a sandbox, it must pass a policy check. The ExecPolicy language is a simple but powerful DSL for defining command rules: </p>
 <pre><code># Allow all variations of 'ls'
@@ -93,7 +94,7 @@ network_rule(host="*", port="*", decision="deny")</code></pre>
 <p> And each rule carries a decision: </p>
 <ol><li>allowed: Execute without asking </li><li>prompt: Ask the user (they can approve or deny) </li><li>forbidden: Hard reject, no execution </li></ol>
 <p> The policy evaluator walks through all matching rules and selects the most restrictive decision. If one rule says "prompt" and another says "allowed," the user gets asked. </p>
-<hr/>
+<hr>
 <h2>The Three-Tier Approval Flow </h2>
 <p> When a command arrives at the sandbox gate, it faces a simple but iron-fisted checkpoint: </p>
 <pre><code>1. COMMAND ARRIVES
@@ -108,7 +109,7 @@ network_rule(host="*", port="*", decision="deny")</code></pre>
 <p> This three-tier system is elegant because it respects three different user postures: </p>
 <ul><li>Permissive: "I trust the AI. Run safe commands without asking." </li><li>Cautious: "Ask me about anything that could be risky." </li><li>Paranoid: "Block dangerous commands outright." </li></ul>
 <p> You can mix and match. npm install? Forbidden. npm ls? Allowed. curl to GitHub? Allowed. curl to some IP address? Prompt. The policy becomes a conversation between user intention and system capability. </p>
-<hr/>
+<hr>
 <h2>Linux Sandboxing: The Three-Layer Cake </h2>
 <p> On Linux, the sandbox is a three-layer stack. Each layer adds different constraints: </p>
 <h2>Layer 1: Bubblewrap (Filesystem Isolation) </h2>
@@ -152,7 +153,7 @@ Layer 2: Seccomp       → System call filtering
 Layer 3: Landlock      → Per-file access control
 Layer 4: no_new_privs  → Privilege escalation prevention</code></pre>
 <p> Breaking out requires compromising all four. Good luck. </p>
-<hr/>
+<hr>
 <h2>macOS Sandboxing: Seatbelt </h2>
 <p> On macOS, the story is different. Apple's Seatbelt (née Sandbox) is a capability-based sandbox that was designed for this exact use case: running untrusted code safely. </p>
 <p> Seatbelt profiles are declarative rules written in a Lisp-like syntax: </p>
@@ -165,7 +166,7 @@ Layer 4: no_new_privs  → Privilege escalation prevention</code></pre>
 <p> Codex generates Seatbelt profiles on the fly, granting: </p>
 <ul><li>Read access to system libraries, config files, and the workspace </li><li>Write access to workspace directories only </li><li>No access to sensitive paths like ~/.ssh, ~/.kube, password stores </li><li>Network isolation (when policy says so) </li></ul>
 <p> Seatbelt is more user-friendly than Linux's fragmented stack of Bubblewrap+Seccomp+Landlock because Apple built the entire OS with sandbox support. File operations, network access, and process creation all go through Seatbelt enforcement. It's the OS's native security model, not a bolt-on. </p>
-<hr/>
+<hr>
 <h2>Windows Sandboxing: ACLs, Restricted Tokens, and ConPTY </h2>
 <p> Windows takes yet another path. The Codex Windows sandbox uses three complementary mechanisms: </p>
 <h2>Mechanism 1: Access Control Lists (ACLs) </h2>
@@ -196,7 +197,7 @@ C:\Windows:
 6. Command runs with sandboxed access
 7. Output streams through ConPTY buffer</code></pre>
 <p> On Windows, the sandbox is not a separate privilege level (you can't easily unshare namespaces like on Linux). Instead, it's a capability-reduction approach: the process runs as you do, but with fewer rights. </p>
-<hr/>
+<hr>
 <h2>Network Sandboxing: Controlling the Pipes </h2>
 <p> Across all platforms, Codex also sandboxes network access. A restrictive policy might allow only: </p>
 <pre><code>network_rule(host="github.com", port=443, decision="allowed")
@@ -209,7 +210,7 @@ network_rule(host="*", port="*", decision="forbidden")</code></pre>
 <p> Windows: Uses Windows Firewall rules and token-based network isolation. ACLs on network resources are checked. </p>
 <p> Network sandboxing is crucial because it prevents: </p>
 <ul><li>Exfiltration of source code to attacker servers </li><li>Backdoor communication </li><li>Exploitation of network-based vulnerabilities </li></ul>
-<hr/>
+<hr>
 <h2>The Vault in Action: An Example </h2>
 <p> Let's trace a real command through the entire vault: </p>
 <pre><code>1. User: "Run this: npm install --save lodash"
@@ -253,13 +254,13 @@ network_rule(host="*", port="*", decision="forbidden")</code></pre>
    Package installed. Workspace updated.
    Sandbox exits. All temporary state cleaned up.</code></pre>
 <p> Each layer performed its duty. The filesystem view was isolated. System calls were filtered. Network access was restricted. And the user knew exactly what permissions the command had. </p>
-<hr/>
+<hr>
 <h2>Beyond Just Security: The Philosophy </h2>
 <p> Sandboxing isn't just about preventing disasters. It's about enabling trust through transparency. When you see a sandboxed command, you see: </p>
 <ul><li>What files it can read (explicitly granted) </li><li>What files it can write (explicitly granted) </li><li>What network hosts it can reach (explicitly granted) </li><li>What system calls it can invoke (everything except the dangerous ones) </li></ul>
 <p> This is the opposite of the old Unix philosophy of "trust by default." Instead, Codex practices zero-trust sandboxing: every access is questioned, every privilege is justified, every boundary is enforced. </p>
 <p> It's not paranoia. It's design. </p>
-<hr/>
+<hr>
 <h2>The Vault Holds </h2>
 <p> The sandbox is the most complex system in Codex precisely because it must be. An AI agent capable of running arbitrary commands is powerful and useful. An AI agent that can run arbitrary commands safely is revolutionary. </p>
 <p> Three operating systems. Three different strategies converging on the same goal: maximum security with zero user friction. </p>

@@ -1,18 +1,25 @@
 #!/usr/bin/env python3
 """Generate the on-site article archive from articles.json."""
 
-import json, os, re
+from __future__ import annotations
+
+import json
+import os
+import re
 from datetime import datetime
 from html import escape
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 SITE = "https://sagart-cactus.github.io"
-ARTS = json.load(open(os.path.join(HERE, "articles.json")))
+ARTICLES_JSON = os.path.join(HERE, "articles.json")
 
-FAVICON = ("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'"
-           "%3E%3Crect width='64' height='64' rx='14' fill='%239c3d17'/%3E%3Ctext x='32' y='44' "
-           "font-family='Georgia,serif' font-size='34' font-weight='700' text-anchor='middle' "
+with open(ARTICLES_JSON, encoding="utf-8") as _handle:
+    ARTICLES = json.load(_handle)
+
+FAVICON = ("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'"
+           "%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20"
+           "font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20"
            "fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E")
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -67,12 +74,12 @@ TOGGLE_JS = """<script>
 
 
 def iso(d):
-    return datetime.strptime(d, "%b %d, %Y").strftime("%Y-%m-%d")
+    return datetime.strptime(d, "%b %d, %Y").date().isoformat()  # noqa: DTZ007
 
 
 def pretty(d):
-    dt = datetime.strptime(d, "%b %d, %Y")
-    return dt.strftime("%-d %B %Y")
+    parsed = datetime.strptime(d, "%b %d, %Y").date()  # noqa: DTZ007
+    return parsed.strftime("%-d %B %Y")
 
 
 def page(title, desc, canonical, body, depth, extra_head="", jsonld=""):
@@ -121,9 +128,14 @@ def page(title, desc, canonical, body, depth, extra_head="", jsonld=""):
 """
 
 
+def html_voids(html):
+    """BeautifulSoup round-trips void elements as XHTML (<br/>); HTML wants <br>."""
+    return re.sub(r"<(br|hr|img)\s*/>", r"<\1>", html)
+
+
 def build_article(a, prev, nxt):
-    d = depth = 2
-    up = "../" * d
+    depth = 2
+    up = "../" * depth
     nav = []
     if prev:
         nav.append(f'<a class="prevnext prev" href="{up}articles/{prev["slug"]}/">'
@@ -149,7 +161,7 @@ def build_article(a, prev, nxt):
       </p>
 
       <div class="post-body">
-{a['html']}
+{html_voids(a['html'])}
       </div>
 
       <p class="source">Originally published on
@@ -181,25 +193,36 @@ def build_article(a, prev, nxt):
     }, indent=2)
     jsonld = f'<script type="application/ld+json">\n{jsonld}\n</script>'
 
+    extra = (f'<meta property="article:published_time" content="{iso(a["date"])}">\n'
+             f'<meta property="article:author" content="Sagar Trivedi">')
+
     return page(f"{a['title']} · Sagar Trivedi", a["excerpt"], canonical,
-                body, depth, jsonld=jsonld)
+                body, depth, extra_head=extra, jsonld=jsonld)
 
 
-def build_index(groups):
-    parts = []
-    for name, items in groups.items():
-        rows = []
-        for a in items:
-            rows.append(f"""          <li>
+def group_id(name):
+    """Stable, readable anchor id. Must not use hash(): it is salted per process."""
+    return "g-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+
+
+def entry_row(a):
+    """One article row in the archive listing."""
+    return f"""          <li>
             <a class="entry" href="{a['slug']}/">
               <span class="entry-title">{escape(a['title'])}</span>
               <span class="entry-meta"><time datetime="{iso(a['date'])}">{pretty(a['date'])}</time>
                 <span class="dot">·</span>{a['minutes']} min</span>
             </a>
             <p class="entry-excerpt">{escape(a['excerpt'])}…</p>
-          </li>""")
-        parts.append(f"""      <section class="group" aria-labelledby="g-{abs(hash(name)) % 99999}">
-        <h2 id="g-{abs(hash(name)) % 99999}">{escape(name)}</h2>
+          </li>"""
+
+
+def build_index(groups):
+    parts = []
+    for name, items in groups.items():
+        rows = [entry_row(a) for a in items]
+        parts.append(f"""      <section class="group" aria-labelledby="{group_id(name)}">
+        <h2 id="{group_id(name)}">{escape(name)}</h2>
         <ul class="entries">
 {chr(10).join(rows)}
         </ul>
@@ -237,26 +260,53 @@ def build_index(groups):
                 f"{SITE}/articles/", body, 1)
 
 
-def main():
+def write_sitemap(groups):
+    """Sitemap over every page, newest article first."""
+    urls = [(f"{SITE}/", None), (f"{SITE}/articles/", None)]
+    arts = sorted((a for v in groups.values() for a in v),
+                  key=lambda a: iso(a["date"]), reverse=True)
+    urls += [(f"{SITE}/articles/{a['slug']}/", iso(a["date"])) for a in arts]
+
+    body = "\n".join(
+        "  <url>\n    <loc>{}</loc>{}\n  </url>".format(
+            loc, f"\n    <lastmod>{mod}</lastmod>" if mod else "")
+        for loc, mod in urls)
+    xml = ('<?xml version="1.0" encoding="UTF-8"?>\n'
+           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+           f"{body}\n</urlset>\n")
+    with open(f"{ROOT}/sitemap.xml", "w", encoding="utf-8") as handle:
+        handle.write(xml)
+
+    with open(f"{ROOT}/robots.txt", "w", encoding="utf-8") as handle:
+        handle.write(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+    return len(urls)
+
+
+def main() -> int:
     groups = {}
-    for a in ARTS:
+    for a in ARTICLES:
         groups.setdefault(a["group"], []).append(a)
 
     os.makedirs(f"{ROOT}/articles", exist_ok=True)
     os.makedirs(f"{ROOT}/assets", exist_ok=True)
 
     # article pages, with prev/next inside each group
-    for name, items in groups.items():
+    for items in groups.values():
         for i, a in enumerate(items):
             prev = items[i - 1] if i > 0 else None
             nxt = items[i + 1] if i < len(items) - 1 else None
-            d = f"{ROOT}/articles/{a['slug']}"
-            os.makedirs(d, exist_ok=True)
-            open(f"{d}/index.html", "w").write(build_article(a, prev, nxt))
+            directory = f"{ROOT}/articles/{a['slug']}"
+            os.makedirs(directory, exist_ok=True)
+            with open(f"{directory}/index.html", "w", encoding="utf-8") as handle:
+                handle.write(build_article(a, prev, nxt))
 
-    open(f"{ROOT}/articles/index.html", "w").write(build_index(groups))
-    print(f"wrote {len(ARTS)} article pages + archive index")
+    with open(f"{ROOT}/articles/index.html", "w", encoding="utf-8") as handle:
+        handle.write(build_index(groups))
+    n = write_sitemap(groups)
+    print(f"wrote {len(ARTICLES)} article pages + archive index")
+    print(f"wrote sitemap.xml ({n} urls) and robots.txt")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

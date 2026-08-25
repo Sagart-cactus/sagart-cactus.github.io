@@ -387,16 +387,16 @@ footer nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
 /* --- Print -------------------------------------------------------- */
 @media print {
   :root {
-    --bg: #fff; --bg-inset: #fff; --text: #000; --text-muted: #333;
-    --rule: #bbb; --rule-strong: #999; --accent: #000; --accent-soft: transparent;
+    --bg: #ffffff; --bg-inset: #ffffff; --text: #000000; --text-muted: #333333;
+    --rule: #bbbbbb; --rule-strong: #999999; --accent: #000000; --accent-soft: transparent;
   }
   @page { margin: 14mm 15mm; }
-  body { background: #fff; color: #000; font-size: 10.5pt; line-height: 1.45; }
+  body { background: #ffffff; color: #000000; font-size: 10.5pt; line-height: 1.45; }
   .wrap { max-width: none; padding: 0; }
   .toggle, .skip, .prevnext-wrap, .backlink { display: none !important; }
-  a { color: #000; border-bottom: none; text-decoration: underline; }
+  a { color: #000000; border-bottom: none; text-decoration: underline; }
   .masthead { border-bottom: none; padding-bottom: 0; }
-  .post-body pre { background: transparent; border: 1px solid #999; }
+  .post-body pre { background: transparent; border: 1px solid #999999; }
   h1, h2, h3 { break-after: avoid; page-break-after: avoid; }
   pre, blockquote, li { break-inside: avoid; page-break-inside: avoid; }
 }

@@ -13,8 +13,13 @@ articles/           25 republished articles, one directory per article
 articles/index.html the writing archive
 assets/site.css     shared styles for the archive and article pages
 tools/              the scripts that fetch and rebuild the archive
+sitemap.xml         generated; every page, articles newest first
+robots.txt          generated; points crawlers at the sitemap
+ruff.toml           lint config for tools/
 README.md           this file
 ```
+
+`sitemap.xml` and `robots.txt` are build output. Edit `tools/build_site.py`, not those files.
 
 The resume page keeps all of its CSS inline and depends on nothing, exactly as before. Only the
 article pages use the shared stylesheet, because inlining 400 lines of CSS into 26 pages would be
@@ -180,12 +185,16 @@ python3 -m venv .venv && .venv/bin/pip install beautifulsoup4
 To add newly published articles, add them to the right group in `tools/articles_source.json`, then:
 
 ```bash
-.venv/bin/python tools/fetch_articles.py && .venv/bin/python tools/normalize.py && .venv/bin/python tools/build_site.py
+.venv/bin/python tools/fetch_articles.py && .venv/bin/python tools/build_site.py
 ```
 
-`fetch_articles.py` pulls each article and strips LinkedIn's markup down to a whitelist of semantic
-tags. `normalize.py` repairs structural defects in the source. `build_site.py` writes the pages.
-The Writing links in `index.html` are not regenerated, so add new entries there by hand.
+`fetch_articles.py` pulls each article, strips LinkedIn's markup down to a whitelist of semantic
+tags, and repairs the structural defects described below. `build_site.py` writes the article pages,
+the archive index, `sitemap.xml` and `robots.txt`.
+
+Both scripts are deterministic: rebuilding without changing `articles.json` produces byte-identical
+output, so a rebuild never shows up as noise in `git diff`. The Writing links in `index.html` are
+not regenerated, so add new entries there by hand.
 
 ### What was repaired during import
 
@@ -198,6 +207,42 @@ LinkedIn's exported markup had two defects worth knowing about, both fixed:
   together without spaces (`happens:The policy says…`). These are defects in the LinkedIn originals,
   not artifacts of the import, and they still read that way on LinkedIn. The on-site copies are
   fixed. Worth correcting at the source if you edit those articles.
+
+## Code quality
+
+Checks this repo is expected to pass, and did at last commit:
+
+- **HTML validity.** All 27 pages pass the W3C Nu validator with zero errors and zero warnings.
+  Two defects were fixed to get there: the favicon data URI contained unencoded spaces (invalid on
+  every page, including the resume), and BeautifulSoup was round-tripping void elements as XHTML
+  (`<br/>`) in 15 article pages.
+- **Accessibility.** Every page has one `<h1>`, no skipped heading levels, a skip link whose target
+  exists, `header`/`main`/`footer` landmarks, labelled `<nav>` elements, accessible names on all
+  buttons, `aria-hidden` on decorative SVGs, and a visible focus ring. Text and accent colours clear
+  WCAG AA in both themes.
+- **Deterministic builds.** Rebuilding produces byte-identical output. The group anchor ids were
+  originally derived from Python's `hash()`, which is salted per process, so every rebuild churned
+  the ids; they are now readable slugs like `#g-model-context-protocol` that also work as deep links.
+- **Lint.** `ruff check .` passes clean against `E,F,W,B,SIM,PERF,UP,I,C4,ISC,DTZ`.
+
+To re-run the checks:
+
+```bash
+.venv/bin/pip install ruff && .venv/bin/ruff check .
+```
+
+For HTML, POST a page to the validator:
+
+```bash
+curl -s -H "Content-Type: text/html; charset=utf-8" --data-binary @index.html "https://validator.w3.org/nu/?out=json"
+```
+
+### Known trade-off
+
+The design tokens are defined twice: inline in `index.html` and again in `assets/site.css`. That is
+deliberate, because the resume page is required to be a single self-contained file, and inlining the
+full stylesheet into 26 article pages would be worse. The two sets are currently identical. If you
+change a colour in one, change it in the other, or the resume and the archive will drift apart.
 
 ## House style
 
