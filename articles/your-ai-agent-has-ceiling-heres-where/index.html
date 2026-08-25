@@ -13,7 +13,7 @@
 <meta property="og:title" content="Your AI Agent Has a Ceiling. Here&#x27;s Where It Is. · Sagar Trivedi">
 <meta property="og:description" content="You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Your AI Agent Has a Ceiling. Here&#x27;s Where It Is. · Sagar Trivedi">
 <meta name="twitter:description" content="You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-07-20">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/your-ai-agent-has-ceiling-heres-where/00.jpg">
+<meta property="og:image:alt" content="Your AI Agent Has a Ceiling. Here&#x27;s Where It Is.">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/your-ai-agent-has-ceiling-heres-where/00.jpg">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -78,7 +81,7 @@
 <p> The context fills with junk. My agent read ten web pages to answer one question. All ten pages sat in its memory for the rest of the task, crowding out the stuff that mattered. Answers got vaguer as tasks got longer. </p>
 <p> Quality dropped as scope grew. One agent playing researcher, analyst, and writer in a single session does all three jobs worse than an agent doing one job. Every context switch costs something. You can see it in the output. </p>
 <p> Everything waits in line. My pipeline had five independent chunks of work. The loop did them one at a time, because that's all a loop can do. A twenty minute job that should have been four. </p>
-<h2>Recommended by LinkedIn</h2>
+<figure class="diagram"><video width="1000" height="560" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/your-ai-agent-has-ceiling-heres-where/00.jpg" aria-label="Diagram: Stage two: the agent loop"><source src="../../assets/articles/your-ai-agent-has-ceiling-heres-where/00.mp4" type="video/mp4"></video></figure>
 <p> Every tool is exposed to every step. The same agent that read untrusted input from the internet also held the tool that could write files. Nothing bad happened. But nothing was stopping it either, except hope. </p>
 <p> I started calling these the four pressures: context, quality, time, and safety. One of them alone is annoying. Two or more and you've hit the ceiling. </p>
 <h2>Stage three: agents that manage agents </h2>
@@ -131,6 +134,28 @@
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -139,7 +164,8 @@
   "headline": "Your AI Agent Has a Ceiling. Here's Where It Is.",
   "datePublished": "2026-07-20",
   "description": "You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that's built into the architecture itself. Let me wal",
-  "wordCount": 684,
+  "wordCount": 681,
+  "image": "https://sagart-cactus.github.io/assets/articles/your-ai-agent-has-ceiling-heres-where/00.jpg",
   "url": "https://sagart-cactus.github.io/articles/your-ai-agent-has-ceiling-heres-where/",
   "mainEntityOfPage": {
     "@type": "WebPage",

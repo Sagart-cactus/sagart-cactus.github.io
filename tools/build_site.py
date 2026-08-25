@@ -115,6 +115,28 @@ TOGGLE_JS = """<script>
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>"""
 
 
@@ -144,7 +166,7 @@ def page(title, desc, canonical, body, depth, extra_head="", jsonld=""):
 <meta property="og:title" content="{escape(title)}">
 <meta property="og:description" content="{escape(desc)}">
 <meta property="og:url" content="{canonical}">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="{'summary_large_image' if 'og:image' in extra_head else 'summary'}">
 <meta name="twitter:title" content="{escape(title)}">
 <meta name="twitter:description" content="{escape(desc)}">
 
@@ -171,6 +193,77 @@ def page(title, desc, canonical, body, depth, extra_head="", jsonld=""):
 </body>
 </html>
 """
+
+
+def nearest_heading(html: str, position: int) -> str:
+    """Text of the last <h2> before `position`, used to caption a diagram."""
+    heads = re.findall(r"<h2>(.*?)</h2>", html[:position], re.DOTALL)
+    return re.sub(r"<[^>]+>", "", heads[-1]).strip() if heads else ""
+
+
+def render_media(html: str, article: dict, up: str) -> str:
+    """Fill each <figure data-img="N"> placeholder with its downloaded media.
+
+    Alt text is derived from the nearest preceding heading; LinkedIn's own alt
+    is always the useless string "Article content".
+    """
+    media = article.get("media") or []
+    base = f"{up}assets/articles/{article['slug']}"
+
+    def replace(match: re.Match) -> str:
+        index = int(match.group(1))
+        if index >= len(media):
+            return ""
+        item = media[index]
+        heading = nearest_heading(html, match.start()) or article["title"]
+        alt = escape(f"Diagram: {heading}")
+        size = f'width="{item["width"]}" height="{item["height"]}"' if item["width"] else ""
+
+        if item["type"] == "video":
+            return (
+                f'<figure class="diagram">'
+                f'<video {size} autoplay loop muted playsinline preload="metadata" '
+                f'poster="{base}/{item["poster"]}" aria-label="{alt}">'
+                f'<source src="{base}/{item["src"]}" type="video/mp4">'
+                f'</video></figure>'
+            )
+        return (
+            f'<figure class="diagram">'
+            f'<img src="{base}/{item["src"]}" {size} loading="lazy" '
+            f'decoding="async" alt="{alt}"></figure>'
+        )
+
+    return re.sub(r'<figure data-img="(\d+)"></figure>', replace, html)
+
+
+def localise_links(html: str, up: str) -> str:
+    """Point cross-references at our own copies instead of back to LinkedIn.
+
+    Also drops rel="nofollow": it is correct for outbound LinkedIn links but
+    wrong once the link is internal.
+    """
+    known = {a["slug"] for a in ARTICLES}
+
+    def replace(match: re.Match) -> str:
+        url = match.group(1)
+        path = url.split("?")[0].split("#")[0].rstrip("/")
+        slug = re.sub(r"-(?:sagar-)?trivedi-[a-z0-9]+$", "", path.split("/")[-1])
+        if slug not in known:
+            return match.group(0)
+        return f'<a href="{up}articles/{slug}/">'
+
+    return re.sub(
+        r'<a href="(https://www\.linkedin\.com/pulse/[^"]+)"[^>]*>', replace, html)
+
+
+def og_image(article: dict) -> str:
+    """Absolute URL of the first diagram, used for link previews."""
+    media = article.get("media") or []
+    if not media:
+        return ""
+    first = media[0]
+    name = first.get("poster") if first["type"] == "video" else first["src"]
+    return f"{SITE}/assets/articles/{article['slug']}/{name}"
 
 
 def html_voids(html):
@@ -206,7 +299,7 @@ def build_article(a, prev, nxt):
       </p>
 
       <div class="post-body">
-{html_voids(a['html'])}
+{html_voids(localise_links(render_media(a['html'], a, up), up))}
       </div>
 
       <p class="source">Originally published on
@@ -231,6 +324,7 @@ def build_article(a, prev, nxt):
         "datePublished": iso(a["date"]),
         "description": a["excerpt"],
         "wordCount": a["words"],
+        **({"image": og_image(a)} if og_image(a) else {}),
         "url": canonical,
         "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "author": {"@type": "Person", "name": "Sagar Trivedi",
@@ -240,6 +334,11 @@ def build_article(a, prev, nxt):
 
     extra = (f'<meta property="article:published_time" content="{iso(a["date"])}">\n'
              f'<meta property="article:author" content="Sagar Trivedi">')
+    image = og_image(a)
+    if image:
+        extra += (f'\n<meta property="og:image" content="{image}">'
+                  f'\n<meta property="og:image:alt" content="{escape(a["title"])}">'
+                  f'\n<meta name="twitter:image" content="{image}">')
 
     return page(f"{a['title']} · Sagar Trivedi", a["excerpt"], canonical,
                 body, depth, extra_head=extra, jsonld=jsonld)

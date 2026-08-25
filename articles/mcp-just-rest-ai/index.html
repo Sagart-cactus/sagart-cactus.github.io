@@ -13,7 +13,7 @@
 <meta property="og:title" content="MCP Is Not Just REST for AI · Sagar Trivedi">
 <meta property="og:description" content="One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/mcp-just-rest-ai/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MCP Is Not Just REST for AI · Sagar Trivedi">
 <meta name="twitter:description" content="One of the fastest ways to misunderstand MCP is to describe it as &quot;REST for AI agents.&quot; That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-05-29">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/mcp-just-rest-ai/00.png">
+<meta property="og:image:alt" content="MCP Is Not Just REST for AI">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/mcp-just-rest-ai/00.png">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -70,6 +73,7 @@
 <p> That sounds convenient, but it misses the point. </p>
 <p> REST and MCP solve different problems for different consumers. </p>
 <p> REST is usually designed for developers writing deterministic code. MCP is designed for models choosing actions at runtime. </p>
+<figure class="diagram"><img src="../../assets/articles/mcp-just-rest-ai/00.png" width="744" height="322" loading="lazy" decoding="async" alt="Diagram: MCP Is Not Just REST for AI"></figure>
 <h2>REST Is for Known Calls </h2>
 <p> REST works beautifully when the caller already knows what it wants to do. </p>
 <p> For example: </p>
@@ -88,7 +92,6 @@
 <p> With MCP, discovery happens at runtime through calls such as tools/list, resources/list, and prompts/list. </p>
 <p> The model can be given the available capabilities as part of its working context. </p>
 <p> That changes how you design the interface. Tool names and descriptions become part of the product. </p>
-<h2>Recommended by LinkedIn</h2>
 <h2>Error Messages Need to Help the Model </h2>
 <p> A REST API can return: </p>
 <pre><code>{ "error": "403 Forbidden" }</code></pre>
@@ -154,6 +157,28 @@
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -162,7 +187,8 @@
   "headline": "MCP Is Not Just REST for AI",
   "datePublished": "2026-05-29",
   "description": "One of the fastest ways to misunderstand MCP is to describe it as \"REST for AI agents.\" That sounds convenient, but it misses the point. REST and MCP solve different problems for different consumers.",
-  "wordCount": 474,
+  "wordCount": 471,
+  "image": "https://sagart-cactus.github.io/assets/articles/mcp-just-rest-ai/00.png",
   "url": "https://sagart-cactus.github.io/articles/mcp-just-rest-ai/",
   "mainEntityOfPage": {
     "@type": "WebPage",

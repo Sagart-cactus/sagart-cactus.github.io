@@ -37,9 +37,12 @@ ALLOWED = {
     "blockquote", "hr", "a", "strong", "em", "br",
 }
 RENAME = {"b": "strong", "i": "em"}
-DROPPED = {"figure", "img", "svg", "button", "icon"}
+CONTENT_IMAGE = "article-inline_image"
+# LinkedIn injects its own related-content heading into the middle of the body.
+CHROME_HEADINGS = ("Recommended by LinkedIn",)
+DROPPED = {"svg", "button", "icon"}
 # Block tags that must never be nested inside a <p>.
-BLOCK = {"ul", "ol", "pre", "blockquote", "h2", "h3", "h4", "hr", "p"}
+BLOCK = {"ul", "ol", "pre", "blockquote", "h2", "h3", "h4", "hr", "p", "figure"}
 
 # Lists that LinkedIn flattened into run-on text in the published original.
 FLATTENED_LISTS = {
@@ -69,14 +72,28 @@ def slug_from_url(url: str) -> str:
     return re.sub(r"-(?:sagar-)?trivedi-[a-z0-9]+$", "", slug)
 
 
-def serialize(node) -> str:
-    """Render a node down to whitelisted tags, dropping attributes except href."""
+def serialize(node, images: list) -> str:
+    """Render a node down to whitelisted tags, dropping attributes except href.
+
+    Content images are replaced by an empty <figure data-img="N">; the actual
+    media is downloaded and the figure filled in later by fetch_media.py and
+    build_site.py. Anything else that is not whitelisted is unwrapped.
+    """
     if isinstance(node, NavigableString):
         return escape(str(node))
     if not isinstance(node, Tag):
         return ""
 
     name = node.name.lower()
+
+    if name == "img":
+        # LinkedIn leaves src empty and puts the real URL on data-delayed-url.
+        url = node.get("data-delayed-url") or node.get("src") or ""
+        if CONTENT_IMAGE not in url:
+            return ""                      # profile photos, related-post thumbs
+        images.append({"url": url, "linkedin_alt": node.get("alt") or ""})
+        return f'<figure data-img="{len(images) - 1}"></figure>'
+
     if name == "pre":
         return f"<pre><code>{escape(node.get_text().rstrip())}</code></pre>"
     if name in ("br", "hr"):
@@ -84,7 +101,7 @@ def serialize(node) -> str:
     if name in DROPPED:
         return ""
 
-    inner = "".join(serialize(child) for child in node.children)
+    inner = "".join(serialize(child, images) for child in node.children)
 
     if name == "a":
         href = node.get("href", "")
@@ -154,10 +171,16 @@ def _split_paragraph(para: Tag) -> None:
     para.decompose()
 
 
+def strip_chrome(html: str) -> str:
+    for heading in CHROME_HEADINGS:
+        html = re.sub(rf"<h[234]>\s*{re.escape(heading)}\s*</h[234]>", "", html)
+    return html
+
+
 def normalise(html: str, slug: str) -> str:
     for before, after in FLATTENED_LISTS.get(slug, []):
         html = html.replace(before, after)
-    return unwrap_block_paragraphs(html)
+    return unwrap_block_paragraphs(strip_chrome(html))
 
 
 def extract(page_html: str, url: str) -> dict | None:
@@ -178,15 +201,17 @@ def extract(page_html: str, url: str) -> dict | None:
         return None
     body = max(divs, key=lambda d: len(d.get_text()))
 
+    images: list[dict] = []
     blocks: list[str] = []
     for child in body.find_all(recursive=False):
         if child.name == "hr":
             blocks.append("<hr>")
             continue
         element = child.find(recursive=False) or child
-        if element.name in ("figure", "img"):
-            continue
-        fragment = collapse_whitespace(serialize(element))
+        # <figure> is no longer skipped: content images live inside them, and
+        # serialize() turns those into placeholders. Chrome images (profile
+        # photos, related-post thumbnails) serialize to "" and drop out below.
+        fragment = collapse_whitespace(serialize(element, images))
         if not fragment or fragment in ("<p></p>", "<p> </p>"):
             continue
         # LinkedIn uses <h3> for top-level sections; our page title is the <h1>.
@@ -209,6 +234,7 @@ def extract(page_html: str, url: str) -> dict | None:
         "words": words,
         "minutes": max(1, round(words / WORDS_PER_MINUTE)),
         "excerpt": re.sub(r"\s+", " ", text)[:200].strip(),
+        "images": images,
     }
 
 

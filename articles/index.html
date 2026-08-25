@@ -267,7 +267,7 @@ TUI, Exec, App Server, and MCP Server</span>
             <a class="entry" href="stop-re-explaining-your-stack-ai-every-morning/">
               <span class="entry-title">Stop re-explaining your stack to your AI every morning</span>
               <span class="entry-meta"><time datetime="2026-06-16">16 June 2026</time>
-                <span class="dot">·</span>2 min</span>
+                <span class="dot">·</span>3 min</span>
             </a>
             <p class="entry-excerpt">You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.…</p>
           </li>
@@ -275,7 +275,7 @@ TUI, Exec, App Server, and MCP Server</span>
             <a class="entry" href="your-teams-standards-keep-getting-ignored-hooks-fix-good/">
               <span class="entry-title">Your team&#x27;s standards keep getting ignored. Hooks fix that for good.</span>
               <span class="entry-meta"><time datetime="2026-06-19">19 June 2026</time>
-                <span class="dot">·</span>2 min</span>
+                <span class="dot">·</span>3 min</span>
             </a>
             <p class="entry-excerpt">Every team has a style guide nobody fully reads and a linter someone quietly disables when it gets annoying. You write the conventions down. You mention them in code review. And they still erode, one…</p>
           </li>
@@ -283,7 +283,7 @@ TUI, Exec, App Server, and MCP Server</span>
             <a class="entry" href="most-important-code-your-plugin-isnt/">
               <span class="entry-title">The most important code in your plugin isn&#x27;t code</span>
               <span class="entry-meta"><time datetime="2026-06-22">22 June 2026</time>
-                <span class="dot">·</span>2 min</span>
+                <span class="dot">·</span>3 min</span>
             </a>
             <p class="entry-excerpt">You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin…</p>
           </li>
@@ -346,6 +346,28 @@ TUI, Exec, App Server, and MCP Server</span>
     if (!root.getAttribute('data-theme')) syncLabel();
   });
   syncLabel();
+})();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
 })();
 </script>
 

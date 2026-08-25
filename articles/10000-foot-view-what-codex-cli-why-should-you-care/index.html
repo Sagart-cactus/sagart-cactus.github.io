@@ -13,7 +13,7 @@
 <meta property="og:title" content="The 10,000-Foot View: What Is Codex CLI and Why Should You Care? · Sagar Trivedi">
 <meta property="og:description" content="The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The 10,000-Foot View: What Is Codex CLI and Why Should You Care? · Sagar Trivedi">
 <meta name="twitter:description" content="The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-03-24">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/10000-foot-view-what-codex-cli-why-should-you-care/00.png">
+<meta property="og:image:alt" content="The 10,000-Foot View: What Is Codex CLI and Why Should You Care?">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/10000-foot-view-what-codex-cli-why-should-you-care/00.png">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -81,6 +84,7 @@
 <p> All of this happens locally on your machine. No data is sent to the cloud except for the minimum necessary API calls to OpenAI's language models. Your proprietary code never leaves your computer. </p>
 <h2>Enter: The Four Buildings </h2>
 <p> Codex CLI isn't a monolith. It's a carefully orchestrated collection of modular components. We think of them as four architectural "buildings," each with a distinct purpose: </p>
+<figure class="diagram"><img src="../../assets/articles/10000-foot-view-what-codex-cli-why-should-you-care/00.png" width="900" height="420" loading="lazy" decoding="async" alt="Diagram: Enter: The Four Buildings"></figure> The Four Architectural Buildings
 <h2>Building 1: The Rust Core (codex-rs) </h2>
 <p> The heart of everything. Think of this as the engine room of a ship. </p>
 <p> Inside /codex-rs, you'll find 60+ Rust crates that handle: </p>
@@ -94,13 +98,13 @@
 <h2>Building 3: The SDK (sdk/) </h2>
 <p> This is where embedability lives. Inside /sdk, you'll find: </p>
 <ul><li>TypeScript SDK: for integrating Codex into VS Code, Cursor, Windsurf, or any IDE </li><li>Python SDK: for building custom agents and tools with Codex's architecture </li><li>Python runtime: for safe Python code execution in the sandbox </li></ul>
-<h2>Recommended by LinkedIn</h2>
 <p> The SDK abstracts the core's complexity behind clean, language-specific APIs. Want to build a Slack bot that uses Codex? Want to integrate code generation into your own CI/CD pipeline? The SDK is your friend. </p>
 <h2>Building 4: The MCP Server (shell-tool-mcp) </h2>
 <p> MCP stands for Model Context Protocol, OpenAI's standard for tools and resources. </p>
 <p> This building exposes Codex's capabilities as a set of well-defined tools. It's how IDEs and other applications talk to the core. It's also a perfect example of scalable architecture: a single protocol, multiple clients, all sharing the same underlying engine. </p>
 <h2>The Architecture in One Diagram </h2>
 <p> Here's how these four buildings talk to each other: </p>
+<figure class="diagram"><img src="../../assets/articles/10000-foot-view-what-codex-cli-why-should-you-care/01.png" width="900" height="520" loading="lazy" decoding="async" alt="Diagram: The Architecture in One Diagram"></figure>
 <p> Every frontend, whether it's the interactive terminal UI, a headless invocation, or an IDE plugin, connects to the same battle-tested core. The core orchestrates everything: file I/O, subprocess execution, API calls, and sandbox management. </p>
 <h2>The Queue That Powers Everything </h2>
 <p> If the core is the engine, the Submission Queue and Event Queue are the transmission. </p>
@@ -163,6 +167,28 @@
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -171,7 +197,8 @@
   "headline": "The 10,000-Foot View: What Is Codex CLI and Why Should You Care?",
   "datePublished": "2026-03-24",
   "description": "The Very Smart Intern in a Padded Room Imagine you hire an incredibly talented software engineer. They understand every programming language. They can design systems, write tests, debug issues, and ev",
-  "wordCount": 1419,
+  "wordCount": 1420,
+  "image": "https://sagart-cactus.github.io/assets/articles/10000-foot-view-what-codex-cli-why-should-you-care/00.png",
   "url": "https://sagart-cactus.github.io/articles/10000-foot-view-what-codex-cli-why-should-you-care/",
   "mainEntityOfPage": {
     "@type": "WebPage",

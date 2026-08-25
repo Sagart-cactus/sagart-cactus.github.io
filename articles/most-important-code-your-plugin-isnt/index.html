@@ -13,7 +13,7 @@
 <meta property="og:title" content="The most important code in your plugin isn&#x27;t code · Sagar Trivedi">
 <meta property="og:description" content="You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The most important code in your plugin isn&#x27;t code · Sagar Trivedi">
 <meta name="twitter:description" content="You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-06-22">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/most-important-code-your-plugin-isnt/00.jpg">
+<meta property="og:image:alt" content="The most important code in your plugin isn&#x27;t code">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/most-important-code-your-plugin-isnt/00.jpg">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -62,7 +65,7 @@
       <h1>The most important code in your plugin isn&#x27;t code</h1>
       <p class="post-meta">
         <time datetime="2026-06-22">22 June 2026</time>
-        <span class="dot">·</span>2 min read
+        <span class="dot">·</span>3 min read
       </p>
 
       <div class="post-body">
@@ -71,6 +74,7 @@
 <p> Every resource about Claude Code plugins obsesses over file structure. Almost none of them tell you the single highest-leverage thing you can do, which is write a precise description. Claude's decision to use a skill rests entirely on what that description says. </p>
 <h2>Descriptions are a routing table </h2>
 <p> When a task comes in, Claude does not run your skill because of its name or its folder. It reads the descriptions of everything available and routes the task to whatever fits. </p>
+<figure class="diagram"><video width="760" height="320" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/most-important-code-your-plugin-isnt/00.jpg" aria-label="Diagram: Descriptions are a routing table"><source src="../../assets/articles/most-important-code-your-plugin-isnt/00.mp4" type="video/mp4"></video></figure> "Review this PR for security" scans the available skills and locks onto the one whose description matches. Get the wording wrong and it picks the wrong door, or no door at all.
 <p> Watch what changes between a weak description and a strong one: </p>
 <pre><code># Weak. Claude has nothing to match against.
 description: Code review helper
@@ -145,6 +149,28 @@ description: Creates a new GitHub issue in the specified repository. Use
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -153,7 +179,8 @@ description: Creates a new GitHub issue in the specified repository. Use
   "headline": "The most important code in your plugin isn't code",
   "datePublished": "2026-06-22",
   "description": "You can write a genuinely useful tool, wire it up perfectly, and then watch your AI assistant never reach for it. You ask it to do exactly the thing your tool was built for, and it improvises somethin",
-  "wordCount": 545,
+  "wordCount": 577,
+  "image": "https://sagart-cactus.github.io/assets/articles/most-important-code-your-plugin-isnt/00.jpg",
   "url": "https://sagart-cactus.github.io/articles/most-important-code-your-plugin-isnt/",
   "mainEntityOfPage": {
     "@type": "WebPage",

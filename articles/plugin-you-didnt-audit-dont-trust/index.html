@@ -13,7 +13,7 @@
 <meta property="og:title" content="A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust · Sagar Trivedi">
 <meta property="og:description" content="Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust · Sagar Trivedi">
 <meta name="twitter:description" content="Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what&#x27;s inside. Think about what an install actually means. The moment a p">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-06-25">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/plugin-you-didnt-audit-dont-trust/00.jpg">
+<meta property="og:image:alt" content="A plugin you didn&#x27;t audit is a plugin you don&#x27;t trust">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/plugin-you-didnt-audit-dont-trust/00.jpg">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -71,13 +74,14 @@
 <p> This is not hypothetical. Real CVEs have already exploited exactly this surface: remote code execution through malicious hooks planted in a repository's settings file, and API-key exfiltration through a rogue MCP server overriding environment variables. </p>
 <h2>You trust the whole pyramid </h2>
 <p> When you trust a plugin, you trust every component inside it, all at once. A single bad one is enough. </p>
+<figure class="diagram"><video width="700" height="340" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/plugin-you-didnt-audit-dont-trust/00.jpg" aria-label="Diagram: You trust the whole pyramid"><source src="../../assets/articles/plugin-you-didnt-audit-dont-trust/00.mp4" type="video/mp4"></video></figure> Skills, agents, hooks, MCP servers, monitors, executables. Each layer is a way in. One malicious component in an otherwise helpful plugin can exfiltrate keys or run arbitrary code.
 <p> That is the threat. Here is the discipline that contains it. </p>
 <h2>Least privilege, component by component </h2>
 <p> The principle is old, and it still wins: give each component only what it needs, and nothing more. </p>
 <ul><li>Skills: declare the tools you actually use. Reading logs? tools: Read, Glob, and nothing else. </li><li>Agents: explicit tool lists, always. A documentation writer needs Read, Write, Glob, not Bash. </li><li>MCP servers: treat each as its own trust boundary. Ship only servers you control or have audited. Reference secrets through environment variables, never hardcode them, and scope tokens to the minimum. Prefer read-only. </li><li>Hooks: the most dangerous surface, covered next. </li></ul>
 <h2>Treat every input as hostile </h2>
 <p> Hooks receive JSON from Claude on stdin. That is untrusted input, full stop. The job of a hook is to validate first and act second, and to allowlist what is permitted rather than trying to blocklist what isn't. </p>
-<h2>Recommended by LinkedIn</h2>
+<figure class="diagram"><video width="760" height="320" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/plugin-you-didnt-audit-dont-trust/01.jpg" aria-label="Diagram: Treat every input as hostile"><source src="../../assets/articles/plugin-you-didnt-audit-dont-trust/01.mp4" type="video/mp4"></video></figure> Well-formed calls pass the gate. The malicious payload is stopped at the boundary. Validate, allowlist, then run.
 <p> In practice, that looks like this: </p>
 <pre><code># Extract and validate; treat stdin as untrusted
 FILE_PATH=$(echo "$STDIN" | jq -r '.tool_input.file_path // empty')
@@ -91,7 +95,7 @@ case "$FILE_PATH" in *../*) exit 1 ;; esac</code></pre>
 <p> Powerful tools deserve careful owners. The plugin model gives you real leverage, and this is the price of holding it responsibly. </p>
 <hr>
 <p> This is one chapter of a much larger field guide. The full interactive version covers the complete trust model, secret management, supply-chain risk, and the architecture patterns that keep plugins safe at scale, all with animated diagrams. </p>
-<p> Explore the complete visual guide → <a href="https://www.linkedin.com/redir/redirect?url=https%3A%2F%2Fsagart-cactus%2Egithub%2Eio%2Flearn-claude-code-plugin%2F&amp;urlhash=Zcv2&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
+<p> Explore the complete visual guide → <a href="https://sagart-cactus.github.io/learn-claude-code-plugin/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">The Definitive Guide to Claude Code Plugins </a></p>
       </div>
 
       <p class="source">Originally published on
@@ -132,6 +136,28 @@ case "$FILE_PATH" in *../*) exit 1 ;; esac</code></pre>
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -140,7 +166,8 @@ case "$FILE_PATH" in *../*) exit 1 ;; esac</code></pre>
   "headline": "A plugin you didn't audit is a plugin you don't trust",
   "datePublished": "2026-06-25",
   "description": "Installing a plugin is one of the most trusting things you do all day, and you probably do it without reading a single line of what's inside. Think about what an install actually means. The moment a p",
-  "wordCount": 500,
+  "wordCount": 542,
+  "image": "https://sagart-cactus.github.io/assets/articles/plugin-you-didnt-audit-dont-trust/00.jpg",
   "url": "https://sagart-cactus.github.io/articles/plugin-you-didnt-audit-dont-trust/",
   "mainEntityOfPage": {
     "@type": "WebPage",

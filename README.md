@@ -171,8 +171,24 @@ expected and it resolves as the site accumulates its own history. If you ever wa
 change the `<link rel="canonical">` in the generated pages to `a["source_url"]` in
 `tools/build_site.py` and rebuild.
 
-**Images are skipped.** The originals only carry LinkedIn cover images, and those URLs are signed
-CDN links that rot. Skipping them also matches the site's no-hero-image direction.
+**Diagrams are self-hosted.** Each article carries explainer diagrams; there are 48 in total across
+the 25 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
+them. `tools/fetch_media.py` downloads everything, re-encodes animated GIFs to H.264 MP4, and
+extracts a poster frame. The whole set drops from **25.3 MB to 3.6 MB**; the worst single file goes
+from 2674 KB to 46 KB. Animated diagrams render as `<video autoplay loop muted playsinline>`, which
+behaves like a GIF but is roughly two orders of magnitude smaller. Median article page weight,
+including media, is 89 KB.
+
+Article cover images are still skipped: they are decorative, and the URLs are signed CDN links that
+rot.
+
+**Reduced motion is respected.** A visitor with `prefers-reduced-motion: reduce` gets paused videos
+with controls rather than autoplay. CSS cannot pause a video, so this is done in JS.
+
+**Alt text is generated**, not authored: each diagram gets `Diagram: <nearest preceding heading>`,
+because LinkedIn's own alt text is the useless string "Article content" on all 48. It is a large
+improvement over that, but it is not a substitute for a human describing what each diagram shows.
+Worth a pass if you want these to work properly in screen readers and image search.
 
 ### Visual field guides
 
@@ -207,11 +223,14 @@ python3 -m venv .venv && .venv/bin/pip install beautifulsoup4
 To add newly published articles, add them to the right group in `tools/articles_source.json`, then:
 
 ```bash
-.venv/bin/python tools/fetch_articles.py && .venv/bin/python tools/build_site.py
+.venv/bin/python tools/fetch_articles.py \
+  && .venv/bin/python tools/fetch_media.py \
+  && .venv/bin/python tools/build_site.py
 ```
 
 `fetch_articles.py` pulls each article, strips LinkedIn's markup down to a whitelist of semantic
-tags, and repairs the structural defects described below. `build_site.py` writes the article pages,
+tags, and repairs the structural defects described below. `fetch_media.py` downloads the diagrams
+and re-encodes the animated ones (needs `ffmpeg` on PATH). `build_site.py` writes the article pages,
 the archive index, `sitemap.xml` and `robots.txt`.
 
 Both scripts are deterministic: rebuilding without changing `articles.json` produces byte-identical
@@ -229,6 +248,14 @@ LinkedIn's exported markup had two defects worth knowing about, both fixed:
   together without spaces (`happens:The policy says…`). These are defects in the LinkedIn originals,
   not artifacts of the import, and they still read that way on LinkedIn. The on-site copies are
   fixed. Worth correcting at the source if you edit those articles.
+- **A "Recommended by LinkedIn" heading** that LinkedIn injects into the middle of the body, which
+  had leaked into 19 of the 25 articles. Now stripped.
+- **Dropped paragraphs.** An earlier version of the extractor skipped `<figure>` blocks wholesale,
+  which also discarded text that sat alongside the diagrams. Handling images properly recovered it,
+  including two full sentences in *Stop re-explaining your stack*.
+- **Cross-references now stay on-site.** Where an article links to another of your articles, the
+  link points at the local copy instead of back to LinkedIn, and `rel="nofollow"` is dropped since
+  the link is no longer outbound.
 
 ## Code quality
 

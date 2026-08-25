@@ -356,6 +356,22 @@ a.entry:hover .entry-title { color: var(--accent); }
   overflow-wrap: break-word;
 }
 
+/* Diagrams. Animated ones are MP4 standing in for the original GIFs. */
+figure.diagram {
+  margin: 2rem 0;
+}
+
+figure.diagram img,
+figure.diagram video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--bg-inset);
+}
+
 .source {
   margin: 2.75rem 0 0;
   padding-top: 1.5rem;

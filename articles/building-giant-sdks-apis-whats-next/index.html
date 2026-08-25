@@ -13,7 +13,7 @@
 <meta property="og:title" content="Building on the Giant: SDKs, APIs, and What&#x27;s Next · Sagar Trivedi">
 <meta property="og:description" content="Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Building on the Giant: SDKs, APIs, and What&#x27;s Next · Sagar Trivedi">
 <meta name="twitter:description" content="Standing on the Shoulders of Giants We&#x27;ve climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-05-08">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/building-giant-sdks-apis-whats-next/00.png">
+<meta property="og:image:alt" content="Building on the Giant: SDKs, APIs, and What&#x27;s Next">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/building-giant-sdks-apis-whats-next/00.png">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -73,6 +76,7 @@
 <p> This is where Building 3: The SDK comes in. </p>
 <p> The SDKs are the translation layer. They take everything we've learned in the previous seven articles and package it into clean, language-specific APIs that developers can actually use. TypeScript developers get a JavaScript-native interface. Python developers get Pydantic models and async generators. Anyone can extend Codex with custom MCP servers. </p>
 <p> In this final article, we're going to see how it all connects, how a developer uses the SDK to spin up a thread, send a prompt, listen to events, and process results. We'll build a small automation script together. And then we'll talk about what comes next: the future of an architecture this well-designed. </p>
+<figure class="diagram"><img src="../../assets/articles/building-giant-sdks-apis-whats-next/00.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: Standing on the Shoulders of Giants"></figure>
 <hr>
 <p><br></p>
 <h2>The TypeScript SDK: From High-Level API to Streaming Events </h2>
@@ -301,6 +305,7 @@ fixTodos().catch(console.error);</code></pre>
 <h2>The Python SDK: JSON-RPC Over Stdio </h2>
 <p> The Python SDK takes a different approach. Instead of spawning the CLI with --experimental-json, the Python SDK launches the app-server binary directly and communicates with it via JSON-RPC 2.0 over stdio. </p>
 <p> Why the difference? The Python SDK is designed for deeper integration, it can send multiple turns to the same thread without respawning the process, and it has access to lower-level primitives like approval handlers. </p>
+<figure class="diagram"><img src="../../assets/articles/building-giant-sdks-apis-whats-next/01.png" width="744" height="186" loading="lazy" decoding="async" alt="Diagram: The Python SDK: JSON-RPC Over Stdio"></figure>
 <p><br></p>
 <h2>The Client Architecture </h2>
 <pre><code>from codex_app_server import Codex
@@ -447,7 +452,6 @@ if __name__ == '__main__':
 <p> An MCP server is a subprocess that: </p>
 <ol><li>Speaks JSON-RPC 2.0 over stdio </li><li>Implements the MCP protocol (list tools, call tools, etc.) </li><li>Connects to Codex's agent process </li></ol>
 <p> Here's a minimal example: an MCP server that queries your company's database. </p>
-<h2>Recommended by LinkedIn</h2>
 <pre><code>from mcp.server import Server
 from mcp.types import Tool, TextContent
 import sqlite3
@@ -499,6 +503,7 @@ if __name__ == "__main__":
 <hr>
 <h2>Architecture Patterns Worth Stealing </h2>
 <p> Over the course of these eight articles, we've seen some genuinely clever design patterns. Even if you never touch Codex's code, these patterns are worth understanding, they'll make you a better architect. </p>
+<figure class="diagram"><img src="../../assets/articles/building-giant-sdks-apis-whats-next/02.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: Architecture Patterns Worth Stealing"></figure>
 <p><br></p>
 <h2>1. SQ/EQ Decoupling: Separation of Concerns </h2>
 <p> The Submission Queue and Event Queue are separate. When you submit a prompt, it doesn't immediately execute. The orchestrator: </p>
@@ -536,14 +541,14 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
 <hr>
 <h2>The Series Retrospective: What We've Built </h2>
 <p> Let's take a step back. Over eight articles, what have we actually learned? </p>
-<p><a href="https://www.linkedin.com/pulse/10000-foot-view-what-codex-cli-why-should-you-care-sagar-trivedi-oos1c/?trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 1: The 10,000-Foot View </a> introduced you to Codex as a concept and showed you the four buildings. </p>
-<p><a href="https://www.linkedin.com/pulse/nervous-system-how-components-talk-sagar-trivedi-gpj8c/?trackingId=HqRTl8rmd4ryAfFIkr89QA%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 2: The Nervous System </a> taught you about the Submission Queue and Event Queue, the message-passing backbone that keeps everything alive. </p>
-<p><a href="https://www.linkedin.com/pulse/brain-inside-core-engine-sagar-trivedi-7gkec/?trackingId=Glxzem1rnUwHo10196Hhhw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 3: The Brain </a> dissected the orchestrator itself, how it reasons about code, makes decisions, and coordinates everything. </p>
-<p><a href="https://www.linkedin.com/pulse/vault-how-every-command-runs-sandbox-sagar-trivedi-jse4c/?trackingId=iiirjwhaaR3OWLmWuzGvOw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 4: The Vault </a> showed you the sandboxing layer, how dangerous operations are isolated, and what happens inside a sandbox. </p>
-<p><a href="https://www.linkedin.com/pulse/part-5-four-windows-one-brain-tui-exec-app-server-mcp-sagar-trivedi-xnmlc/?trackingId=0D44JpFOtUQaw8Xkn5Q%2BFw%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 5: Four Windows </a> revealed the different frontends, how you can interact with Codex via terminal, headless execution, MCP server, or IDE plugins. </p>
-<p><a href="https://www.linkedin.com/pulse/swiss-army-knife-mcp-tools-plugin-ecosystem-sagar-trivedi-chqmc/?trackingId=vcvszCabY72CpBDBnPxmIA%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 6: The Swiss Army Knife </a> explored the tools: reading and writing files, executing commands, calling the AI, web search, and memory management. </p>
-<p><a href="https://www.linkedin.com/pulse/part-7-safety-net-sagar-trivedi-tcjxc/?trackingId=MeJShJb56o97HTkz60iY%2Fg%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 7: The Safety Net </a> deep-dived into safety mechanisms: approval policies, audit logging, and the constraints that keep everything secure. </p>
-<p><a href="https://www.linkedin.com/pulse/building-giant-sdks-apis-whats-next-sagar-trivedi-vmvsc/?trackingId=OwVhsusCp%2F3DLGE1nHfVrg%3D%3D&amp;trk=article-ssr-frontend-pulse_little-text-block" rel="nofollow">Article 8: Building on the Giant </a> (this article) showed you the SDKs and how to extend Codex with custom MCP servers. </p>
+<p><a href="../../articles/10000-foot-view-what-codex-cli-why-should-you-care/">Article 1: The 10,000-Foot View </a> introduced you to Codex as a concept and showed you the four buildings. </p>
+<p><a href="../../articles/nervous-system-how-components-talk/">Article 2: The Nervous System </a> taught you about the Submission Queue and Event Queue, the message-passing backbone that keeps everything alive. </p>
+<p><a href="../../articles/brain-inside-core-engine/">Article 3: The Brain </a> dissected the orchestrator itself, how it reasons about code, makes decisions, and coordinates everything. </p>
+<p><a href="../../articles/vault-how-every-command-runs-sandbox/">Article 4: The Vault </a> showed you the sandboxing layer, how dangerous operations are isolated, and what happens inside a sandbox. </p>
+<p><a href="../../articles/part-5-four-windows-one-brain-tui-exec-app-server-mcp/">Article 5: Four Windows </a> revealed the different frontends, how you can interact with Codex via terminal, headless execution, MCP server, or IDE plugins. </p>
+<p><a href="../../articles/swiss-army-knife-mcp-tools-plugin-ecosystem/">Article 6: The Swiss Army Knife </a> explored the tools: reading and writing files, executing commands, calling the AI, web search, and memory management. </p>
+<p><a href="../../articles/part-7-safety-net/">Article 7: The Safety Net </a> deep-dived into safety mechanisms: approval policies, audit logging, and the constraints that keep everything secure. </p>
+<p><a href="../../articles/building-giant-sdks-apis-whats-next/">Article 8: Building on the Giant </a> (this article) showed you the SDKs and how to extend Codex with custom MCP servers. </p>
 <p> Together, these eight articles form a complete mental model of how a sophisticated AI coding agent works. </p>
 <p> You understand: </p>
 <ul><li>Why it's built in Rust (performance and safety) </li><li>How it communicates internally (message queues and events) </li><li>How it makes decisions (orchestration and state machines) </li><li>How it stays secure (sandboxing and approval policies) </li><li>How you can use it (SDKs and APIs) </li><li>How you can extend it (MCP servers) </li></ul>
@@ -606,6 +611,28 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -614,7 +641,8 @@ impl Sandbox for WindowsSandbox { /* ... */ }</code></pre>
   "headline": "Building on the Giant: SDKs, APIs, and What's Next",
   "datePublished": "2026-05-08",
   "description": "Standing on the Shoulders of Giants We've climbed seven mountains together. In Article 1, we saw the 10,000-foot view of the four buildings that make up Codex. In Article 2, we traced the nervous syst",
-  "wordCount": 3358,
+  "wordCount": 3355,
+  "image": "https://sagart-cactus.github.io/assets/articles/building-giant-sdks-apis-whats-next/00.png",
   "url": "https://sagart-cactus.github.io/articles/building-giant-sdks-apis-whats-next/",
   "mainEntityOfPage": {
     "@type": "WebPage",

@@ -13,7 +13,7 @@
 <meta property="og:title" content="Why RAG Exists: The Context Window Is a Red Herring · Sagar Trivedi">
 <meta property="og:description" content="The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Why RAG Exists: The Context Window Is a Red Herring · Sagar Trivedi">
 <meta name="twitter:description" content="The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-08-24">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/why-rag-exists-context-window-red-herring/00.jpg">
+<meta property="og:image:alt" content="Why RAG Exists: The Context Window Is a Red Herring">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/why-rag-exists-context-window-red-herring/00.jpg">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -71,6 +74,7 @@
 <p> Here is the shape of that failure. A RAG system starts giving confident, well-written, wrong answers on maybe one question in six. The natural response is to assume too much is being crammed in and things are getting lost. So you cut the number of retrieved chunks. No change. You raise it. No change. You move to a model with a much bigger window on the theory that there is more headroom. Sometimes slightly worse. </p>
 <p> Weeks can disappear into this, because every one of those changes is tuning what happens after retrieval, on queries where retrieval already failed. The correct document was never in the results at all. </p>
 <p> That failure mode is a direct consequence of believing the capacity story. </p>
+<figure class="diagram"><video width="960" height="540" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/why-rag-exists-context-window-red-herring/00.jpg" aria-label="Diagram: Why RAG Exists: The Context Window Is a Red Herring"><source src="../../assets/articles/why-rag-exists-context-window-red-herring/00.mp4" type="video/mp4"></video></figure>
 <h2>The four reasons, in order of how much they actually matter </h2>
 <p> Recency. The model's weights froze at training time. Your pricing did not. Your policies did not. No context window size fixes a model not knowing about something that happened after it was trained. </p>
 <p> Privacy and scope. Your contracts were never in the training data and should not have been. Neither should customer A's records be visible to customer B. One set of weights cannot hold a per-user view of the world. It has one view, and everyone with access gets the same one. </p>
@@ -86,11 +90,13 @@
 <p> Which gives you a one-sentence definition that is more useful than any box diagram: </p>
 <p> Separate knowledge from reasoning. The model is a reasoning engine you rent. The corpus is memory you own, update, permission and audit. </p>
 <p> Everything else in retrieval is an engineering consequence of that split. </p>
+<figure class="diagram"><video width="960" height="540" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/why-rag-exists-context-window-red-herring/01.jpg" aria-label="Diagram: Why verifiability decides the architecture"><source src="../../assets/articles/why-rag-exists-context-window-red-herring/01.mp4" type="video/mp4"></video></figure>
 <h2>Two diagnostics worth running before you tune anything </h2>
 <p> The grounding test. Take a query the system answers correctly. Now look at the chunks that were actually retrieved. Do they contain the answer? </p>
 <p> If they do not, the model answered from its own training knowledge and got lucky. Which means grounding is not enforced anywhere in the pipeline, so every answer it produces is unverifiable, including the wrong ones. A correct answer can hide a completely broken guarantee, and most teams would call that a passing test. </p>
 <p> The retrieval test. When something goes wrong, before touching anything downstream, ask whether the right chunk was retrieved at all. </p>
 <p> A large fraction of the time it was not, and everything after retrieval is irrelevant to the fix. </p>
+<figure class="diagram"><video width="960" height="540" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/why-rag-exists-context-window-red-herring/02.jpg" aria-label="Diagram: Two diagnostics worth running before you tune anything"><source src="../../assets/articles/why-rag-exists-context-window-red-herring/02.mp4" type="video/mp4"></video></figure>
 <h2>The reflex worth building </h2>
 <p> The capacity explanation trains a bad instinct. Something goes wrong, and you reach for "it does not fit." That framing is comfortable because capacity problems are loud. They throw errors. They truncate visibly. They appear in logs. </p>
 <p> Quality problems do none of that. They return a confident, well-written, correctly formatted, wrong answer, and nothing anywhere reports a problem. </p>
@@ -139,6 +145,28 @@
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -148,6 +176,7 @@
   "datePublished": "2026-08-24",
   "description": "The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It",
   "wordCount": 889,
+  "image": "https://sagart-cactus.github.io/assets/articles/why-rag-exists-context-window-red-herring/00.jpg",
   "url": "https://sagart-cactus.github.io/articles/why-rag-exists-context-window-red-herring/",
   "mainEntityOfPage": {
     "@type": "WebPage",

@@ -13,7 +13,7 @@
 <meta property="og:title" content="Stop re-explaining your stack to your AI every morning · Sagar Trivedi">
 <meta property="og:description" content="You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Stop re-explaining your stack to your AI every morning · Sagar Trivedi">
 <meta name="twitter:description" content="You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-06-16">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/stop-re-explaining-your-stack-ai-every-morning/00.jpg">
+<meta property="og:image:alt" content="Stop re-explaining your stack to your AI every morning">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/stop-re-explaining-your-stack-ai-every-morning/00.jpg">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -62,7 +65,7 @@
       <h1>Stop re-explaining your stack to your AI every morning</h1>
       <p class="post-meta">
         <time datetime="2026-06-16">16 June 2026</time>
-        <span class="dot">·</span>2 min read
+        <span class="dot">·</span>3 min read
       </p>
 
       <div class="post-body">
@@ -72,10 +75,11 @@
 <h2>One bundle, six kinds of power </h2>
 <p> A plugin is not a prompt wrapper. It is a composable unit that can carry any combination of six things: skills (reusable instruction sets), agents (specialised sub-assistants with their own tools), hooks (scripts that fire on events), MCP servers (live integrations with your APIs), LSP servers (real code intelligence), and background monitors (watchers that stream context as things happen). </p>
 <p> Install one, and Claude Code lights up with all of them at once. </p>
+<figure class="diagram"><video width="760" height="340" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/stop-re-explaining-your-stack-ai-every-morning/00.jpg" aria-label="Diagram: One bundle, six kinds of power"><source src="../../assets/articles/stop-re-explaining-your-stack-ai-every-morning/00.mp4" type="video/mp4"></video></figure> One plugin can carry skills, agents, hooks, MCP servers, LSP servers, and monitors. Claude sees them all the moment it is enabled.
 <p> The mental model that makes this click: if Claude Code is the operating system, plugins are the applications. You do not reinstall your editor every time you open a file. You should not re-teach your assistant every time you open a session. </p>
 <h2>It is all ready before you type a word </h2>
 <p> When Claude Code starts with a plugin enabled, the loading happens in a fixed order, and all of it finishes before Claude's first response. The manifest registers the plugin's identity, skills join the command list, agents load into the registry, hooks arm themselves for lifecycle events, MCP and LSP servers boot as child processes, and monitors begin streaming. </p>
-<h2>Recommended by LinkedIn</h2>
+<figure class="diagram"><video width="760" height="300" autoplay loop muted playsinline preload="metadata" poster="../../assets/articles/stop-re-explaining-your-stack-ai-every-morning/01.jpg" aria-label="Diagram: It is all ready before you type a word"><source src="../../assets/articles/stop-re-explaining-your-stack-ai-every-morning/01.mp4" type="video/mp4"></video></figure> Manifest, skills, agents, hooks, MCP, LSP, monitors. A scanning loader brings each one online before you ask your first question.
 <p> You never see the boot sequence. You just noticed that Claude already knows your conventions. </p>
 <h2>When to reach for a plugin </h2>
 <p> The honest answer is: not always. If it is just you, on one project, for a quick experiment, a standalone .claude/ directory is faster to set up and perfectly fine. The moment any of these become true, build a plugin instead: </p>
@@ -127,6 +131,28 @@
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -135,7 +161,8 @@
   "headline": "Stop re-explaining your stack to your AI every morning",
   "datePublished": "2026-06-16",
   "description": "You onboard a new engineer once. You walk them through the architecture, the folder layout, the three things that look weird but exist for a reason, and the rule about never putting money in a float.",
-  "wordCount": 547,
+  "wordCount": 586,
+  "image": "https://sagart-cactus.github.io/assets/articles/stop-re-explaining-your-stack-ai-every-morning/00.jpg",
   "url": "https://sagart-cactus.github.io/articles/stop-re-explaining-your-stack-ai-every-morning/",
   "mainEntityOfPage": {
     "@type": "WebPage",

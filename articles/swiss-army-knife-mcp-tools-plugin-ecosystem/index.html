@@ -13,7 +13,7 @@
 <meta property="og:title" content="The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem · Sagar Trivedi">
 <meta property="og:description" content="Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem · Sagar Trivedi">
 <meta name="twitter:description" content="Welcome back to our journey through Codex&#x27;s architecture. In Part 5, we explored how Codex manifests in four different frontends—TUI, exec, app-server, MCP server. But we only touched the surface of M">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-04-20">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/00.png">
+<meta property="og:image:alt" content="The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/00.png">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -75,6 +78,7 @@
 <h2>What is MCP? </h2>
 <p> MCP is a standardised protocol that lets AI models (Claude, others) request information from, or invoke tools on, external systems. It's not specific to Codex. It's not specific to OpenAI. It's an open specification that any AI agent can speak. </p>
 <p> Here's the protocol at its core: </p>
+<figure class="diagram"><img src="../../assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/00.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: What is MCP?"></figure>
 <p> It's JSON-RPC 2.0 over stdio (or HTTP, or WebSocket). Messages flow in both directions. The agent asks, the server responds. The server never initiates, the agent is always in control. </p>
 <h2>Why MCP Matters for Codex </h2>
 <p> Without MCP, Codex could only: </p>
@@ -88,6 +92,7 @@
 <h2>The Architecture </h2>
 <p> When you start Codex, before it talks to Claude, it: </p>
 <ol><li>Reads config from ~/.codex/config.toml </li><li>Spawns MCP servers (from the [mcp_servers] section) </li><li>Discovers their tools (via list_tools request) </li><li>Injects tool definitions into Claude's context </li><li>Routes tool calls to the correct server </li><li>Returns results to Claude </li></ol>
+<figure class="diagram"><img src="../../assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/01.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: The Architecture"></figure>
 <h2>rmcp-client: The Orchestrator </h2>
 <p> The rmcp_client crate (in /codex-rs/rmcp-client/src/rmcp_client.rs) is Codex's MCP client. Let's understand its key responsibilities. </p>
 <p> Initialization &amp; Discovery: </p>
@@ -275,7 +280,6 @@ pub fn cached_all_connectors(cache_key: &amp;AllConnectorsCacheKey) -&gt; Option
 
     Ok(skills)
 }</code></pre>
-<h2>Recommended by LinkedIn</h2>
 <h2>Skill Injection </h2>
 <p> Skills are injected into Claude's context as tools. Each skill is a YAML/TOML file (e.g., deploy-to-staging/SKILL.md) that describes: </p>
 <pre><code>---
@@ -367,6 +371,7 @@ No → fail with error</code></pre>
 <h2>Deep Dive 5: Tool Call Flow </h2>
 <p> Let's trace a complete tool call from start to finish. </p>
 <h2>Scenario: Claude Needs to List Files </h2>
+<figure class="diagram"><img src="../../assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/02.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: Scenario: Claude Needs to List Files"></figure>
 <p> This entire flow happens in milliseconds, with full observability. Every command is logged, every decision is audited. </p>
 <hr>
 <h2>The Plugin Ecosystem </h2>
@@ -422,6 +427,7 @@ env = { JIRA_TOKEN = "$JIRA_API_TOKEN" }</code></pre>
 <p> Imagine: </p>
 <ul><li>GitHub MCP: PR review, branch creation, workflow triggers </li><li>Slack MCP: Send messages, query channels, post threads </li><li>Datadog MCP: Query logs, create incidents, check metrics </li><li>Vercel MCP: Deploy, check build status, manage environment variables </li><li>Your Company's MCP: Query internal APIs, check compliance, access business logic </li></ul>
 <p> Codex becomes a central hub that talks to all your tools. Claude, inside Codex, can orchestrate workflows across your entire tech stack. </p>
+<figure class="diagram"><img src="../../assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/03.png" width="1333" height="1000" loading="lazy" decoding="async" alt="Diagram: The Ecosystem Vision"></figure>
 <h2>Security: The Rules Gauntlet </h2>
 <p> With great power (many tools) comes great responsibility. How does Codex keep you safe? </p>
 <h2>Layers of Defense </h2>
@@ -498,6 +504,28 @@ TUI, Exec, App Server, and MCP Server</a><a class="prevnext next" href="../../ar
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -506,7 +534,8 @@ TUI, Exec, App Server, and MCP Server</a><a class="prevnext next" href="../../ar
   "headline": "The Swiss Army Knife: MCP, Tools, and the Plugin Ecosystem",
   "datePublished": "2026-04-20",
   "description": "Welcome back to our journey through Codex's architecture. In Part 5, we explored how Codex manifests in four different frontends\u2014TUI, exec, app-server, MCP server. But we only touched the surface of M",
-  "wordCount": 1946,
+  "wordCount": 1943,
+  "image": "https://sagart-cactus.github.io/assets/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/00.png",
   "url": "https://sagart-cactus.github.io/articles/swiss-army-knife-mcp-tools-plugin-ecosystem/",
   "mainEntityOfPage": {
     "@type": "WebPage",

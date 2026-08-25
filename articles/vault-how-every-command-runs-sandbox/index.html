@@ -13,7 +13,7 @@
 <meta property="og:title" content="The Vault: How Every Command Runs in a Sandbox · Sagar Trivedi">
 <meta property="og:description" content="We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen">
 <meta property="og:url" content="https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Vault: How Every Command Runs in a Sandbox · Sagar Trivedi">
 <meta name="twitter:description" content="We&#x27;ve traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here&#x27;s the sacred truth that separates a useful AI agen">
 
@@ -28,6 +28,9 @@
 <link rel="stylesheet" href="../../assets/site.css">
 <meta property="article:published_time" content="2026-04-09">
 <meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagart-cactus.github.io/assets/articles/vault-how-every-command-runs-sandbox/00.png">
+<meta property="og:image:alt" content="The Vault: How Every Command Runs in a Sandbox">
+<meta name="twitter:image" content="https://sagart-cactus.github.io/assets/articles/vault-how-every-command-runs-sandbox/00.png">
 <script>
   try {
     var t = localStorage.getItem('theme');
@@ -96,6 +99,7 @@ network_rule(host="*", port="*", decision="deny")</code></pre>
 <p> The policy evaluator walks through all matching rules and selects the most restrictive decision. If one rule says "prompt" and another says "allowed," the user gets asked. </p>
 <hr>
 <h2>The Three-Tier Approval Flow </h2>
+<figure class="diagram"><img src="../../assets/articles/vault-how-every-command-runs-sandbox/00.png" width="744" height="264" loading="lazy" decoding="async" alt="Diagram: The Three-Tier Approval Flow"></figure>
 <p> When a command arrives at the sandbox gate, it faces a simple but iron-fisted checkpoint: </p>
 <pre><code>1. COMMAND ARRIVES
    ↓
@@ -111,6 +115,7 @@ network_rule(host="*", port="*", decision="deny")</code></pre>
 <p> You can mix and match. npm install? Forbidden. npm ls? Allowed. curl to GitHub? Allowed. curl to some IP address? Prompt. The policy becomes a conversation between user intention and system capability. </p>
 <hr>
 <h2>Linux Sandboxing: The Three-Layer Cake </h2>
+<figure class="diagram"><img src="../../assets/articles/vault-how-every-command-runs-sandbox/01.png" width="744" height="271" loading="lazy" decoding="async" alt="Diagram: Linux Sandboxing: The Three-Layer Cake"></figure>
 <p> On Linux, the sandbox is a three-layer stack. Each layer adds different constraints: </p>
 <h2>Layer 1: Bubblewrap (Filesystem Isolation) </h2>
 <p> Bubblewrap is a user-space program that creates lightweight namespaces. Think of it as a jailbreak in reverse, it builds walls instead of tearing them down. </p>
@@ -157,7 +162,6 @@ Layer 4: no_new_privs  → Privilege escalation prevention</code></pre>
 <h2>macOS Sandboxing: Seatbelt </h2>
 <p> On macOS, the story is different. Apple's Seatbelt (née Sandbox) is a capability-based sandbox that was designed for this exact use case: running untrusted code safely. </p>
 <p> Seatbelt profiles are declarative rules written in a Lisp-like syntax: </p>
-<h2>Recommended by LinkedIn</h2>
 <pre><code>(allow default)
 (deny file-write-data (subpath "/System"))
 (deny file-write-data (subpath "/Library"))
@@ -313,6 +317,28 @@ TUI, Exec, App Server, and MCP Server</a></nav>
   });
   syncLabel();
 })();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
 </script>
 <script type="application/ld+json">
 {
@@ -321,7 +347,8 @@ TUI, Exec, App Server, and MCP Server</a></nav>
   "headline": "The Vault: How Every Command Runs in a Sandbox",
   "datePublished": "2026-04-09",
   "description": "We've traced the journey from protocol to nervous system to the beating heart of the orchestrator. Commands arrive. The engine accepts them. But here's the sacred truth that separates a useful AI agen",
-  "wordCount": 2016,
+  "wordCount": 2013,
+  "image": "https://sagart-cactus.github.io/assets/articles/vault-how-every-command-runs-sandbox/00.png",
   "url": "https://sagart-cactus.github.io/articles/vault-how-every-command-runs-sandbox/",
   "mainEntityOfPage": {
     "@type": "WebPage",
