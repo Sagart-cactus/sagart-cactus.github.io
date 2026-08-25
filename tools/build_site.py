@@ -22,6 +22,51 @@ FAVICON = ("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20vie
            "font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20"
            "fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E")
 
+# Consolidated guide sites, each one a companion to an article group.
+# "group" must match a group name in articles_source.json, or "" for none.
+GUIDES = [
+    {
+        "name": "RAG · The Visual Field Guide",
+        "url": "https://sagart-cactus.github.io/learn-rag/",
+        "short": "RAG field guide",
+        "group": "Agents, evaluation and retrieval",
+        "blurb": "Why retrieval exists, how embeddings and BM25 actually work, chunking, "
+                 "reranking and ANN indexes.",
+    },
+    {
+        "name": "Managed Agents · The Visual Field Guide",
+        "url": "https://sagart-cactus.github.io/learn-managed-agents/",
+        "short": "Managed Agents field guide",
+        "group": "Agents, evaluation and retrieval",
+        "blurb": "Orchestration, parent and child isolation, parallelism, model matching, cost, "
+                 "and when not to reach for an agent.",
+    },
+    {
+        "name": "The MCP Knowledgebase",
+        "url": "https://sagart-cactus.github.io/learn-mcp/",
+        "short": "The MCP Knowledgebase",
+        "group": "Model Context Protocol",
+        "blurb": "Model Context Protocol explained: architecture, primitives, call flow, server "
+                 "design and security.",
+    },
+    {
+        "name": "Anatomy of an AI Coding Agent",
+        "url": "https://sagart-cactus.github.io/learn-codex-internals/",
+        "short": "Anatomy of an AI Coding Agent",
+        "group": "Inside Codex CLI, an eight-part series",
+        "blurb": "An eight-part dissection of the OpenAI Codex CLI: architecture, protocols, "
+                 "prompt assembly, sandboxing, tools and safety.",
+    },
+    {
+        "name": "Claude Code Plugins · The Definitive Visual Guide",
+        "url": "https://sagart-cactus.github.io/learn-claude-code-plugin/",
+        "short": "Claude Code Plugins guide",
+        "group": "Agent tooling and team practice",
+        "blurb": "Skills, agents, hooks, MCP and LSP servers, monitors, security and workflow "
+                 "automation.",
+    },
+]
+
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
@@ -217,12 +262,42 @@ def entry_row(a):
           </li>"""
 
 
+def guides_section():
+    items = "\n".join(
+        f"""          <li>
+            <a href="{g['url']}">{escape(g['name'])}</a>
+            <span>{escape(g['blurb'])}</span>
+          </li>"""
+        for g in GUIDES
+    )
+    return f"""      <section class="group guides" aria-labelledby="g-visual-field-guides">
+        <h2 id="g-visual-field-guides">Visual field guides</h2>
+        <p class="group-note">Each series is consolidated into a single illustrated guide, built
+        to be handed to a team rather than read once.</p>
+        <ul class="guide-list">
+{items}
+        </ul>
+      </section>"""
+
+
+def companion_link(group_name):
+    """Guides that consolidate a given article group."""
+    matches = [g for g in GUIDES if g["group"] == group_name]
+    if not matches:
+        return ""
+    anchors = [f'<a href="{g["url"]}">{escape(g["short"])}</a>' for g in matches]
+    links = anchors[0] if len(anchors) == 1 else " and ".join(
+        [", ".join(anchors[:-1]), anchors[-1]])
+    label = "Companion guide" if len(matches) == 1 else "Companion guides"
+    return f'\n        <p class="companion">{label}: {links}</p>'
+
+
 def build_index(groups):
-    parts = []
+    parts = [guides_section()]
     for name, items in groups.items():
         rows = [entry_row(a) for a in items]
         parts.append(f"""      <section class="group" aria-labelledby="{group_id(name)}">
-        <h2 id="{group_id(name)}">{escape(name)}</h2>
+        <h2 id="{group_id(name)}">{escape(name)}</h2>{companion_link(name)}
         <ul class="entries">
 {chr(10).join(rows)}
         </ul>

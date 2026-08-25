@@ -457,6 +457,39 @@ ul.article-list > li::before {
   background: var(--rule-strong);
 }
 
+.group-note {
+  margin: -0.2rem 0 0.85rem;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+  max-width: 58ch;
+}
+
+ul.guide-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.guide-list > li { margin-bottom: 0.9rem; }
+ul.guide-list > li:last-child { margin-bottom: 0; }
+
+ul.guide-list > li > a {
+  font-size: 1rem;
+  font-weight: 500;
+  border-bottom-color: transparent;
+}
+
+ul.guide-list > li > a:hover { border-bottom-color: currentColor; }
+
+ul.guide-list > li > span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
 ul.article-list a {
   color: var(--text);
   border-bottom-color: var(--rule);
@@ -924,6 +957,41 @@ footer nav {
           I write about the parts of AI systems that decide whether they survive production:
           evaluation, failure modes, cost, and the protocols and tooling underneath.
         </p>
+
+        <div class="article-group">
+          <h3>Visual field guides</h3>
+          <p class="group-note">
+            Each series is consolidated into a single illustrated guide, built to be handed to a
+            team rather than read once.
+          </p>
+          <ul class="guide-list">
+            <li>
+              <a href="https://sagart-cactus.github.io/learn-rag/">RAG · The Visual Field Guide</a>
+              <span>Why retrieval exists, how embeddings and BM25 actually work, chunking,
+                reranking and ANN indexes.</span>
+            </li>
+            <li>
+              <a href="https://sagart-cactus.github.io/learn-managed-agents/">Managed Agents · The Visual Field Guide</a>
+              <span>Orchestration, parent and child isolation, parallelism, model matching, cost,
+                and when not to reach for an agent.</span>
+            </li>
+            <li>
+              <a href="https://sagart-cactus.github.io/learn-mcp/">The MCP Knowledgebase</a>
+              <span>Model Context Protocol explained: architecture, primitives, call flow, server
+                design and security.</span>
+            </li>
+            <li>
+              <a href="https://sagart-cactus.github.io/learn-codex-internals/">Anatomy of an AI Coding Agent</a>
+              <span>An eight-part dissection of the OpenAI Codex CLI: architecture, protocols,
+                prompt assembly, sandboxing, tools and safety.</span>
+            </li>
+            <li>
+              <a href="https://sagart-cactus.github.io/learn-claude-code-plugin/">Claude Code Plugins · The Definitive Visual Guide</a>
+              <span>Skills, agents, hooks, MCP and LSP servers, monitors, security and workflow
+                automation.</span>
+            </li>
+          </ul>
+        </div>
 
         <div class="article-group">
           <h3>Agents, evaluation and retrieval</h3>

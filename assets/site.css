@@ -181,6 +181,46 @@ a:hover { border-bottom-color: currentColor; }
   color: var(--text-muted);
 }
 
+.group-note {
+  margin: -0.4rem 0 1rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  max-width: 58ch;
+}
+
+.companion {
+  margin: -0.5rem 0 1rem;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+ul.guide-list { margin: 0; padding: 0; list-style: none; }
+
+ul.guide-list > li {
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--rule);
+}
+
+ul.guide-list > li:last-child { border-bottom: 1px solid var(--rule); }
+
+ul.guide-list > li > a {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.008em;
+  border-bottom-color: transparent;
+}
+
+ul.guide-list > li > a:hover { border-bottom-color: currentColor; }
+
+ul.guide-list > li > span {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  max-width: 62ch;
+}
+
 ul.entries { margin: 0; padding: 0; list-style: none; }
 
 ul.entries > li {

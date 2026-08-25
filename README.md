@@ -174,6 +174,28 @@ change the `<link rel="canonical">` in the generated pages to `a["source_url"]` 
 **Images are skipped.** The originals only carry LinkedIn cover images, and those URLs are signed
 CDN links that rot. Skipping them also matches the site's no-hero-image direction.
 
+### Visual field guides
+
+Five separate repositories publish consolidated, illustrated versions of the article series. They
+are GitHub Pages project sites, so they already live on this same domain under `/learn-*/`:
+
+| Guide | Consolidates |
+| --- | --- |
+| [RAG](https://sagart-cactus.github.io/learn-rag/) | Agents, evaluation and retrieval |
+| [Managed Agents](https://sagart-cactus.github.io/learn-managed-agents/) | Agents, evaluation and retrieval |
+| [The MCP Knowledgebase](https://sagart-cactus.github.io/learn-mcp/) | Model Context Protocol |
+| [Anatomy of an AI Coding Agent](https://sagart-cactus.github.io/learn-codex-internals/) | Inside Codex CLI |
+| [Claude Code Plugins](https://sagart-cactus.github.io/learn-claude-code-plugin/) | Agent tooling and team practice |
+
+They are linked in two places: a "Visual field guides" block at the top of both the resume's Writing
+section and the archive index, and a per-group "Companion guide" line on the archive so a reader
+inside one series finds its guide without scrolling back up.
+
+The list lives in the `GUIDES` constant in `tools/build_site.py`. Each entry has a `name`, `url`,
+`short` label used in the companion lines, a `blurb`, and a `group` that must match a group name in
+`articles_source.json` (use `""` for a guide with no matching group). The archive block is generated
+from it; **the copy in `index.html` is hand-written, so update both** if you add a guide.
+
 ### Rebuilding or adding an article
 
 The pipeline needs `beautifulsoup4`. Use a virtualenv, since macOS system Python refuses installs:
