@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sagart-cactus.github.io/sitemap.xml
+Sitemap: https://sagartrivedi.dev/sitemap.xml

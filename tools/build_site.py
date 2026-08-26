@@ -8,10 +8,14 @@ import os
 import re
 from datetime import datetime
 from html import escape
+from urllib.parse import parse_qs, unquote, urlparse
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
-SITE = "https://sagart-cactus.github.io"
+SITE = "https://sagartrivedi.dev"
+# Hosts this site used to live on. Links in the archived articles still point at
+# them; rewrite so nothing depends on a redirect.
+LEGACY_HOSTS = ("https://sagart-cactus.github.io",)
 ARTICLES_JSON = os.path.join(HERE, "articles.json")
 
 with open(ARTICLES_JSON, encoding="utf-8") as _handle:
@@ -27,7 +31,7 @@ FAVICON = ("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20vie
 GUIDES = [
     {
         "name": "RAG · The Visual Field Guide",
-        "url": "https://sagart-cactus.github.io/learn-rag/",
+        "url": "https://sagartrivedi.dev/learn-rag/",
         "short": "RAG field guide",
         "group": "Agents, evaluation and retrieval",
         "blurb": "Why retrieval exists, how embeddings and BM25 actually work, chunking, "
@@ -35,7 +39,7 @@ GUIDES = [
     },
     {
         "name": "Managed Agents · The Visual Field Guide",
-        "url": "https://sagart-cactus.github.io/learn-managed-agents/",
+        "url": "https://sagartrivedi.dev/learn-managed-agents/",
         "short": "Managed Agents field guide",
         "group": "Agents, evaluation and retrieval",
         "blurb": "Orchestration, parent and child isolation, parallelism, model matching, cost, "
@@ -43,7 +47,7 @@ GUIDES = [
     },
     {
         "name": "The MCP Knowledgebase",
-        "url": "https://sagart-cactus.github.io/learn-mcp/",
+        "url": "https://sagartrivedi.dev/learn-mcp/",
         "short": "The MCP Knowledgebase",
         "group": "Model Context Protocol",
         "blurb": "Model Context Protocol explained: architecture, primitives, call flow, server "
@@ -51,7 +55,7 @@ GUIDES = [
     },
     {
         "name": "Anatomy of an AI Coding Agent",
-        "url": "https://sagart-cactus.github.io/learn-codex-internals/",
+        "url": "https://sagartrivedi.dev/learn-codex-internals/",
         "short": "Anatomy of an AI Coding Agent",
         "group": "Inside Codex CLI, an eight-part series",
         "blurb": "An eight-part dissection of the OpenAI Codex CLI: architecture, protocols, "
@@ -59,7 +63,7 @@ GUIDES = [
     },
     {
         "name": "Claude Code Plugins · The Definitive Visual Guide",
-        "url": "https://sagart-cactus.github.io/learn-claude-code-plugin/",
+        "url": "https://sagartrivedi.dev/learn-claude-code-plugin/",
         "short": "Claude Code Plugins guide",
         "group": "Agent tooling and team practice",
         "blurb": "Skills, agents, hooks, MCP and LSP servers, monitors, security and workflow "
@@ -236,6 +240,27 @@ def render_media(html: str, article: dict, up: str) -> str:
     return re.sub(r'<figure data-img="(\d+)"></figure>', replace, html)
 
 
+def unwrap_redirects(html: str) -> str:
+    """Replace LinkedIn's redirect wrapper with the destination URL.
+
+    Articles that link out were rewritten by LinkedIn into
+    linkedin.com/redir/redirect?url=... Keeping that on our own pages routes
+    readers through LinkedIn for no reason.
+    """
+    def replace(match: re.Match) -> str:
+        target = parse_qs(urlparse(unquote(match.group(0))).query).get("url", [""])[0]
+        return target or match.group(0)
+
+    return re.sub(r"https://www\.linkedin\.com/redir/redirect\?[^\"\s]+", replace, html)
+
+
+def migrate_hosts(html: str) -> str:
+    """Point old-domain URLs, in both hrefs and visible text, at the current site."""
+    for host in LEGACY_HOSTS:
+        html = html.replace(host, SITE)
+    return html
+
+
 def localise_links(html: str, up: str) -> str:
     """Point cross-references at our own copies instead of back to LinkedIn.
 
@@ -299,7 +324,7 @@ def build_article(a, prev, nxt):
       </p>
 
       <div class="post-body">
-{html_voids(localise_links(render_media(a['html'], a, up), up))}
+{html_voids(localise_links(migrate_hosts(unwrap_redirects(render_media(a['html'], a, up))), up))}
       </div>
 
       <p class="source">Originally published on

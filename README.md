@@ -1,6 +1,6 @@
 # Personal resume site
 
-**Published at <https://sagart-cactus.github.io/>**
+**Published at <https://sagartrivedi.dev/>**
 
 A single static page, positioned for the OpenAI **Applied AI Architect** role (Technical Success,
 Delhi / Mumbai / Bangalore). No build step, no framework, no dependencies beyond one Google Fonts
@@ -57,11 +57,23 @@ Just open the file, or serve it if you prefer a real origin:
 python3 -m http.server 8000
 ```
 
-## GitHub Pages
+## GitHub Pages and the custom domain
 
-Already live. Because the repository is named `sagart-cactus.github.io`, it is a GitHub user site:
-Pages enabled itself on first push and serves from `main` at the root path, with HTTPS enforced.
-There was no Settings step.
+Live at **<https://sagartrivedi.dev/>**. The repository is named `sagart-cactus.github.io`, which
+makes it a GitHub *user site*: Pages enabled itself on first push and serves from `main` at the root
+path.
+
+The custom domain is set on the repo (`CNAME` file at the root, committed by GitHub), with HTTPS
+enforced and a Let's Encrypt certificate. DNS lives at Namecheap: four `A` records and four `AAAA`
+records on the apex pointing at GitHub Pages, plus a `CNAME` on `www`. `sagart-cactus.github.io`
+now 301-redirects to the custom domain, and so do the five `learn-*` guide sites, which moved to
+`sagartrivedi.dev/learn-*/` automatically because they hang off the user site.
+
+Two things to know about `.dev`: it is on the HSTS preload list, so browsers refuse plain HTTP at
+the TLD level. If the certificate is ever missing or expired the site fails outright rather than
+showing a warning. And domain *verification* (account Settings, a `_github-pages-challenge-*` TXT
+record) is a separate step from setting the *custom domain* on the repo; doing only the first leaves
+the domain serving 404s.
 
 To publish a change, just push:
 
@@ -75,9 +87,9 @@ The rebuild takes about half a minute. To check whether it has finished:
 gh api repos/Sagart-cactus/sagart-cactus.github.io/pages --jq .status
 ```
 
-For a custom domain later, add it under **Settings → Pages → Custom domain**, commit the `CNAME`
-file Pages creates, and point a `CNAME` DNS record at `sagart-cactus.github.io`. Leave **Enforce
-HTTPS** on, and update the canonical link, `og:url` and JSON-LD `url` in `index.html` to match.
+If the domain ever changes again, update `SITE` in `tools/build_site.py`, the canonical link,
+`og:url` and JSON-LD `url` in `index.html`, and the five guide URLs in `GUIDES`, then rebuild. The
+old host is listed in `LEGACY_HOSTS` so links inside archived articles get rewritten automatically.
 
 ## Deploying to Vercel
 
@@ -112,7 +124,7 @@ Run `grep -n PLACEHOLDER index.html` to list them in place.
    `summary_large_image`.
 4. **Twitter handle** *(optional)*. A commented `twitter:site` tag; delete it if you do not want one.
 
-Everything else is done. The site URL is set to `https://sagart-cactus.github.io/` in all three
+Everything else is done. The site URL is set to `https://sagartrivedi.dev/` in all three
 places (canonical link, `og:url`, JSON-LD `url`). All five open-source links were checked against
 the live repositories and return 200; note that the OptiPod repo is lowercase `optipod`, and the
 link uses that. Dates, titles, education, certification and the article list are filled in from your
@@ -197,11 +209,11 @@ are GitHub Pages project sites, so they already live on this same domain under `
 
 | Guide | Consolidates |
 | --- | --- |
-| [RAG](https://sagart-cactus.github.io/learn-rag/) | Agents, evaluation and retrieval |
-| [Managed Agents](https://sagart-cactus.github.io/learn-managed-agents/) | Agents, evaluation and retrieval |
-| [The MCP Knowledgebase](https://sagart-cactus.github.io/learn-mcp/) | Model Context Protocol |
-| [Anatomy of an AI Coding Agent](https://sagart-cactus.github.io/learn-codex-internals/) | Inside Codex CLI |
-| [Claude Code Plugins](https://sagart-cactus.github.io/learn-claude-code-plugin/) | Agent tooling and team practice |
+| [RAG](https://sagartrivedi.dev/learn-rag/) | Agents, evaluation and retrieval |
+| [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Agents, evaluation and retrieval |
+| [The MCP Knowledgebase](https://sagartrivedi.dev/learn-mcp/) | Model Context Protocol |
+| [Anatomy of an AI Coding Agent](https://sagartrivedi.dev/learn-codex-internals/) | Inside Codex CLI |
+| [Claude Code Plugins](https://sagartrivedi.dev/learn-claude-code-plugin/) | Agent tooling and team practice |
 
 They are linked in two places: a "Visual field guides" block at the top of both the resume's Writing
 section and the archive index, and a per-group "Companion guide" line on the archive so a reader
