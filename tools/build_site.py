@@ -199,6 +199,25 @@ def page(title, desc, canonical, body, depth, extra_head="", jsonld=""):
 """
 
 
+def meta_description(text: str, limit: int = 155) -> str:
+    """Trim to something Google will actually display, without cutting a word.
+
+    Google shows roughly 155-160 characters. Prefer ending on a sentence; failing
+    that, fall back to the last word boundary and mark the truncation.
+    """
+    text = re.sub(r"\s+", " ", text).strip()
+    if len(text) <= limit:
+        return text
+
+    window = text[:limit + 1]
+    sentence = max(window.rfind(". "), window.rfind("! "), window.rfind("? "))
+    if sentence >= limit * 0.55:          # only if it leaves a useful amount
+        return window[:sentence + 1].strip()
+
+    word = window.rfind(" ")
+    return window[:word].rstrip(" ,;:-").strip() + "…"
+
+
 def nearest_heading(html: str, position: int) -> str:
     """Text of the last <h2> before `position`, used to caption a diagram."""
     heads = re.findall(r"<h2>(.*?)</h2>", html[:position], re.DOTALL)
@@ -365,8 +384,8 @@ def build_article(a, prev, nxt):
                   f'\n<meta property="og:image:alt" content="{escape(a["title"])}">'
                   f'\n<meta name="twitter:image" content="{image}">')
 
-    return page(f"{a['title']} · Sagar Trivedi", a["excerpt"], canonical,
-                body, depth, extra_head=extra, jsonld=jsonld)
+    return page(f"{a['title']} · Sagar Trivedi", meta_description(a["excerpt"]),
+                canonical, body, depth, extra_head=extra, jsonld=jsonld)
 
 
 def group_id(name):

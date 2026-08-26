@@ -285,6 +285,10 @@ Checks this repo is expected to pass, and did at last commit:
   originally derived from Python's `hash()`, which is salted per process, so every rebuild churned
   the ids; they are now readable slugs like `#g-model-context-protocol` that also work as deep links.
 - **Lint.** `ruff check .` passes clean against `E,F,W,B,SIM,PERF,UP,I,C4,ISC,DTZ`.
+- **Meta descriptions.** Every page is within Google's ~160-character display limit and ends on a
+  sentence or a marked truncation. They were previously a hard 200-character slice, which left 22
+  of 25 articles cut mid-word in search results. `meta_description()` in `tools/build_site.py`
+  does the trimming; the longer `excerpt` is still used for the archive listing cards.
 
 To re-run the checks:
 
