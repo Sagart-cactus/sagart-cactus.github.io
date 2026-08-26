@@ -111,18 +111,18 @@ Answer *no* when it asks whether to override the build settings. Add a custom do
 
 Run `grep -n PLACEHOLDER index.html` to list them in place.
 
-1. **Email address.** A commented-out `<li>` in the contact list holds a `you@example.com`
-   placeholder. Fill in your address and uncomment it to publish, then do the same for the
-   commented footer link and add an `"email"` field to the JSON-LD block. Two things to know: HTML
-   comments are served in the public page source, so a real address parked in a commented-out block
-   is still scrapeable, and publishing an address on a public page invites spam either way. Decide
-   deliberately rather than leaving it half-done.
-2. **Last updated.** The footer says "August 2026" in both the visible text and the `datetime`
+1. **Last updated.** The footer says "August 2026" in both the visible text and the `datetime`
    attribute. Worth changing whenever you edit the page.
-3. **Open Graph image** *(optional)*. Two commented meta tags. Without one, link previews show a
+2. **Open Graph image** *(optional)*. Two commented meta tags. Without one, link previews show a
    text-only card. If you add a 1200×630 PNG, also switch `twitter:card` from `summary` to
    `summary_large_image`.
-4. **Twitter handle** *(optional)*. A commented `twitter:site` tag; delete it if you do not want one.
+3. **Twitter handle** *(optional)*. A commented `twitter:site` tag; delete it if you do not want one.
+
+Contact is published as `sagar@sagartrivedi.dev`, a Namecheap forwarding alias that lands in the
+personal Gmail. Deliberately not the Gmail itself: an address on an indexed page gets harvested and,
+once Google and the Wayback Machine have it, that is permanent. The alias is expendable, so if it
+ever turns into a spam magnet, delete the forwarding rule and the real inbox was never exposed. It
+is a single alias rather than a catch-all, which would accept mail to every invented address.
 
 Everything else is done. The site URL is set to `https://sagartrivedi.dev/` in all three
 places (canonical link, `og:url`, JSON-LD `url`). All five open-source links were checked against
