@@ -204,13 +204,14 @@ Worth a pass if you want these to work properly in screen readers and image sear
 
 ### Visual field guides
 
-Five separate repositories publish consolidated, illustrated versions of the article series. They
+Six separate repositories publish consolidated, illustrated versions of the article series. They
 are GitHub Pages project sites, so they already live on this same domain under `/learn-*/`:
 
 | Guide | Consolidates |
 | --- | --- |
 | [RAG](https://sagartrivedi.dev/learn-rag/) | Retrieval and RAG |
 | [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Agents and evaluation |
+| [Evals](https://sagartrivedi.dev/learn-eval/) | Agents and evaluation |
 | [The MCP Knowledgebase](https://sagartrivedi.dev/learn-mcp/) | Model Context Protocol |
 | [Anatomy of an AI Coding Agent](https://sagartrivedi.dev/learn-codex-internals/) | Inside Codex CLI |
 | [Claude Code Plugins](https://sagartrivedi.dev/learn-claude-code-plugin/) | Agent tooling and team practice |

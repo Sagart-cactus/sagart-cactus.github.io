@@ -46,6 +46,14 @@ GUIDES = [
                  "and when not to reach for an agent.",
     },
     {
+        "name": "Evals · The Visual Field Guide",
+        "url": "https://sagartrivedi.dev/learn-eval/",
+        "short": "Evals field guide",
+        "group": "Agents and evaluation",
+        "blurb": "What evals actually are, the four questions people conflate, how teams build "
+                 "them, when to run them, and which frameworks are worth the trouble.",
+    },
+    {
         "name": "The MCP Knowledgebase",
         "url": "https://sagartrivedi.dev/learn-mcp/",
         "short": "The MCP Knowledgebase",
