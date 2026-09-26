@@ -7,6 +7,22 @@
     <loc>https://sagartrivedi.dev/articles/</loc>
   </url>
   <url>
+    <loc>https://sagartrivedi.dev/articles/how-rag-fails-eleven-modes-one-symptom/</loc>
+    <lastmod>2026-09-17</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/when-use-rag-you-sizing-off-wrong-number/</loc>
+    <lastmod>2026-09-10</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/hybrid-retrieval-what-embeddings-cannot-see/</loc>
+    <lastmod>2026-09-03</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/how-chunking-works-why-your-best-document-never-gets/</loc>
+    <lastmod>2026-08-28</lastmod>
+  </url>
+  <url>
     <loc>https://sagartrivedi.dev/articles/why-rag-exists-context-window-red-herring/</loc>
     <lastmod>2026-08-24</lastmod>
   </url>

@@ -9,7 +9,7 @@ dropping the file onto any static host.
 
 ```
 index.html          the resume page: markup, styles, print styles, theme toggle, JSON-LD
-articles/           25 republished articles, one directory per article
+articles/           29 republished articles, one directory per article
 articles/index.html the writing archive
 assets/site.css     shared styles for the archive and article pages
 tools/              the scripts that fetch and rebuild the archive
@@ -173,7 +173,7 @@ as "cutting annual cloud spend substantially" rather than with the dollar figure
 
 ## The writing archive
 
-All 25 LinkedIn articles are republished at `/articles/`, grouped the same way as the resume's
+All 29 LinkedIn articles are republished at `/articles/`, grouped the same way as the resume's
 Writing section. Each article gets its own page with a publish date, reading time, prev/next links
 within its group, `BlogPosting` structured data, and a link back to the LinkedIn original.
 
@@ -183,10 +183,10 @@ expected and it resolves as the site accumulates its own history. If you ever wa
 change the `<link rel="canonical">` in the generated pages to `a["source_url"]` in
 `tools/build_site.py` and rebuild.
 
-**Diagrams are self-hosted.** Each article carries explainer diagrams; there are 48 in total across
-the 25 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
+**Diagrams are self-hosted.** Each article carries explainer diagrams; there are 58 in total across
+the 29 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
 them. `tools/fetch_media.py` downloads everything, re-encodes animated GIFs to H.264 MP4, and
-extracts a poster frame. The whole set drops from **25.3 MB to 3.6 MB**; the worst single file goes
+extracts a poster frame. The whole set drops from **32.4 MB to 4.3 MB**; the worst single file goes
 from 2674 KB to 46 KB. Animated diagrams render as `<video autoplay loop muted playsinline>`, which
 behaves like a GIF but is roughly two orders of magnitude smaller. Median article page weight,
 including media, is 89 KB.
@@ -209,8 +209,8 @@ are GitHub Pages project sites, so they already live on this same domain under `
 
 | Guide | Consolidates |
 | --- | --- |
-| [RAG](https://sagartrivedi.dev/learn-rag/) | Agents, evaluation and retrieval |
-| [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Agents, evaluation and retrieval |
+| [RAG](https://sagartrivedi.dev/learn-rag/) | Retrieval and RAG |
+| [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Agents and evaluation |
 | [The MCP Knowledgebase](https://sagartrivedi.dev/learn-mcp/) | Model Context Protocol |
 | [Anatomy of an AI Coding Agent](https://sagartrivedi.dev/learn-codex-internals/) | Inside Codex CLI |
 | [Claude Code Plugins](https://sagartrivedi.dev/learn-claude-code-plugin/) | Agent tooling and team practice |
@@ -287,7 +287,7 @@ Checks this repo is expected to pass, and did at last commit:
 - **Lint.** `ruff check .` passes clean against `E,F,W,B,SIM,PERF,UP,I,C4,ISC,DTZ`.
 - **Meta descriptions.** Every page is within Google's ~160-character display limit and ends on a
   sentence or a marked truncation. They were previously a hard 200-character slice, which left 22
-  of 25 articles cut mid-word in search results. `meta_description()` in `tools/build_site.py`
+  of the articles cut mid-word in search results. `meta_description()` in `tools/build_site.py`
   does the trimming; the longer `excerpt` is still used for the archive listing cards.
 
 To re-run the checks:

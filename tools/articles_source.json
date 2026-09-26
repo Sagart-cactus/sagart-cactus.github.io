@@ -1,9 +1,27 @@
 {
- "Agents, evaluation and retrieval": [
+ "Retrieval and RAG": [
   [
    "Why RAG Exists: The Context Window Is a Red Herring",
    "https://www.linkedin.com/pulse/why-rag-exists-context-window-red-herring-sagar-trivedi-t4ync"
   ],
+  [
+   "How Chunking Works: Why Your Best Document Never Gets Retrieved",
+   "https://www.linkedin.com/pulse/how-chunking-works-why-your-best-document-never-gets-sagar-trivedi-b6wac"
+  ],
+  [
+   "Hybrid Retrieval: What Embeddings Cannot See",
+   "https://www.linkedin.com/pulse/hybrid-retrieval-what-embeddings-cannot-see-sagar-trivedi-wqwuc"
+  ],
+  [
+   "When Not to Use RAG: You Are Sizing It Off the Wrong Number",
+   "https://www.linkedin.com/pulse/when-use-rag-you-sizing-off-wrong-number-sagar-trivedi-2du9c"
+  ],
+  [
+   "How RAG Fails: Eleven Modes, One Symptom",
+   "https://www.linkedin.com/pulse/how-rag-fails-eleven-modes-one-symptom-sagar-trivedi-pzk3c"
+  ]
+ ],
+ "Agents and evaluation": [
   [
    "The Scariest AI Agent Failure Is the One That Looks Like Success",
    "https://www.linkedin.com/pulse/scariest-ai-agent-failure-one-looks-like-success-sagar-trivedi-th4kc"

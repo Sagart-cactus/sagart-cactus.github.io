@@ -33,7 +33,7 @@ GUIDES = [
         "name": "RAG · The Visual Field Guide",
         "url": "https://sagartrivedi.dev/learn-rag/",
         "short": "RAG field guide",
-        "group": "Agents, evaluation and retrieval",
+        "group": "Retrieval and RAG",
         "blurb": "Why retrieval exists, how embeddings and BM25 actually work, chunking, "
                  "reranking and ANN indexes.",
     },
@@ -41,7 +41,7 @@ GUIDES = [
         "name": "Managed Agents · The Visual Field Guide",
         "url": "https://sagartrivedi.dev/learn-managed-agents/",
         "short": "Managed Agents field guide",
-        "group": "Agents, evaluation and retrieval",
+        "group": "Agents and evaluation",
         "blurb": "Orchestration, parent and child isolation, parallelism, model matching, cost, "
                  "and when not to reach for an agent.",
     },

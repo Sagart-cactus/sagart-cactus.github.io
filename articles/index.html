@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Writing · Sagar Trivedi</title>
-<meta name="description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta name="description" content="29 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 <meta name="author" content="Sagar Trivedi">
 <link rel="canonical" href="https://sagartrivedi.dev/articles/">
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="Writing · Sagar Trivedi">
-<meta property="og:description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta property="og:description" content="29 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 <meta property="og:url" content="https://sagartrivedi.dev/articles/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Writing · Sagar Trivedi">
-<meta name="twitter:description" content="25 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta name="twitter:description" content="29 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
@@ -57,7 +57,7 @@
     <h1>Writing</h1>
     <p class="lede">I write about the parts of AI systems that decide whether they survive
     production: evaluation, failure modes, cost, and the protocols and tooling underneath.
-    25 articles, about 26,000 words.</p>
+    29 articles, about 30,000 words.</p>
   </header>
 
   <main id="main">
@@ -88,9 +88,9 @@
           </li>
         </ul>
       </section>
-      <section class="group" aria-labelledby="g-agents-evaluation-and-retrieval">
-        <h2 id="g-agents-evaluation-and-retrieval">Agents, evaluation and retrieval</h2>
-        <p class="companion">Companion guides: <a href="https://sagartrivedi.dev/learn-rag/">RAG field guide</a> and <a href="https://sagartrivedi.dev/learn-managed-agents/">Managed Agents field guide</a></p>
+      <section class="group" aria-labelledby="g-retrieval-and-rag">
+        <h2 id="g-retrieval-and-rag">Retrieval and RAG</h2>
+        <p class="companion">Companion guide: <a href="https://sagartrivedi.dev/learn-rag/">RAG field guide</a></p>
         <ul class="entries">
           <li>
             <a class="entry" href="why-rag-exists-context-window-red-herring/">
@@ -100,6 +100,44 @@
             </a>
             <p class="entry-excerpt">The standard answer goes like this. The model has a limited context window; your data is bigger than that window, so you retrieve the relevant parts instead of sending everything. It is not wrong. It…</p>
           </li>
+          <li>
+            <a class="entry" href="how-chunking-works-why-your-best-document-never-gets/">
+              <span class="entry-title">How Chunking Works: Why Your Best Document Never Gets Retrieved</span>
+              <span class="entry-meta"><time datetime="2026-08-28">28 August 2026</time>
+                <span class="dot">·</span>5 min</span>
+            </a>
+            <p class="entry-excerpt">Chunking gets treated as a formatting decision. Cut documents into pieces because whole documents are too big to send to the model; pick a size, add some overlap, move on. It looks like the least inte…</p>
+          </li>
+          <li>
+            <a class="entry" href="hybrid-retrieval-what-embeddings-cannot-see/">
+              <span class="entry-title">Hybrid Retrieval: What Embeddings Cannot See</span>
+              <span class="entry-meta"><time datetime="2026-09-03">3 September 2026</time>
+                <span class="dot">·</span>4 min</span>
+            </a>
+            <p class="entry-excerpt">Picture the query. Something like ERR_4021, pasted straight in. Semantic search returns three documents. &quot;Troubleshooting common errors.&quot; &quot;What to do when something fails.&quot; &quot;Error handling best practi…</p>
+          </li>
+          <li>
+            <a class="entry" href="when-use-rag-you-sizing-off-wrong-number/">
+              <span class="entry-title">When Not to Use RAG: You Are Sizing It Off the Wrong Number</span>
+              <span class="entry-meta"><time datetime="2026-09-10">10 September 2026</time>
+                <span class="dot">·</span>4 min</span>
+            </a>
+            <p class="entry-excerpt">Here is a scenario that sounds like an obvious retrieval problem. Eight thousand contracts, around eighty pages each. Roughly half a billion tokens. Users asking questions about them all day. Nothing…</p>
+          </li>
+          <li>
+            <a class="entry" href="how-rag-fails-eleven-modes-one-symptom/">
+              <span class="entry-title">How RAG Fails: Eleven Modes, One Symptom</span>
+              <span class="entry-meta"><time datetime="2026-09-17">17 September 2026</time>
+                <span class="dot">·</span>5 min</span>
+            </a>
+            <p class="entry-excerpt">Consider a question that looks perfectly reasonable to ask a retrieval system: how many enterprise customers churned in Q2? It answers seven and cites seven sources. Check them. Every citation resolve…</p>
+          </li>
+        </ul>
+      </section>
+      <section class="group" aria-labelledby="g-agents-and-evaluation">
+        <h2 id="g-agents-and-evaluation">Agents and evaluation</h2>
+        <p class="companion">Companion guide: <a href="https://sagartrivedi.dev/learn-managed-agents/">Managed Agents field guide</a></p>
+        <ul class="entries">
           <li>
             <a class="entry" href="scariest-ai-agent-failure-one-looks-like-success/">
               <span class="entry-title">The Scariest AI Agent Failure Is the One That Looks Like Success</span>
