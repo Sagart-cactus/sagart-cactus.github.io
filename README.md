@@ -111,7 +111,7 @@ Answer *no* when it asks whether to override the build settings. Add a custom do
 
 Run `grep -n PLACEHOLDER index.html` to list them in place.
 
-1. **Last updated.** The footer says "August 2026" in both the visible text and the `datetime`
+1. **Last updated.** The footer says "October 2026" in both the visible text and the `datetime`
    attribute. Worth changing whenever you edit the page.
 2. **Open Graph image** *(optional)*. Two commented meta tags. Without one, link previews show a
    text-only card. If you add a 1200×630 PNG, also switch `twitter:card` from `summary` to
@@ -163,7 +163,7 @@ team headcount, the third-party chat vendor's product name, and your phone numbe
 architecture is described by shape ("streaming ingestion, warehousing, retrieval over customer and
 knowledge context") rather than by naming the stack as a blueprint. Percentages, ratios and
 percentiles were kept, since your rule allows them: 94–97% judge precision, 98.5% cache hit rate,
-99.965% uptime, 27% verbosity reduction, roughly 7× cost reduction.
+99.99% uptime, 27% verbosity reduction, roughly 7× cost reduction.
 
 The experience heading is now just **Honest**, with no descriptor after it. Note that the summary
 paragraph and the meta description still say "a regulated digital bank" as a generic descriptor of
