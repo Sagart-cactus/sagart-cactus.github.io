@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">From shared state to an isolated test run</title>
+  <desc id="desc">The old path used the current kubeconfig, a fixed cluster, static waits, and manual cleanup. The new path creates a private kubeconfig, a unique Kind cluster, waits for real conditions, collects redacted evidence, and performs scoped cleanup.</desc>
+  <defs>
+    <marker id="arrow-old" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#b8b4ab"/>
+    </marker>
+    <marker id="arrow-new" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3f5f54"/>
+    </marker>
+  </defs>
+  <rect width="1200" height="760" fill="#fcfcfa"/>
+  <g font-family="IBM Plex Sans, Inter, Arial, sans-serif" fill="#292926">
+    <text x="76" y="88" font-size="25" font-weight="500" letter-spacing="2" fill="#77776f">THE ARCHITECTURE CHANGE</text>
+    <text x="76" y="148" font-size="48" font-weight="600">Give every test run its own world</text>
+
+    <g transform="translate(76 210)">
+      <text x="0" y="25" font-size="25" font-weight="600" fill="#9c3d17">BEFORE</text>
+      <text x="0" y="59" font-size="20" fill="#77776f">The machine running the test was part of the test.</text>
+
+      <g transform="translate(0 100)">
+        <rect x="0" y="0" width="190" height="106" rx="12" fill="#f1e5df"/>
+        <text x="95" y="44" text-anchor="middle" font-size="20" font-weight="600">Current</text>
+        <text x="95" y="72" text-anchor="middle" font-size="20">kubeconfig</text>
+
+        <line x1="200" y1="53" x2="250" y2="53" stroke="#b8b4ab" stroke-width="3" marker-end="url(#arrow-old)"/>
+        <rect x="260" y="0" width="190" height="106" rx="12" fill="#f1e5df"/>
+        <text x="355" y="44" text-anchor="middle" font-size="20" font-weight="600">Fixed</text>
+        <text x="355" y="72" text-anchor="middle" font-size="20">cluster name</text>
+
+        <line x1="460" y1="53" x2="510" y2="53" stroke="#b8b4ab" stroke-width="3" marker-end="url(#arrow-old)"/>
+        <rect x="520" y="0" width="190" height="106" rx="12" fill="#f1e5df"/>
+        <text x="615" y="44" text-anchor="middle" font-size="20" font-weight="600">Static</text>
+        <text x="615" y="72" text-anchor="middle" font-size="20">waits</text>
+
+        <line x1="720" y1="53" x2="770" y2="53" stroke="#b8b4ab" stroke-width="3" marker-end="url(#arrow-old)"/>
+        <rect x="780" y="0" width="190" height="106" rx="12" fill="#f1e5df"/>
+        <text x="875" y="44" text-anchor="middle" font-size="20" font-weight="600">Manual</text>
+        <text x="875" y="72" text-anchor="middle" font-size="20">cleanup</text>
+      </g>
+    </g>
+
+    <line x1="76" y1="474" x2="1124" y2="474" stroke="#d9d6cf" stroke-width="2"/>
+
+    <g transform="translate(76 520)">
+      <text x="0" y="25" font-size="25" font-weight="600" fill="#3f5f54">AFTER</text>
+      <text x="0" y="59" font-size="20" fill="#77776f">The run owns its cluster, its evidence, and its cleanup.</text>
+
+      <g transform="translate(0 100)">
+        <rect x="0" y="0" width="180" height="96" rx="12" fill="#e5eee9"/>
+        <text x="90" y="40" text-anchor="middle" font-size="19" font-weight="600">Private</text>
+        <text x="90" y="67" text-anchor="middle" font-size="19">kubeconfig</text>
+
+        <line x1="190" y1="48" x2="224" y2="48" stroke="#3f5f54" stroke-width="3" marker-end="url(#arrow-new)"/>
+        <rect x="234" y="0" width="180" height="96" rx="12" fill="#e5eee9"/>
+        <text x="324" y="40" text-anchor="middle" font-size="19" font-weight="600">Unique Kind</text>
+        <text x="324" y="67" text-anchor="middle" font-size="19">cluster</text>
+
+        <line x1="424" y1="48" x2="458" y2="48" stroke="#3f5f54" stroke-width="3" marker-end="url(#arrow-new)"/>
+        <rect x="468" y="0" width="180" height="96" rx="12" fill="#e5eee9"/>
+        <text x="558" y="40" text-anchor="middle" font-size="19" font-weight="600">Real condition</text>
+        <text x="558" y="67" text-anchor="middle" font-size="19">observed</text>
+
+        <line x1="658" y1="48" x2="692" y2="48" stroke="#3f5f54" stroke-width="3" marker-end="url(#arrow-new)"/>
+        <rect x="702" y="0" width="180" height="96" rx="12" fill="#e5eee9"/>
+        <text x="792" y="40" text-anchor="middle" font-size="19" font-weight="600">Redacted</text>
+        <text x="792" y="67" text-anchor="middle" font-size="19">evidence</text>
+
+        <line x1="892" y1="48" x2="926" y2="48" stroke="#3f5f54" stroke-width="3" marker-end="url(#arrow-new)"/>
+        <rect x="936" y="0" width="180" height="96" rx="12" fill="#e5eee9"/>
+        <text x="1026" y="40" text-anchor="middle" font-size="19" font-weight="600">Scoped</text>
+        <text x="1026" y="67" text-anchor="middle" font-size="19">cleanup</text>
+      </g>
+    </g>
+  </g>
+</svg>

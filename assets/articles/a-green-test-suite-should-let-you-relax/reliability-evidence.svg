@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" role="img" aria-labelledby="title desc">
+  <title id="title">Reliability evidence and the missed timing goal</title>
+  <desc id="desc">All ten consecutive local smoke runs passed and each took between 300 and 311 seconds. The hosted smoke job took 8 minutes 51 seconds, missing the goal of less than 6 minutes.</desc>
+  <rect width="1200" height="760" fill="#fcfcfa"/>
+  <g font-family="IBM Plex Sans, Inter, Arial, sans-serif" fill="#292926">
+    <text x="76" y="88" font-size="25" font-weight="500" letter-spacing="2" fill="#77776f">RELIABILITY, NOT A LUCKY RUN</text>
+    <text x="76" y="148" font-size="48" font-weight="600">Ten fresh clusters. Ten clean results.</text>
+    <text x="76" y="194" font-size="23" fill="#66665f">Each local smoke run created and removed its own Kind cluster.</text>
+
+    <g transform="translate(90 270)">
+      <g fill="#3f5f54">
+        <circle cx="42" cy="42" r="38"/><circle cx="146" cy="42" r="38"/>
+        <circle cx="250" cy="42" r="38"/><circle cx="354" cy="42" r="38"/>
+        <circle cx="458" cy="42" r="38"/><circle cx="562" cy="42" r="38"/>
+        <circle cx="666" cy="42" r="38"/><circle cx="770" cy="42" r="38"/>
+        <circle cx="874" cy="42" r="38"/><circle cx="978" cy="42" r="38"/>
+      </g>
+      <g fill="none" stroke="#fcfcfa" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M25 42 l12 12 l23 -28"/><path d="M129 42 l12 12 l23 -28"/>
+        <path d="M233 42 l12 12 l23 -28"/><path d="M337 42 l12 12 l23 -28"/>
+        <path d="M441 42 l12 12 l23 -28"/><path d="M545 42 l12 12 l23 -28"/>
+        <path d="M649 42 l12 12 l23 -28"/><path d="M753 42 l12 12 l23 -28"/>
+        <path d="M857 42 l12 12 l23 -28"/><path d="M961 42 l12 12 l23 -28"/>
+      </g>
+      <g font-size="16" fill="#77776f" text-anchor="middle">
+        <text x="42" y="106">1</text><text x="146" y="106">2</text><text x="250" y="106">3</text>
+        <text x="354" y="106">4</text><text x="458" y="106">5</text><text x="562" y="106">6</text>
+        <text x="666" y="106">7</text><text x="770" y="106">8</text><text x="874" y="106">9</text>
+        <text x="978" y="106">10</text>
+      </g>
+      <text x="510" y="159" text-anchor="middle" font-size="21" fill="#66665f">300 to 311 seconds per run</text>
+    </g>
+
+    <line x1="76" y1="500" x2="1124" y2="500" stroke="#d9d6cf" stroke-width="2"/>
+
+    <text x="76" y="556" font-size="24" font-weight="600">Hosted smoke timing</text>
+    <text x="76" y="590" font-size="20" fill="#77776f">The goal was visible, and so was the miss.</text>
+
+    <g transform="translate(76 625)">
+      <rect x="0" y="0" width="1000" height="34" rx="17" fill="#e8e5de"/>
+      <rect x="0" y="0" width="885" height="34" rx="17" fill="#9c3d17"/>
+      <line x1="600" y1="-17" x2="600" y2="51" stroke="#292926" stroke-width="3"/>
+      <text x="600" y="82" text-anchor="middle" font-size="18" fill="#66665f">goal: under 6:00</text>
+      <text x="885" y="-13" text-anchor="middle" font-size="22" font-weight="600" fill="#9c3d17">actual: 8:51</text>
+      <text x="0" y="82" font-size="17" fill="#77776f">0 min</text>
+      <text x="1000" y="82" text-anchor="end" font-size="17" fill="#77776f">10 min</text>
+    </g>
+  </g>
+</svg>
