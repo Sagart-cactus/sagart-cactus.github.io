@@ -9,7 +9,7 @@ dropping the file onto any static host.
 
 ```
 index.html          the resume page: markup, styles, print styles, theme toggle, JSON-LD
-articles/           29 republished articles, one directory per article
+articles/           30 articles, one directory per article
 articles/index.html the writing archive
 assets/site.css     shared styles for the archive and article pages
 tools/              the scripts that fetch and rebuild the archive
@@ -173,9 +173,10 @@ as "cutting annual cloud spend substantially" rather than with the dollar figure
 
 ## The writing archive
 
-All 29 LinkedIn articles are republished at `/articles/`, grouped the same way as the resume's
-Writing section. Each article gets its own page with a publish date, reading time, prev/next links
-within its group, `BlogPosting` structured data, and a link back to the LinkedIn original.
+The writing archive contains 29 republished LinkedIn articles and one article published directly
+on this site. Articles are grouped the same way as the resume's Writing section. Each article gets
+its own page with a publish date, reading time, prev/next links within its group, and `BlogPosting`
+structured data. Republished articles also link back to the LinkedIn original.
 
 **Canonical.** Each article page points its canonical at itself, claiming your domain as the home of
 your writing. LinkedIn is a much stronger domain and will likely outrank you for a while; that is
@@ -183,8 +184,8 @@ expected and it resolves as the site accumulates its own history. If you ever wa
 change the `<link rel="canonical">` in the generated pages to `a["source_url"]` in
 `tools/build_site.py` and rebuild.
 
-**Diagrams are self-hosted.** Each article carries explainer diagrams; there are 58 in total across
-the 29 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
+**Diagrams are self-hosted.** Each article carries explainer diagrams. The LinkedIn archive has 58
+across 29 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
 them. `tools/fetch_media.py` downloads everything, re-encodes animated GIFs to H.264 MP4, and
 extracts a poster frame. The whole set drops from **32.4 MB to 4.3 MB**; the worst single file goes
 from 2674 KB to 46 KB. Animated diagrams render as `<video autoplay loop muted playsinline>`, which
@@ -246,9 +247,11 @@ tags, and repairs the structural defects described below. `fetch_media.py` downl
 and re-encodes the animated ones (needs `ffmpeg` on PATH). `build_site.py` writes the article pages,
 the archive index, `sitemap.xml` and `robots.txt`.
 
-Both scripts are deterministic: rebuilding without changing `articles.json` produces byte-identical
-output, so a rebuild never shows up as noise in `git diff`. The Writing links in `index.html` are
-not regenerated, so add new entries there by hand.
+Both scripts are deterministic: rebuilding without changing `articles.json` or
+`local_articles.json` produces byte-identical output, so a rebuild never shows up as noise in
+`git diff`. Articles published directly on this site are listed in `local_articles.json`, with
+their HTML fragments under `tools/local_articles/`. The Writing links in `index.html` are not
+regenerated, so add new entries there by hand.
 
 ### What was repaired during import
 

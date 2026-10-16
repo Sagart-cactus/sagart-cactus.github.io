@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>A Green Test Suite Should Let You Relax. Mine Did Not. · Sagar Trivedi</title>
+<meta name="description" content="A green test suite should create confidence. Mine made me check the Kubernetes context one more time. Here is how I rebuilt OptiPod&#x27;s test architecture.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagartrivedi.dev/articles/a-green-test-suite-should-let-you-relax/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="A Green Test Suite Should Let You Relax. Mine Did Not. · Sagar Trivedi">
+<meta property="og:description" content="A green test suite should create confidence. Mine made me check the Kubernetes context one more time. Here is how I rebuilt OptiPod&#x27;s test architecture.">
+<meta property="og:url" content="https://sagartrivedi.dev/articles/a-green-test-suite-should-let-you-relax/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A Green Test Suite Should Let You Relax. Mine Did Not. · Sagar Trivedi">
+<meta name="twitter:description" content="A green test suite should create confidence. Mine made me check the Kubernetes context one more time. Here is how I rebuilt OptiPod&#x27;s test architecture.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<meta property="article:published_time" content="2026-10-16">
+<meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagartrivedi.dev/assets/articles/a-green-test-suite-should-let-you-relax/hero.png">
+<meta property="og:image:alt" content="A Green Test Suite Should Let You Relax. Mine Did Not.">
+<meta name="twitter:image" content="https://sagartrivedi.dev/assets/articles/a-green-test-suite-should-let-you-relax/hero.png">
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>A Green Test Suite Should Let You Relax. Mine Did Not.</h1>
+      <p class="post-meta">
+        <time datetime="2026-10-16">16 October 2026</time>
+        <span class="dot">·</span>7 min read
+      </p>
+
+      <div class="post-body">
+<p>A green test suite should let you relax.</p>
+<p>Mine made me check the Kubernetes context one more time.</p>
+<p>That small habit told the truth.</p>
+<p>OptiPod had a large test suite, but I did not fully trust it. Before a run, I worried about which cluster it would touch. After a failure, I had to ask whether the code was broken or the setup had drifted. Even after a pass, I was not always sure the test had proved the behavior that mattered.</p>
+<p>That is a bad place for an open source project to be. Tests are meant to remove doubt. These tests were creating more of it.</p>
+<p>So I stopped fixing flakes one by one. I used a Factory Mission to rebuild the test architecture itself.</p>
+<p>The result was a <a href="https://github.com/Sagart-cactus/optipod/pull/73">merged pull request</a> that changed 219 files, added about 25,000 lines, removed about 19,600 lines, and finished with all checks green.</p>
+<p>But the number that matters most to me is simpler: 10 clean runs out of 10.</p>
+<figure class="diagram"><img src="../../assets/articles/a-green-test-suite-should-let-you-relax/hero.png" width="1200" height="630" loading="lazy" decoding="async" alt="An unreliable shared Kubernetes test environment beside a calm, isolated test chamber."></figure>
+
+<h2>Why OptiPod is hard to test</h2>
+<p><a href="https://github.com/Sagart-cactus/optipod">OptiPod</a> is a Kubernetes operator. It watches workloads, studies their CPU and memory use, and recommends or applies better resource settings.</p>
+<p>Some of that logic is easy to test. Give the recommendation engine a set of numbers and check the result.</p>
+<p>Other parts need a real Kubernetes cluster. You need one to prove that:</p>
+<ul>
+  <li>the controller reacts to a real workload</li>
+  <li>the admission webhook changes a new pod correctly</li>
+  <li>permissions are complete</li>
+  <li>certificates and webhook policies work</li>
+  <li>the system recovers after the controller restarts</li>
+</ul>
+<p>The old suite mixed all of these concerns together. Small checks often paid the cost of a full cluster test. The suite also relied on fixed cluster names, the current Kubernetes context, tracked configuration changes, command-line calls, static waits, and manual cleanup.</p>
+<p>In plain language, too much depended on the laptop running the test.</p>
+<p>One part was especially uncomfortable. Some setup commands did not use a private kubeconfig. They could depend on whichever Kubernetes context happened to be active.</p>
+<p>A test should never make a developer wonder, "Which cluster did that command just touch?"</p>
+
+<h2>First, we counted what already existed</h2>
+<p>The Mission did not begin by writing new tests. It began by making a list.</p>
+<p>We found 155 old test scenarios and gave every one a clear outcome:</p>
+<ul>
+  <li>6 stayed where they were</li>
+  <li>87 moved to a better kind of test</li>
+  <li>62 were removed because they were repeated, outdated, or testing the test setup rather than OptiPod</li>
+</ul>
+<figure class="diagram"><img src="../../assets/articles/a-green-test-suite-should-let-you-relax/scenario-disposition.png" width="1200" height="675" loading="lazy" decoding="async" alt="Of 155 legacy scenarios, 6 were retained, 87 were replaced at a better test layer, and 62 were removed as duplicate, outdated, or setup-only."></figure>
+<p>This was the turning point.</p>
+<p>The suite looked like one large testing problem. It was really several smaller problems placed in the same room.</p>
+<p>We separated them into four layers:</p>
+<ol>
+  <li>Fast unit tests for calculations and small decisions.</li>
+  <li>Lightweight Kubernetes API tests for controllers and webhooks.</li>
+  <li>A small Kind smoke suite for the most important installed flow.</li>
+  <li>A broader conformance suite for conflicts, failures, restarts, TLS, and policy changes.</li>
+</ol>
+<p>The rule was simple: use a real cluster only when the behavior truly needs one.</p>
+
+<h2>Give every test run its own room</h2>
+<p>The new cluster test suite is hermetic. That word can sound more complicated than it is.</p>
+<p>It means every run gets its own room.</p>
+<p>The suite creates a uniquely named Kind cluster and a private kubeconfig. It pins the Kind version and the Kubernetes node image. It builds and installs the exact code being tested. It creates its own namespaces. When it finishes, it removes only the things it created.</p>
+<p>It does not borrow the developer's current cluster. It does not switch their Kubernetes context. It does not clean up unrelated resources.</p>
+<figure class="diagram"><img src="../../assets/articles/a-green-test-suite-should-let-you-relax/test-architecture.png" width="1200" height="760" loading="lazy" decoding="async" alt="The old path used the current kubeconfig, a fixed cluster, static waits, and manual cleanup. The new path uses a private kubeconfig, a unique Kind cluster, real condition checks, redacted evidence, and scoped cleanup."></figure>
+<p>During validation, my existing Kind cluster, current context, and kubeconfig stayed unchanged.</p>
+<p>That safety result matters as much as the test results.</p>
+
+<h2>Stop waiting and start observing</h2>
+<p>The old suite often waited for a fixed amount of time and hoped the system had finished.</p>
+<p>That is easy to write, but hard to trust. A slow machine can fail a correct test. A fast machine wastes time. A real bug can hide behind another retry.</p>
+<p>The new suite waits for something meaningful instead:</p>
+<ul>
+  <li>a workload reaches the expected state</li>
+  <li>a recommendation changes</li>
+  <li>a new controller pod becomes ready</li>
+  <li>a webhook admits or rejects the right request</li>
+</ul>
+<p>It also uses fixed test metrics. If a scenario expects a CPU recommendation of a certain value, it feeds the system known input and checks the exact output.</p>
+<p>This replaced "wait and see" with "observe and prove."</p>
+
+<h2>A failed test should explain itself</h2>
+<p>Automatic cleanup is useful until it removes the evidence you need.</p>
+<p>The new suite collects test results, phase timings, and cluster diagnostics before cleaning up. Sensitive information is removed from those files.</p>
+<p>We tested this by causing a failure on purpose. The run produced 41 diagnostic files and applied 14 redactions. A separate scan found no credentials, kubeconfig contents, private key bodies, or test secrets in the output.</p>
+<p>If deeper inspection is needed, a maintainer can choose to keep the failed cluster. The suite then prints the exact commands needed to inspect and remove it.</p>
+<p>No guessing. No mystery cluster left behind.</p>
+
+<h2>The tests found real product bugs</h2>
+<p>The most valuable surprise was that this was not only a testing refactor.</p>
+<p>By following real production paths, the new suite found three product problems:</p>
+<ol>
+  <li>One update path could fail to preserve every container in a workload.</li>
+  <li>The webhook did not correctly update recommendation data for each container.</li>
+  <li>The shipped Kubernetes permissions were missing read access for ReplicaSets.</li>
+</ol>
+<p>The Mission also found two problems that appeared only in hosted CI. One download URL was wrong. Two checks behaved differently on Linux than on my local machine.</p>
+<p>All five issues were fixed and tested.</p>
+<p>This is the difference between checking that a command ran and checking that the product worked.</p>
+
+<h2>What changed in the end</h2>
+<p>The final evidence looked like this:</p>
+<ul>
+  <li>10 out of 10 local smoke runs passed, each with a fresh cluster.</li>
+  <li>Each smoke run took about 5 minutes locally.</li>
+  <li>The larger conformance run finished with 37 passed, 0 failed, and 2 intentionally skipped tests.</li>
+  <li>About 104 private Kind test runs were performed during the Mission.</li>
+  <li>Six GitHub Actions runs were used to find and prove CI fixes.</li>
+  <li>The final pull request merged with all checks green.</li>
+</ul>
+<figure class="diagram"><img src="../../assets/articles/a-green-test-suite-should-let-you-relax/reliability-evidence.png" width="1200" height="760" loading="lazy" decoding="async" alt="Ten consecutive local smoke runs passed in 300 to 311 seconds each. The hosted smoke job took 8 minutes 51 seconds against a goal of less than 6 minutes."></figure>
+<p>Not every target was met.</p>
+<p>I wanted the hosted smoke job to finish in less than six minutes. It took 8 minutes and 51 seconds. Building the controller image and running the scenarios took most of that time.</p>
+<p>That miss is now useful. The suite records where the time goes, so the next speed improvement can be measured instead of guessed.</p>
+<p>The hosted conformance timing target is still unproven. I would rather leave it open than turn an unmeasured goal into a success claim.</p>
+
+<h2>Where Factory helped</h2>
+<p>This work suited a Factory Mission because it was large, connected, and easy to get wrong in pieces.</p>
+<p>The Mission used four stages: understand the old system, build the safe smoke path, add wider behavior coverage, and prove the result in CI.</p>
+<p>Factory coordinated 53 worker sessions, nine review rounds, and six user-style testing rounds. The plan started with 21 features and grew to 39 as the work exposed missing checks and real product fixes.</p>
+<p>The useful part was not simply having more agents write more code. It was the repeated cycle:</p>
+<ol>
+  <li>Make a change.</li>
+  <li>Test it against a clear rule.</li>
+  <li>Review the evidence.</li>
+  <li>Fix what the evidence reveals.</li>
+</ol>
+<p>Factory handled a great deal of execution, but it did not remove human judgment. I still had to approve product changes, decide what belonged in scope, and accept that one speed goal had been missed.</p>
+<p>That balance felt right. The system could move quickly inside a clear boundary, while product and risk decisions stayed with me.</p>
+
+<h2>What I will carry into the next project</h2>
+<p>I came away with five simple lessons:</p>
+<h3>Put each test at the cheapest useful layer</h3>
+<p>Do not start a cluster to prove arithmetic. Do not use a mock to prove that a real webhook is wired correctly.</p>
+<h3>Control the input</h3>
+<p>Known metrics and clear conditions are better than longer waits.</p>
+<h3>Treat failure output as part of the product</h3>
+<p>A test that fails without explaining why still creates manual work.</p>
+<h3>Test the path users actually run</h3>
+<p>Real installation files, permissions, controllers, and webhooks reveal problems that small simulations cannot.</p>
+<h3>Give autonomous agents proof, not vague goals</h3>
+<p>"Improve the tests" is not enough. A scenario list, safety rules, repeated-run target, timing goal, and CI check make success visible.</p>
+
+<h2>The result I actually wanted</h2>
+<p>The biggest change is not that the suite has more code.</p>
+<p>It is that I no longer need to check the Kubernetes context one more time.</p>
+<p>The tests create their own world, prove the behavior that matters, explain failures, and clean up after themselves.</p>
+<p>Green means something again.</p>
+<p>Repository: <a href="https://github.com/Sagart-cactus/optipod">github.com/Sagart-cactus/optipod</a></p>
+<p>Merged implementation: <a href="https://github.com/Sagart-cactus/optipod/pull/73">OptiPod PR #73</a></p>
+      </div>
+
+      
+    </article>
+
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A Green Test Suite Should Let You Relax. Mine Did Not.",
+  "datePublished": "2026-10-16",
+  "description": "A green test suite should create confidence. Mine made me check the Kubernetes context one more time. Here is how I rebuilt OptiPod's test architecture.",
+  "wordCount": 1477,
+  "image": "https://sagartrivedi.dev/assets/articles/a-green-test-suite-should-let-you-relax/hero.png",
+  "url": "https://sagartrivedi.dev/articles/a-green-test-suite-should-let-you-relax/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagartrivedi.dev/articles/a-green-test-suite-should-let-you-relax/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagartrivedi.dev/"
+  }
+}
+</script>
+</body>
+</html>

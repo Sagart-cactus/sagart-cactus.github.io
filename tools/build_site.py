@@ -17,9 +17,21 @@ SITE = "https://sagartrivedi.dev"
 # them; rewrite so nothing depends on a redirect.
 LEGACY_HOSTS = ("https://sagart-cactus.github.io",)
 ARTICLES_JSON = os.path.join(HERE, "articles.json")
+LOCAL_ARTICLES_JSON = os.path.join(HERE, "local_articles.json")
 
 with open(ARTICLES_JSON, encoding="utf-8") as _handle:
-    ARTICLES = json.load(_handle)
+    LINKEDIN_ARTICLES = json.load(_handle)
+
+LOCAL_ARTICLES = []
+if os.path.exists(LOCAL_ARTICLES_JSON):
+    with open(LOCAL_ARTICLES_JSON, encoding="utf-8") as _handle:
+        LOCAL_ARTICLES = json.load(_handle)
+    for _article in LOCAL_ARTICLES:
+        _content_path = os.path.join(HERE, _article.pop("content_file"))
+        with open(_content_path, encoding="utf-8") as _handle:
+            _article["html"] = _handle.read().strip()
+
+ARTICLES = LOCAL_ARTICLES + LINKEDIN_ARTICLES
 
 FAVICON = ("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'"
            "%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20"
@@ -247,7 +259,7 @@ def render_media(html: str, article: dict, up: str) -> str:
             return ""
         item = media[index]
         heading = nearest_heading(html, match.start()) or article["title"]
-        alt = escape(f"Diagram: {heading}")
+        alt = escape(item.get("alt") or f"Diagram: {heading}")
         size = f'width="{item["width"]}" height="{item["height"]}"' if item["width"] else ""
 
         if item["type"] == "video":
@@ -335,6 +347,11 @@ def build_article(a, prev, nxt):
                    f'<span class="dir">Next</span>{escape(nxt["title"])}</a>')
     nav_html = f'<nav class="prevnext-wrap" aria-label="More in this series">{"".join(nav)}</nav>' if nav else ""
 
+    source = ""
+    if a.get("source_url"):
+        source = (f'<p class="source">Originally published on\n'
+                  f'        <a href="{a["source_url"]}" rel="nofollow">LinkedIn</a>.</p>')
+
     body = f"""  <header class="page-head">
     <div class="masthead">
       <a class="backlink" href="{up}articles/">Writing</a>
@@ -354,8 +371,7 @@ def build_article(a, prev, nxt):
 {html_voids(localise_links(migrate_hosts(unwrap_redirects(render_media(a['html'], a, up))), up))}
       </div>
 
-      <p class="source">Originally published on
-        <a href="{a['source_url']}" rel="nofollow">LinkedIn</a>.</p>
+      {source}
     </article>
 {nav_html}
   </main>

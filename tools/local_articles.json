@@ -1,0 +1,42 @@
+[
+  {
+    "title": "A Green Test Suite Should Let You Relax. Mine Did Not.",
+    "date": "Oct 16, 2026",
+    "slug": "a-green-test-suite-should-let-you-relax",
+    "content_file": "local_articles/a-green-test-suite-should-let-you-relax.html",
+    "words": 1477,
+    "minutes": 7,
+    "excerpt": "A green test suite should create confidence. Mine made me check the Kubernetes context one more time. Here is how I rebuilt OptiPod's test architecture.",
+    "group": "Open source engineering",
+    "media": [
+      {
+        "type": "image",
+        "src": "hero.png",
+        "width": 1200,
+        "height": 630,
+        "alt": "An unreliable shared Kubernetes test environment beside a calm, isolated test chamber."
+      },
+      {
+        "type": "image",
+        "src": "scenario-disposition.png",
+        "width": 1200,
+        "height": 675,
+        "alt": "Of 155 legacy scenarios, 6 were retained, 87 were replaced at a better test layer, and 62 were removed as duplicate, outdated, or setup-only."
+      },
+      {
+        "type": "image",
+        "src": "test-architecture.png",
+        "width": 1200,
+        "height": 760,
+        "alt": "The old path used the current kubeconfig, a fixed cluster, static waits, and manual cleanup. The new path uses a private kubeconfig, a unique Kind cluster, real condition checks, redacted evidence, and scoped cleanup."
+      },
+      {
+        "type": "image",
+        "src": "reliability-evidence.png",
+        "width": 1200,
+        "height": 760,
+        "alt": "Ten consecutive local smoke runs passed in 300 to 311 seconds each. The hosted smoke job took 8 minutes 51 seconds against a goal of less than 6 minutes."
+      }
+    ]
+  }
+]
