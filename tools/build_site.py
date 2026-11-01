@@ -31,7 +31,18 @@ if os.path.exists(LOCAL_ARTICLES_JSON):
         with open(_content_path, encoding="utf-8") as _handle:
             _article["html"] = _handle.read().strip()
 
-ARTICLES = LOCAL_ARTICLES + LINKEDIN_ARTICLES
+# Local articles lead, except those continuing a series that started on LinkedIn.
+ARTICLES = (
+    [a for a in LOCAL_ARTICLES if not a.get("append_to_group")]
+    + LINKEDIN_ARTICLES
+    + [a for a in LOCAL_ARTICLES if a.get("append_to_group")]
+)
+
+COMICS_JSON = os.path.join(HERE, "comics.json")
+COMICS = []
+if os.path.exists(COMICS_JSON):
+    with open(COMICS_JSON, encoding="utf-8") as _handle:
+        COMICS = json.load(_handle)
 
 FAVICON = ("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'"
            "%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20"
@@ -412,6 +423,104 @@ def build_article(a, prev, nxt):
                 canonical, body, depth, extra_head=extra, jsonld=jsonld)
 
 
+def build_comic(c):
+    depth = 2
+    up = "../" * depth
+    base = f"{up}assets/comics/{c['slug']}"
+    total = len(c["pages"])
+
+    figures = []
+    for p in c["pages"]:
+        n = p["number"]
+        loading = 'fetchpriority="high"' if n == 1 else 'loading="lazy"'
+        lines = "\n".join(f"          <p>{escape(line)}</p>" for line in p["transcript"])
+        figures.append(f"""      <figure class="comic-page">
+        <a href="{base}/page-{n}.png" aria-label="Open page {n} at full size">
+          <img src="{base}/page-{n}.jpg" width="{c['width']}" height="{c['height']}" {loading} decoding="async"
+               alt="Comic page {n} of {total}: {escape(p['heading'])}">
+        </a>
+        <details class="comic-text">
+          <summary>Read page {n} as text</summary>
+{lines}
+        </details>
+      </figure>""")
+
+    intro = "\n".join(f"      <p>{escape(t)}</p>" for t in c["intro"])
+    body = f"""  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="{up}articles/">Writing</a>
+{TOGGLE}
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post comic">
+      <h1>{escape(c['title'])}</h1>
+      <p class="post-meta">
+        <time datetime="{iso(c['date'])}">{pretty(c['date'])}</time>
+        <span class="dot">·</span>{total} page comic
+      </p>
+
+      <div class="post-body">
+{intro}
+      </div>
+
+{chr(10).join(figures)}
+
+      <p class="source">The last page ends with a challenge. Add your explanation to the
+        <a href="{c['discussion_url']}" rel="nofollow">post on LinkedIn</a>.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p><a href="{up}">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="{up}">Resume</a>
+      <a href="{up}articles/">Writing</a>
+    </nav>
+  </footer>"""
+
+    canonical = f"{SITE}/comics/{c['slug']}/"
+    image = f"{SITE}/assets/comics/{c['slug']}/page-1.jpg"
+    jsonld = json.dumps({
+        "@context": "https://schema.org",
+        "@type": "ComicStory",
+        "name": c["title"],
+        "headline": c["title"],
+        "datePublished": iso(c["date"]),
+        "description": c["description"],
+        "image": image,
+        "url": canonical,
+        "author": {"@type": "Person", "name": "Sagar Trivedi", "url": f"{SITE}/"},
+    }, indent=2, ensure_ascii=False)
+    jsonld = f'<script type="application/ld+json">\n{jsonld}\n</script>'
+    extra = (f'<meta property="article:published_time" content="{iso(c["date"])}">\n'
+             f'<meta property="og:image" content="{image}">\n'
+             f'<meta property="og:image:alt" content="{escape(c["title"])}">\n'
+             f'<meta name="twitter:image" content="{image}">')
+    return page(f"{c['title']} · Sagar Trivedi", meta_description(c["description"]),
+                canonical, body, depth, extra_head=extra, jsonld=jsonld)
+
+
+def comics_section():
+    if not COMICS:
+        return ""
+    rows = "\n".join(f"""          <li>
+            <a class="entry" href="../comics/{c['slug']}/">
+              <span class="entry-title">{escape(c['title'])}</span>
+              <span class="entry-meta"><time datetime="{iso(c['date'])}">{pretty(c['date'])}</time>
+                <span class="dot">·</span>{len(c['pages'])} pages</span>
+            </a>
+            <p class="entry-excerpt">{escape(c['description'])}</p>
+          </li>""" for c in COMICS)
+    return f"""      <section class="group" aria-labelledby="g-comics">
+        <h2 id="g-comics">Comics</h2>
+        <ul class="entries">
+{rows}
+        </ul>
+      </section>"""
+
+
 def group_id(name):
     """Stable, readable anchor id. Must not use hash(): it is salted per process."""
     return "g-" + re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
@@ -461,6 +570,8 @@ def companion_link(group_name):
 
 def build_index(groups):
     parts = [guides_section()]
+    if COMICS:
+        parts.append(comics_section())
     for name, items in groups.items():
         rows = [entry_row(a) for a in items]
         parts.append(f"""      <section class="group" aria-labelledby="{group_id(name)}">
@@ -508,6 +619,7 @@ def write_sitemap(groups):
     arts = sorted((a for v in groups.values() for a in v),
                   key=lambda a: iso(a["date"]), reverse=True)
     urls += [(f"{SITE}/articles/{a['slug']}/", iso(a["date"])) for a in arts]
+    urls += [(f"{SITE}/comics/{c['slug']}/", iso(c["date"])) for c in COMICS]
 
     body = "\n".join(
         "  <url>\n    <loc>{}</loc>{}\n  </url>".format(
@@ -542,10 +654,16 @@ def main() -> int:
             with open(f"{directory}/index.html", "w", encoding="utf-8") as handle:
                 handle.write(build_article(a, prev, nxt))
 
+    for c in COMICS:
+        directory = f"{ROOT}/comics/{c['slug']}"
+        os.makedirs(directory, exist_ok=True)
+        with open(f"{directory}/index.html", "w", encoding="utf-8") as handle:
+            handle.write(build_comic(c))
+
     with open(f"{ROOT}/articles/index.html", "w", encoding="utf-8") as handle:
         handle.write(build_index(groups))
     n = write_sitemap(groups)
-    print(f"wrote {len(ARTICLES)} article pages + archive index")
+    print(f"wrote {len(ARTICLES)} article pages, {len(COMICS)} comic(s) + archive index")
     print(f"wrote sitemap.xml ({n} urls) and robots.txt")
     return 0
 

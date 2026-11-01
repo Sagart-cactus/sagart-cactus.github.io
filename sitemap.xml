@@ -7,6 +7,14 @@
     <loc>https://sagartrivedi.dev/articles/</loc>
   </url>
   <url>
+    <loc>https://sagartrivedi.dev/articles/your-agent-passed-once-is-it-reliable/</loc>
+    <lastmod>2026-11-01</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/what-happens-when-the-model-under-your-app-changes/</loc>
+    <lastmod>2026-11-01</lastmod>
+  </url>
+  <url>
     <loc>https://sagartrivedi.dev/articles/who-evaluates-evaluator/</loc>
     <lastmod>2026-10-27</lastmod>
   </url>
@@ -149,5 +157,9 @@
   <url>
     <loc>https://sagartrivedi.dev/articles/sprintfoundry-now-supports-agent-sandboxes/</loc>
     <lastmod>2026-03-20</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/comics/how-does-an-llm-answer-your-question/</loc>
+    <lastmod>2026-10-26</lastmod>
   </url>
 </urlset>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>How does an LLM turn my question into an answer? · Sagar Trivedi</title>
+<meta name="description" content="An 8-page comic that follows one question about a cat through token IDs, sampling, weights, prefill, decode and KV caching.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagartrivedi.dev/comics/how-does-an-llm-answer-your-question/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="How does an LLM turn my question into an answer? · Sagar Trivedi">
+<meta property="og:description" content="An 8-page comic that follows one question about a cat through token IDs, sampling, weights, prefill, decode and KV caching.">
+<meta property="og:url" content="https://sagartrivedi.dev/comics/how-does-an-llm-answer-your-question/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How does an LLM turn my question into an answer? · Sagar Trivedi">
+<meta name="twitter:description" content="An 8-page comic that follows one question about a cat through token IDs, sampling, weights, prefill, decode and KV caching.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<meta property="article:published_time" content="2026-10-26">
+<meta property="og:image" content="https://sagartrivedi.dev/assets/comics/how-does-an-llm-answer-your-question/page-1.jpg">
+<meta property="og:image:alt" content="How does an LLM turn my question into an answer?">
+<meta name="twitter:image" content="https://sagartrivedi.dev/assets/comics/how-does-an-llm-answer-your-question/page-1.jpg">
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post comic">
+      <h1>How does an LLM turn my question into an answer?</h1>
+      <p class="post-meta">
+        <time datetime="2026-10-26">26 October 2026</time>
+        <span class="dot">·</span>8 page comic
+      </p>
+
+      <div class="post-body">
+      <p>While learning how LLMs work, I kept coming back to a few questions. If the model only takes numbers, what happens to my text? Why can it process the question together, but generate the answer one token at a time? Does it process the whole question again at every step?</p>
+      <p>I turned that learning into this 8-page comic. It follows one question about a cat through token IDs, sampling, weights, prefill, decode and KV caching.</p>
+      </div>
+
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-1.png" aria-label="Open page 1 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-1.jpg" width="1440" height="1920" fetchpriority="high" decoding="async"
+               alt="Comic page 1 of 8: How does an LLM turn my question into an answer?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 1 as text</summary>
+          <p>One question. The same example all the way through.</p>
+          <p>Start with the question, follow the steps, then try the challenge on the last page.</p>
+          <p>How does an LLM turn</p>
+          <p>my question into an answer?</p>
+          <p>A Large Language Model, explained with one worked example.</p>
+          <p>THE QUESTIONS WE WILL ANSWER</p>
+          <p>What does the model</p>
+          <p>actually receive?</p>
+          <p>What comes out of</p>
+          <p>one prediction?</p>
+          <p>What is inside</p>
+          <p>the black box?</p>
+          <p>Can the question be processed</p>
+          <p>all together?</p>
+          <p>How does the answer</p>
+          <p>grow one token at a time?</p>
+          <p>Does the same question</p>
+          <p>go in again each time?</p>
+          <p>ONE EXAMPLE TO FOLLOW</p>
+          <p>QUESTION</p>
+          <p>Where did the cat sit?</p>
+          <p>EXAMPLE ANSWER</p>
+          <p>The cat sat on the mat.</p>
+          <p>We’ll follow the text, the token IDs and the growing answer.</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-2.png" aria-label="Open page 2 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-2.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 2 of 8: I type words. What does the model see?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 2 as text</summary>
+          <p>I type words. What does the model see?</p>
+          <p>Text → tokenizer → token IDs → model</p>
+          <p>GPT-2 example IDs. · marks a leading space. Other tokenizers use different IDs.</p>
+          <p>THE QUESTION</p>
+          <p>THE LEARNER</p>
+          <p>I type a question.</p>
+          <p>Where does the answer</p>
+          <p>actually come from?</p>
+          <p>IMAGINE A GIANT FUNCTION</p>
+          <p>INPUT / QUESTION</p>
+          <p>Where did the cat sit?</p>
+          <p>Question in. Computation. Next piece out.</p>
+          <p>EVENTUAL EXAMPLE ANSWER</p>
+          <p>The cat sat on the mat.</p>
+          <p>BUT I TYPED WORDS</p>
+          <p>WHAT I TYPED</p>
+          <p>Where did the cat sit?</p>
+          <p>Why are there numbers</p>
+          <p>going into the model?</p>
+          <p>THE TOKENIZER MAPS TEXT PIECES TO IDs</p>
+          <p>Where</p>
+          <p>·did</p>
+          <p>·the</p>
+          <p>·cat</p>
+          <p>·sit</p>
+          <p>?</p>
+          <p>TOKEN IDs ENTERING THE MODEL</p>
+          <p>[8496,750,262,3797,1650,30]</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-3.png" aria-label="Open page 3 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-3.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 3 of 8: What comes out for our cat question?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 3 as text</summary>
+          <p>What comes out for our cat question?</p>
+          <p>464 becomes “The”. That is the first piece of the example answer.</p>
+          <p>Illustrative probabilities, not a model run. GPT-2 token IDs; chat formatting omitted.</p>
+          <p>THE SAME QUESTION GOES IN</p>
+          <p>QUESTION</p>
+          <p>Where did the cat sit?</p>
+          <p>INPUT TOKEN IDs</p>
+          <p>[8496,750,262,3797,1650,30]</p>
+          <p>SCORES BECOME NEXT-TOKEN PROBABILITIES</p>
+          <p>NEXT TOKEN</p>
+          <p>ID</p>
+          <p>PROBABILITY</p>
+          <p>The</p>
+          <p>60%</p>
+          <p>A</p>
+          <p>20%</p>
+          <p>It</p>
+          <p>10%</p>
+          <p>All other tokens</p>
+          <p>10%</p>
+          <p>Illustrative distribution</p>
+          <p>SELECT THE NEXT TOKEN</p>
+          <p>A selection step chooses</p>
+          <p>one token from the possibilities.</p>
+          <p>This step is called sampling.</p>
+          <p>SELECTED TOKEN ID</p>
+          <p>TURN THE SELECTED ID BACK INTO TEXT</p>
+          <p>464 → The</p>
+          <p>ANSWER SO FAR</p>
+          <p>The</p>
+          <p>All that for one piece?</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-4.png" aria-label="Open page 4 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-4.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 4 of 8: What calculated those probabilities?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 4 as text</summary>
+          <p>What calculated those probabilities?</p>
+          <p>Ordinary inference uses the learned weights without changing them.</p>
+          <p>Weights, probabilities and network drawings are illustrative.</p>
+          <p>LOOK INSIDE THE BLACK BOX</p>
+          <p>What&#x27;s inside the box</p>
+          <p>that processes these IDs?</p>
+          <p>OUR QUESTION AS TOKEN IDs</p>
+          <p>[8496,750,262,3797,1650,30]</p>
+          <p>LEARNED NUMBERS CALLED WEIGHTS</p>
+          <p>Weights shape the calculation.</p>
+          <p>They are also called parameters.</p>
+          <p>EXAMPLE WEIGHTS</p>
+          <p>0.12     -0.43     0.08</p>
+          <p>70B ≈ 70 billion parameters</p>
+          <p>ONE FORWARD PASS</p>
+          <p>INPUT TOKEN IDs</p>
+          <p>[8496,750,262,3797,1650,30]</p>
+          <p>Input → model calculations → scores</p>
+          <p>AFTER TURNING SCORES INTO PROBABILITIES</p>
+          <p>The: 60%   A: 20%</p>
+          <p>It: 10%   other: 10%</p>
+          <p>DID ANSWERING CHANGE THE WEIGHTS?</p>
+          <p>Now it has answered “The”.</p>
+          <p>TRAINING</p>
+          <p>Changes the</p>
+          <p>weights.</p>
+          <p>ORDINARY INFERENCE</p>
+          <p>Uses fixed</p>
+          <p>weights.</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-5.png" aria-label="Open page 5 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-5.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 5 of 8: Why can it read faster than it can write?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 5 as text</summary>
+          <p>Why can it read faster than it can write?</p>
+          <p>Prefill: known prompt positions can run in parallel. Decode: choices depend on earlier tokens.</p>
+          <p>Standard autoregressive Transformers. Runtimes may chunk prompts; optimized decoding adds variations.</p>
+          <p>DOES IT READ MY QUESTION ONE TOKEN AT A TIME?</p>
+          <p>OUR SIX-TOKEN QUESTION</p>
+          <p>Where did the cat sit?</p>
+          <p>The words have an order.</p>
+          <p>Must they go in one by one?</p>
+          <p>PREFILL: THE PROMPT IS ALREADY AVAILABLE</p>
+          <p>All prompt tokens are already known.</p>
+          <p>Their positions can be processed</p>
+          <p>in parallel through the model layers.</p>
+          <p>ID 8496</p>
+          <p>Where</p>
+          <p>ID 750</p>
+          <p>·did</p>
+          <p>ID 262</p>
+          <p>·the</p>
+          <p>ID 3797</p>
+          <p>·cat</p>
+          <p>ID 1650</p>
+          <p>·sit</p>
+          <p>ID 30</p>
+          <p>?</p>
+          <p>No need to generate the question first.</p>
+          <p>PARALLEL PROCESSING STILL PRESERVES WORD ORDER</p>
+          <p>Position information keeps the order.</p>
+          <p>Causal attention lets each position use</p>
+          <p>itself and the positions before it.</p>
+          <p>POS. 1</p>
+          <p>Where</p>
+          <p>POS. 2</p>
+          <p>·did</p>
+          <p>POS. 3</p>
+          <p>·the</p>
+          <p>POS. 4</p>
+          <p>·cat</p>
+          <p>POS. 5</p>
+          <p>·sit</p>
+          <p>POS. 6</p>
+          <p>?</p>
+          <p>DECODE: THE ANSWER IS NOT KNOWN IN ADVANCE</p>
+          <p>Each chosen token affects</p>
+          <p>the next-token prediction.</p>
+          <p>DEPENDENT STEPS</p>
+          <p>The → The cat → The cat sat</p>
+          <p>Prefill gives the first-token prediction.</p>
+          <p>Decode continues the dependent loop.</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-6.png" aria-label="Open page 6 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-6.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 6 of 8: Watch the answer grow, one token at a time.">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 6 as text</summary>
+          <p>Watch the answer grow, one token at a time.</p>
+          <p>The context grows. Next: which earlier work does the engine reuse?</p>
+          <p>These panels show logical context, not a new user request for each token.</p>
+          <p>STEP 1 (PREFILL): QUESTION → FIRST TOKEN</p>
+          <p>464 → The</p>
+          <p>QUESTION / KEPT</p>
+          <p>Where did the cat sit?</p>
+          <p>ANSWER SO FAR</p>
+          <p>(empty)</p>
+          <p>Answer IDs: []</p>
+          <p>ANSWER AFTER THIS STEP</p>
+          <p>The</p>
+          <p>STEP 2 (DECODE): QUESTION + ANSWER SO FAR → NEXT TOKEN</p>
+          <p>3797 → ·cat</p>
+          <p>QUESTION / KEPT</p>
+          <p>Where did the cat sit?</p>
+          <p>ANSWER SO FAR</p>
+          <p>The</p>
+          <p>Answer IDs: [464]</p>
+          <p>ANSWER AFTER THIS STEP</p>
+          <p>The cat</p>
+          <p>STEP 3 (DECODE): QUESTION + ANSWER SO FAR → NEXT TOKEN</p>
+          <p>3332 → ·sat</p>
+          <p>QUESTION / KEPT</p>
+          <p>Where did the cat sit?</p>
+          <p>ANSWER SO FAR</p>
+          <p>The cat</p>
+          <p>Answer IDs: [464,3797]</p>
+          <p>ANSWER AFTER THIS STEP</p>
+          <p>The cat sat</p>
+          <p>KEEP APPENDING TOKENS TO THE CONTEXT (DECODE)</p>
+          <p>4. Select 319 → ·on</p>
+          <p>The cat sat on</p>
+          <p>5. Select 262 → ·the</p>
+          <p>The cat sat on the</p>
+          <p>6. Select 2603 → ·mat</p>
+          <p>The cat sat on the mat</p>
+          <p>7. Select 13 → .</p>
+          <p>The cat sat on the mat.</p>
+          <p>An end-of-sequence token or a length limit ends generation.</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-7.png" aria-label="Open page 7 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-7.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 7 of 8: Am I sending the same question again?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 7 as text</summary>
+          <p>Am I sending the same question again?</p>
+          <p>One request. A generation loop. Earlier attention state reused.</p>
+          <p>Next: try the challenge. A new chat turn is a separate request; context handling varies.</p>
+          <p>ONE ANSWER DOES NOT REQUIRE REPEATED USER INPUT</p>
+          <p>You submit the question once.</p>
+          <p>The serving system runs the loop</p>
+          <p>that generates the answer tokens.</p>
+          <p>OUR EXAMPLE</p>
+          <p>One request → The cat sat on the mat.</p>
+          <p>WHY DOES THE QUESTION APPEAR IN EVERY STEP?</p>
+          <p>The question remains part of the</p>
+          <p>context used for each prediction.</p>
+          <p>With KV caching, earlier attention</p>
+          <p>keys and values are saved and reused.</p>
+          <p>SAVED RUNTIME STATE</p>
+          <p>This is the KV cache.</p>
+          <p>CACHED DECODE: PROCESS THE NEW TOKEN, REUSE EARLIER STATE</p>
+          <p>NEW TOKEN INPUT TO THIS DECODE STEP</p>
+          <p>464 = The</p>
+          <p>REUSED ATTENTION STATE</p>
+          <p>The question’s cached keys and values</p>
+          <p>NEXT TOKEN SELECTED FOR OUR EXAMPLE</p>
+          <p>3797 → ·cat</p>
+          <p>A FOLLOW-UP MESSAGE IS A NEW CHAT TURN</p>
+          <p>EXAMPLE FOLLOW-UP</p>
+          <p>What color was the mat?</p>
+          <p>The app supplies relevant conversation</p>
+          <p>context for the new turn.</p>
+          <p>Cached prefixes may be reused.</p>
+          <p>Context reuse is not model training.</p>
+        </details>
+      </figure>
+      <figure class="comic-page">
+        <a href="../../assets/comics/how-does-an-llm-answer-your-question/page-8.png" aria-label="Open page 8 at full size">
+          <img src="../../assets/comics/how-does-an-llm-answer-your-question/page-8.jpg" width="1440" height="1920" loading="lazy" decoding="async"
+               alt="Comic page 8 of 8: Your turn. What happens next?">
+        </a>
+        <details class="comic-text">
+          <summary>Read page 8 as text</summary>
+          <p>Your turn. What happens next?</p>
+          <p>Explain what happens and why.</p>
+          <p>Use the example to explain the next step. No need for a long answer.</p>
+          <p>The model has generated “The cat”. We are using a KV cache.</p>
+          <p>ORIGINAL QUESTION</p>
+          <p>Where did the cat sit?</p>
+          <p>ANSWER SO FAR</p>
+          <p>The cat</p>
+          <p>LAST SELECTED TOKEN</p>
+          <p>3797 = ·cat</p>
+          <p>The answer is still being generated.</p>
+          <p>Think about the next decode step.</p>
+          <p>WHAT TOKEN GOES INTO THE NEXT DECODE STEP?</p>
+          <p>Which token ID goes into the next decode step,</p>
+          <p>and what text does that ID represent?</p>
+          <p>WHAT INFORMATION CAN THE MODEL REUSE?</p>
+          <p>What earlier information is available from the cache?</p>
+          <p>Does the user need to send the question again?</p>
+          <p>DO THE WEIGHTS NEED TO CHANGE?</p>
+          <p>Can the model continue this answer using fixed weights?</p>
+          <p>Explain the difference between inference and training.</p>
+          <p>Write your answers in the comments.</p>
+        </details>
+      </figure>
+
+      <p class="source">The last page ends with a challenge. Add your explanation to the
+        <a href="https://www.linkedin.com/feed/update/urn:li:activity:7520454271545278464/" rel="nofollow">post on LinkedIn</a>.</p>
+    </article>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ComicStory",
+  "name": "How does an LLM turn my question into an answer?",
+  "headline": "How does an LLM turn my question into an answer?",
+  "datePublished": "2026-10-26",
+  "description": "An 8-page comic that follows one question about a cat through token IDs, sampling, weights, prefill, decode and KV caching.",
+  "image": "https://sagartrivedi.dev/assets/comics/how-does-an-llm-answer-your-question/page-1.jpg",
+  "url": "https://sagartrivedi.dev/comics/how-does-an-llm-answer-your-question/",
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagartrivedi.dev/"
+  }
+}
+</script>
+</body>
+</html>

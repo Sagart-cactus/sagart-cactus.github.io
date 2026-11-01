@@ -38,5 +38,37 @@
         "alt": "Ten consecutive local smoke runs passed in 300 to 311 seconds each. The hosted smoke job took 8 minutes 51 seconds against a goal of less than 6 minutes."
       }
     ]
+  },
+  {
+    "title": "Your Agent Passed Once. Is It Reliable?",
+    "date": "Nov 1, 2026",
+    "slug": "your-agent-passed-once-is-it-reliable",
+    "content_file": "local_articles/your-agent-passed-once-is-it-reliable.html",
+    "words": 515,
+    "minutes": 2,
+    "excerpt": "An agent completes a task successfully. What did you learn? You learned that it can succeed once. You did not learn that it is reliable. Agents take multiple steps, call tools, interpret intermediate",
+    "group": "Eval",
+    "append_to_group": true,
+    "media": [
+      {
+        "type": "image",
+        "src": "07-pass-at-k-vs-pass-power-k.png",
+        "width": 1600,
+        "height": 900,
+        "alt": "For an agent with an 80% single-run success rate, pass@3 is 99.2% and pass^3 is 51.2%."
+      }
+    ]
+  },
+  {
+    "title": "What Happens When the Model Under Your App Changes?",
+    "date": "Nov 1, 2026",
+    "slug": "what-happens-when-the-model-under-your-app-changes",
+    "content_file": "local_articles/what-happens-when-the-model-under-your-app-changes.html",
+    "words": 592,
+    "minutes": 3,
+    "excerpt": "The model behind your application changes. Maybe a new version is available. Maybe a cheaper model looks good. Maybe the provider updates a model snapshot behind the same name. How do you know your pr",
+    "group": "Eval",
+    "append_to_group": true,
+    "media": []
   }
 ]

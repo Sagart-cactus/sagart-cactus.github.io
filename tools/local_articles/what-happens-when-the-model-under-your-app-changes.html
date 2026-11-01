@@ -1,0 +1,75 @@
+<p>The model behind your application changes.</p>
+<p>Maybe a new version is available. Maybe a cheaper model looks good. Maybe the provider updates a model snapshot behind the same name.</p>
+<p>How do you know your product still works?</p>
+<p>You rerun the same eval suite.</p>
+<p>This is where evals stop being a one-time experiment and become part of the product lifecycle.</p>
+<h2>While prototyping: read outputs</h2>
+<p>Do not build heavy infrastructure for a weekend prototype.</p>
+<p>Run the product. Read 20 outputs. Keep a simple list of what breaks.</p>
+<p>This is already a form of evaluation.</p>
+<p>The purpose at this stage is to learn quickly, not to create a dashboard.</p>
+<h2>Before launch: build the first real suite</h2>
+<p>Read a larger set of traces and group the common failure modes.</p>
+<p>Build 20 to 50 cases around the most important ones. Add structured synthetic cases where production data is missing.</p>
+<p>Set a clear release bar.</p>
+<p>For example:</p>
+<ul>
+  <li>no critical policy violations</li>
+  <li>at least 90% on the capability suite</li>
+  <li>100% on critical regression cases</li>
+  <li>latency and cost within limits</li>
+</ul>
+<p>The exact numbers depend on the product. The important part is deciding before launch, not after seeing the score.</p>
+<h2>On every change: protect solved behaviour</h2>
+<p>Once a capability works reliably, move its cases into a regression suite.</p>
+<p>Run that suite when you change:</p>
+<ul>
+  <li>the prompt</li>
+  <li>retrieval logic</li>
+  <li>tool definitions</li>
+  <li>application code</li>
+  <li>model or provider</li>
+</ul>
+<p>Put the suite in CI where possible. A pull request that breaks solved behaviour should show which cases flipped before it merges.</p>
+<p>This is the AI equivalent of keeping a bug from returning.</p>
+<h2>When the model changes: compare side by side</h2>
+<p>Model upgrades should not rely on a general leaderboard or a few demo prompts.</p>
+<p>Run the old and new models against the same cases.</p>
+<p>Compare:</p>
+<ul>
+  <li>failure rate by category</li>
+  <li>newly fixed cases</li>
+  <li>newly broken cases</li>
+  <li>latency</li>
+  <li>token use and cost</li>
+  <li>judge consistency</li>
+</ul>
+<p>A cheaper model may be the better product choice if quality stays within the required bar.</p>
+<p>A more capable model may be a bad upgrade if it introduces regressions in a critical workflow.</p>
+<h2>In production: evaluate a sample continuously</h2>
+<p>Offline datasets never capture everything users will do.</p>
+<p>Sample real production traces and run focused graders on them. Track failure rates by category, not only one overall quality score.</p>
+<p>Send unusual or high-risk cases to a human review queue.</p>
+<p>Watch trends. A slow increase in one failure mode can reveal a data change, a prompt issue, or a provider change before it becomes a major incident.</p>
+<h2>After every incident: add a test</h2>
+<p>An incident should improve two things:</p>
+<ol>
+  <li>The product</li>
+  <li>The suite that protects the product</li>
+</ol>
+<p>The bad input becomes a regression case. The expected behaviour becomes explicit. The fix is not complete until the case passes and stays in the suite.</p>
+<p>Over time, the suite becomes institutional memory.</p>
+<p>It records the failures your team has already paid to understand.</p>
+<h2>The tool is not the practice</h2>
+<p>You can begin with a spreadsheet and a script.</p>
+<p>Later, you may add a library for CI, a tracing platform, an annotation queue, and online evaluation.</p>
+<p>Those tools help with scale. They do not decide what good means.</p>
+<p>Teams with a strong dataset and simple tooling usually learn more than teams with a sophisticated platform and vague metrics.</p>
+<h2>Three things to remember</h2>
+<ol>
+  <li>The evaluation process should grow with the product.</li>
+  <li>Every model or prompt change should run against the same important cases.</li>
+  <li>Every production incident should strengthen the regression suite.</li>
+</ol>
+<p>Models will keep changing.</p>
+<p>Your definition of acceptable product behaviour needs to remain stable enough to compare them.</p>

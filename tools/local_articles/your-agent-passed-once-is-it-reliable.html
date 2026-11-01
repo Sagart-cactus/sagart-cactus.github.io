@@ -1,0 +1,67 @@
+<p>An agent completes a task successfully.</p>
+<p>What did you learn?</p>
+<p>You learned that it can succeed once.</p>
+<p>You did not learn that it is reliable.</p>
+<p>Agents take multiple steps, call tools, interpret intermediate results, and make choices. Small variations can change the final outcome.</p>
+<p>One run hides that randomness.</p>
+<h2>Run the same task more than once</h2>
+<p>Suppose an agent has an 80% chance of completing a task correctly.</p>
+<p>One run gives you either a pass or a fail. Neither result reveals the underlying 80% rate.</p>
+<p>Run the task several times and two useful measures appear:</p>
+<ul>
+  <li><strong>pass@k</strong>: At least one of k attempts succeeds.</li>
+  <li><strong>pass^k</strong>: Every one of k attempts succeeds.</li>
+</ul>
+<p>The formulas are simple:</p>
+<p><code>pass@k = 1 - (1 - p)^k</code></p>
+<p><code>pass^k = p^k</code></p>
+<p>For an agent with an 80% single-run success rate and three attempts:</p>
+<ul>
+  <li>pass@3 is 99.2%</li>
+  <li>pass^3 is 51.2%</li>
+</ul>
+<p>Same agent. Same task. Two very different stories.</p>
+<figure data-img="0"></figure>
+<h2>Choose the measure that matches the product</h2>
+<p>pass@k is useful when you can try several times and keep the best valid result.</p>
+<p>A coding agent is a good example. It may generate three patches, run tests, and keep the one that passes.</p>
+<p>pass^k matters when every attempt reaches a user or changes the real world.</p>
+<p>A customer-facing booking agent cannot quietly discard two bad conversations and show only the good one. Every conversation counts.</p>
+<p>The right metric depends on who sees the failures.</p>
+<h2>Grade the outcome first</h2>
+<p>Agents can take different paths to the same correct result.</p>
+<p>If the task is "Book a table for two on Friday", check the reservation system.</p>
+<p>Is there one booking, for two people, on Friday, under the correct name?</p>
+<p>That final state matters more than whether the agent used the exact sequence of tool calls you expected.</p>
+<p>After checking the outcome, inspect the path for behaviour that matters independently:</p>
+<ul>
+  <li>Did it touch the wrong record?</li>
+  <li>Did it expose sensitive information?</li>
+  <li>Did it loop unnecessarily?</li>
+  <li>Did it spend far more than expected?</li>
+</ul>
+<p>Outcome first. Path second.</p>
+<h2>Small score changes may be noise</h2>
+<p>Suppose a prompt change improves the score from 78% to 82% on 50 cases.</p>
+<p>That looks encouraging. It may also be random variation.</p>
+<p>Small datasets produce wide uncertainty. Agent randomness makes it wider.</p>
+<p>Before calling a small improvement real:</p>
+<ul>
+  <li>run more cases</li>
+  <li>run several trials per case</li>
+  <li>compare the same cases before and after the change</li>
+  <li>read the cases that flipped</li>
+</ul>
+<p>The last point is essential. A four-point gain is not automatically good if it fixes easy cases and breaks a critical workflow.</p>
+<h2>Reliability is a product requirement</h2>
+<p>Capability and reliability are different.</p>
+<p>An agent that succeeds once in ten attempts may demonstrate capability. It is not ready for a customer workflow that must work every time.</p>
+<p>Your eval should reflect the reliability the product actually needs.</p>
+<h2>Three things to remember</h2>
+<ol>
+  <li>One successful run proves capability, not reliability.</li>
+  <li>pass@k and pass^k answer different product questions.</li>
+  <li>Check the final state before judging the exact path.</li>
+</ol>
+<p>An agent is not reliable because you have seen it work.</p>
+<p>It is reliable when repeated evidence shows how often it works.</p>

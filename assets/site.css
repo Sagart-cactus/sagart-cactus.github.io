@@ -372,6 +372,35 @@ figure.diagram video {
   background: var(--bg-inset);
 }
 
+/* Comics: each page links to its full-size original, with a text version beneath. */
+figure.comic-page { margin: 2rem 0; }
+
+figure.comic-page a { display: block; border-bottom: none; }
+
+figure.comic-page img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.comic-text {
+  margin-top: 0.6rem;
+  font-size: 0.93rem;
+  color: var(--text-muted);
+}
+
+.comic-text summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.04em;
+}
+
+.comic-text p { margin: 0.35rem 0; }
+
 .source {
   margin: 2.75rem 0 0;
   padding-top: 1.5rem;

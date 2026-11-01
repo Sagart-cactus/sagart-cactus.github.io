@@ -9,8 +9,9 @@ dropping the file onto any static host.
 
 ```
 index.html          the resume page: markup, styles, print styles, theme toggle, JSON-LD
-articles/           36 articles, one directory per article
+articles/           38 articles, one directory per article
 articles/index.html the writing archive
+comics/             comics, one directory per comic, generated from tools/comics.json
 assets/site.css     shared styles for the archive and article pages
 tools/              the scripts that fetch and rebuild the archive
 sitemap.xml         generated; every page, articles newest first
@@ -173,7 +174,7 @@ as "cutting annual cloud spend substantially" rather than with the dollar figure
 
 ## The writing archive
 
-The writing archive contains 35 republished LinkedIn articles and one article published directly
+The writing archive contains 35 republished LinkedIn articles and three articles published directly
 on this site. Articles are grouped the same way as the resume's Writing section. Each article gets
 its own page with a publish date, reading time, prev/next links within its group, and `BlogPosting`
 structured data. Republished articles also link back to the LinkedIn original.
@@ -250,7 +251,9 @@ the archive index, `sitemap.xml` and `robots.txt`.
 Both scripts are deterministic: rebuilding without changing `articles.json` or
 `local_articles.json` produces byte-identical output, so a rebuild never shows up as noise in
 `git diff`. Articles published directly on this site are listed in `local_articles.json`, with
-their HTML fragments under `tools/local_articles/`. The Writing links in `index.html` are not
+their HTML fragments under `tools/local_articles/`. Set `append_to_group` on one that continues a
+LinkedIn series, so it sorts after that series. If it later goes live on LinkedIn, add its
+`source_url` there rather than adding it to `articles_source.json`, which would duplicate it. The Writing links in `index.html` are not
 regenerated, so add new entries there by hand.
 
 ### What was repaired during import
