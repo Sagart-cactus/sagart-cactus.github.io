@@ -401,6 +401,86 @@ figure.comic-page img {
 
 .comic-text p { margin: 0.35rem 0; }
 
+.comic-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-bottom: 0.6rem;
+}
+
+.comic-nav[hidden] { display: none; }
+
+.comic-nav button {
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--rule-strong);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.comic-nav button:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--bg-inset);
+}
+
+.comic-nav button:disabled {
+  color: var(--text-muted);
+  border-color: var(--rule);
+  cursor: default;
+  opacity: 0.6;
+}
+
+.comic-status {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* One page at a time on screen, sized so the whole page and the controls fit
+   without scrolling. Print keeps every page stacked. */
+@media screen {
+  .comic-reader.is-paged { scroll-margin-top: 0.5rem; }
+
+  .is-paged .comic-track {
+    display: flex;
+    align-items: flex-start;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .is-paged .comic-track::-webkit-scrollbar { display: none; }
+
+  .is-paged figure.comic-page {
+    flex: 0 0 100%;
+    min-width: 0;
+    margin: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .is-paged figure.comic-page a {
+    width: fit-content;
+    margin-inline: auto;
+    outline-offset: -2px;
+  }
+
+  .is-paged figure.comic-page img {
+    width: auto;
+    max-width: 100%;
+    max-height: calc(100vh - 4.5rem);
+    max-height: calc(100svh - 4.5rem);
+  }
+}
+
 .source {
   margin: 2.75rem 0 0;
   padding-top: 1.5rem;
@@ -478,7 +558,8 @@ footer nav { display: flex; flex-wrap: wrap; gap: 1.25rem; }
   @page { margin: 14mm 15mm; }
   body { background: #ffffff; color: #000000; font-size: 10.5pt; line-height: 1.45; }
   .wrap { max-width: none; padding: 0; }
-  .toggle, .skip, .prevnext-wrap, .backlink { display: none !important; }
+  .toggle, .skip, .prevnext-wrap, .backlink, .comic-nav { display: none !important; }
+  figure.comic-page { break-inside: avoid; page-break-inside: avoid; }
   a { color: #000000; border-bottom: none; text-decoration: underline; }
   .masthead { border-bottom: none; padding-bottom: 0; }
   .post-body pre { background: transparent; border: 1px solid #999999; }

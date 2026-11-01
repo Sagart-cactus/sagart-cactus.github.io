@@ -175,6 +175,82 @@ TOGGLE_JS = """<script>
 </script>"""
 
 
+# Turns the stacked comic pages into a one-at-a-time reader. Without JavaScript,
+# and in print, the pages stay stacked. Swiping is native scroll snapping.
+COMIC_JS = """<script>
+(function () {
+  var reader = document.getElementById('comic-reader');
+  var track = reader.querySelector('.comic-track');
+  var pages = track.querySelectorAll('.comic-page');
+  var nav = reader.querySelector('.comic-nav');
+  var prev = nav.querySelector('[data-step="-1"]');
+  var next = nav.querySelector('[data-step="1"]');
+  var status = nav.querySelector('.comic-status');
+  var last = pages.length - 1;
+  var current = -1;
+
+  function preload(i) {
+    if (pages[i]) pages[i].querySelector('img').loading = 'eager';
+  }
+
+  function sync(i) {
+    if (i === current) return;
+    var first = current === -1;
+    var focused = document.activeElement;
+    current = i;
+    status.textContent = 'Page ' + (i + 1) + ' of ' + pages.length;
+    prev.disabled = i === 0;
+    next.disabled = i === last;
+    if (focused && focused.disabled) (i === 0 ? next : prev).focus();
+    for (var j = 0; j < pages.length; j++) {
+      if (j !== i) pages[j].querySelector('details').open = false;
+    }
+    preload(i - 1);
+    preload(i + 1);
+    if (!first) history.replaceState(null, '', i ? '#page-' + (i + 1) : location.pathname + location.search);
+  }
+
+  function show(i) {
+    track.scrollLeft = i * track.clientWidth;
+    sync(i);
+  }
+
+  function go(i) {
+    show(Math.max(0, Math.min(last, i)));
+    var image = pages[current].querySelector('img').getBoundingClientRect();
+    if (nav.getBoundingClientRect().top < 0 || image.bottom > window.innerHeight) reader.scrollIntoView();
+  }
+
+  function fromHash() {
+    var match = /^#page-(\\d+)$/.exec(location.hash);
+    var n = match ? parseInt(match[1], 10) - 1 : -1;
+    return n >= 0 && n <= last ? n : null;
+  }
+
+  reader.classList.add('is-paged');
+  nav.hidden = false;
+  show(fromHash() || 0);
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+  track.addEventListener('scroll', function () {
+    sync(Math.round(track.scrollLeft / track.clientWidth));
+  }, { passive: true });
+  window.addEventListener('resize', function () { track.scrollLeft = current * track.clientWidth; });
+  window.addEventListener('hashchange', function () {
+    var n = fromHash();
+    if (n !== null) show(n);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    go(current + (e.key === 'ArrowLeft' ? -1 : 1));
+  });
+})();
+</script>"""
+
+
 def iso(d):
     return datetime.strptime(d, "%b %d, %Y").date().isoformat()  # noqa: DTZ007
 
@@ -434,7 +510,7 @@ def build_comic(c):
         n = p["number"]
         loading = 'fetchpriority="high"' if n == 1 else 'loading="lazy"'
         lines = "\n".join(f"          <p>{escape(line)}</p>" for line in p["transcript"])
-        figures.append(f"""      <figure class="comic-page">
+        figures.append(f"""      <figure class="comic-page" id="page-{n}">
         <a href="{base}/page-{n}.png" aria-label="Open page {n} at full size">
           <img src="{base}/page-{n}.jpg" width="{c['width']}" height="{c['height']}" {loading} decoding="async"
                alt="Comic page {n} of {total}: {escape(p['heading'])}">
@@ -465,7 +541,16 @@ def build_comic(c):
 {intro}
       </div>
 
+      <div class="comic-reader" id="comic-reader">
+        <nav class="comic-nav" aria-label="Comic pages" hidden>
+          <button type="button" data-step="-1"><span aria-hidden="true">←</span> Previous</button>
+          <span class="comic-status" aria-live="polite">Page 1 of {total}</span>
+          <button type="button" data-step="1">Next <span aria-hidden="true">→</span></button>
+        </nav>
+        <div class="comic-track">
 {chr(10).join(figures)}
+        </div>
+      </div>
 
       <p class="source">The last page ends with a challenge. Add your explanation to the
         <a href="{c['discussion_url']}" rel="nofollow">post on LinkedIn</a>.</p>
@@ -478,7 +563,9 @@ def build_comic(c):
       <a href="{up}">Resume</a>
       <a href="{up}articles/">Writing</a>
     </nav>
-  </footer>"""
+  </footer>
+
+{COMIC_JS}"""
 
     canonical = f"{SITE}/comics/{c['slug']}/"
     image = f"{SITE}/assets/comics/{c['slug']}/page-1.jpg"
