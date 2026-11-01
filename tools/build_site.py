@@ -53,7 +53,7 @@ GUIDES = [
         "name": "Managed Agents · The Visual Field Guide",
         "url": "https://sagartrivedi.dev/learn-managed-agents/",
         "short": "Managed Agents field guide",
-        "group": "Agents and evaluation",
+        "group": "Managed Agents",
         "blurb": "Orchestration, parent and child isolation, parallelism, model matching, cost, "
                  "and when not to reach for an agent.",
     },
@@ -61,7 +61,7 @@ GUIDES = [
         "name": "Evals · The Visual Field Guide",
         "url": "https://sagartrivedi.dev/learn-eval/",
         "short": "Evals field guide",
-        "group": "Agents and evaluation",
+        "group": "Eval",
         "blurb": "What evals actually are, the four questions people conflate, how teams build "
                  "them, when to run them, and which frameworks are worth the trouble.",
     },

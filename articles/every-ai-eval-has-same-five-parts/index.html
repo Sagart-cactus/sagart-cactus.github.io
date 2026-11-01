@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Every AI Eval Has the Same Five Parts · Sagar Trivedi</title>
+<meta name="description" content="What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagartrivedi.dev/articles/every-ai-eval-has-same-five-parts/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Every AI Eval Has the Same Five Parts · Sagar Trivedi">
+<meta property="og:description" content="What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores.">
+<meta property="og:url" content="https://sagartrivedi.dev/articles/every-ai-eval-has-same-five-parts/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Every AI Eval Has the Same Five Parts · Sagar Trivedi">
+<meta name="twitter:description" content="What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<meta property="article:published_time" content="2026-10-02">
+<meta property="article:author" content="Sagar Trivedi">
+<meta property="og:image" content="https://sagartrivedi.dev/assets/articles/every-ai-eval-has-same-five-parts/00.png">
+<meta property="og:image:alt" content="Every AI Eval Has the Same Five Parts">
+<meta name="twitter:image" content="https://sagartrivedi.dev/assets/articles/every-ai-eval-has-same-five-parts/00.png">
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Every AI Eval Has the Same Five Parts</h1>
+      <p class="post-meta">
+        <time datetime="2026-10-02">2 October 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> What exactly is inside an AI eval? </p>
+<p> The terminology can make it sound more complicated than it is. </p>
+<p> Datasets. Trials. Traces. Graders. Harnesses. Scores. </p>
+<p> Strip the language away and nearly every eval has the same five parts: </p>
+<p> Input → System → Output → Grader → Score </p>
+<p> Once this shape is clear, most eval tools become easier to understand. </p>
+<figure class="diagram"><img src="../../assets/articles/every-ai-eval-has-same-five-parts/00.png" width="711" height="400" loading="lazy" decoding="async" alt="Diagram: Every AI Eval Has the Same Five Parts"></figure>
+<h2> 1. Input </h2>
+<p> The input is one realistic task. </p>
+<p> For a support bot, it might be: </p>
+<blockquote>Can I get a refund after 30 days? </blockquote>
+<p> For a coding agent, it might be a bug report and a repository. </p>
+<p> For a research agent, it might be a question plus a collection of documents. </p>
+<p> Good inputs look like real work. They include ambiguity, missing details, typos, awkward phrasing, and edge cases. </p>
+<p> Clean demo prompts are useful for demos. They are rarely enough for evals. </p>
+<h2> 2. System </h2>
+<p> The system is everything that tries to complete the task. </p>
+<p> That may include: </p>
+<ul><li>the model </li><li>prompts </li><li>tools </li><li>retrieved context </li><li>memory </li><li>application logic </li></ul>
+<p> This matters because an eval does not measure a model in isolation. It measures the product configuration your users actually experience. </p>
+<p> Change the prompt, retrieval, tool schema, or model, and the score may change. </p>
+<h2> 3. Output </h2>
+<p> For a chatbot, the output may be one answer. </p>
+<p> For an agent, it may be the full transcript, including every tool call, retry, and intermediate result. </p>
+<p> Sometimes the most useful output is not text at all. It is the state left behind. </p>
+<p> Did the agent create the correct booking? Did it update the right record? Did the generated SQL run? </p>
+<p> For agents, checking the final state is often more reliable than expecting one exact sequence of steps. </p>
+<h2> 4. Grader </h2>
+<p> The grader decides whether the result is acceptable. </p>
+<p> It can be: </p>
+<ul><li>code, such as an exact match or schema check </li><li>another model, often called an LLM judge </li><li>a human reviewer </li></ul>
+<p> The grader should check one clear thing. </p>
+<p> "Is this response good?" is vague. </p>
+<p> "Does every refund-policy claim appear in the supplied policy text?" is testable. </p>
+<p> Most of the hard work in evals lives here, because someone must turn a product expectation into a repeatable decision. </p>
+<h2> 5. Score </h2>
+<p> One test case gives you a pass or fail. </p>
+<p> A set of cases gives you a rate. </p>
+<p> If 43 of 50 cases pass, the score is 86%. </p>
+<p> That number becomes useful when you compare it with something: </p>
+<ul><li>the previous prompt </li><li>a different model </li><li>last week's production score </li><li>a release threshold </li></ul>
+<p> A score without context is just a number. A score tied to specific cases tells you what changed. </p>
+<h2> The surrounding vocabulary </h2>
+<p> A few common terms now become simple: </p>
+<ul><li>A task or case is one input plus its expected behavior. </li><li>A trial is one attempt at that task. </li><li>A trace is the full record of what happened. </li><li>A suite is a collection of related cases. </li><li>A harness is the plumbing that runs everything and records the results. </li></ul>
+<p> Different tools use slightly different names. The five-part shape stays the same. </p>
+<h2> Three things to remember </h2>
+<ol><li>Inputs should look like real user work. </li><li>The grader needs a precise definition of acceptable behavior. </li><li>The score becomes valuable when it helps you compare two versions. </li></ol>
+<p> If an eval setup feels confusing, draw five boxes. </p>
+<p> You will usually find the missing piece quickly. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/every-ai-eval-has-same-five-parts-sagar-trivedi-yplnc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/your-ai-app-did-crash-quietly-got-worse/"><span class="dir">Previous</span>Your AI App Did Not Crash. It Quietly Got Worse.</a><a class="prevnext next" href="../../articles/stop-picking-metrics-before-reading-failures/"><span class="dir">Next</span>Stop Picking Metrics Before Reading Failures</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Every AI Eval Has the Same Five Parts",
+  "datePublished": "2026-10-02",
+  "description": "What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores. Strip the language away and nearly every eval ha",
+  "wordCount": 540,
+  "image": "https://sagartrivedi.dev/assets/articles/every-ai-eval-has-same-five-parts/00.png",
+  "url": "https://sagartrivedi.dev/articles/every-ai-eval-has-same-five-parts/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagartrivedi.dev/articles/every-ai-eval-has-same-five-parts/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagartrivedi.dev/"
+  }
+}
+</script>
+</body>
+</html>

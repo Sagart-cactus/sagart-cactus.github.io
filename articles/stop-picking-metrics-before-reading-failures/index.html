@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Stop Picking Metrics Before Reading Failures · Sagar Trivedi</title>
+<meta name="description" content="Should you begin an eval project by choosing metrics? Usually, no. &quot;Helpfulness&quot;, &quot;relevance&quot;, and &quot;coherence&quot; look sensible in a dashboard.">
+<meta name="author" content="Sagar Trivedi">
+<link rel="canonical" href="https://sagartrivedi.dev/articles/stop-picking-metrics-before-reading-failures/">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Stop Picking Metrics Before Reading Failures · Sagar Trivedi">
+<meta property="og:description" content="Should you begin an eval project by choosing metrics? Usually, no. &quot;Helpfulness&quot;, &quot;relevance&quot;, and &quot;coherence&quot; look sensible in a dashboard.">
+<meta property="og:url" content="https://sagartrivedi.dev/articles/stop-picking-metrics-before-reading-failures/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Stop Picking Metrics Before Reading Failures · Sagar Trivedi">
+<meta name="twitter:description" content="Should you begin an eval project by choosing metrics? Usually, no. &quot;Helpfulness&quot;, &quot;relevance&quot;, and &quot;coherence&quot; look sensible in a dashboard.">
+
+<meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%239c3d17'/%3E%3Ctext%20x='32'%20y='44'%20font-family='Georgia,serif'%20font-size='34'%20font-weight='700'%20text-anchor='middle'%20fill='%23fcfcfa'%3EST%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="../../assets/site.css">
+<meta property="article:published_time" content="2026-10-06">
+<meta property="article:author" content="Sagar Trivedi">
+<script>
+  try {
+    var t = localStorage.getItem('theme');
+    if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="wrap">
+  <header class="page-head">
+    <div class="masthead">
+      <a class="backlink" href="../../articles/">Writing</a>
+      <button class="toggle" type="button" id="theme-toggle" aria-label="Switch to dark theme" title="Switch theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2"/>
+          <path d="M12 2.4v2.2M12 19.4v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6"/>
+        </svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <article class="post">
+      <h1>Stop Picking Metrics Before Reading Failures</h1>
+      <p class="post-meta">
+        <time datetime="2026-10-06">6 October 2026</time>
+        <span class="dot">·</span>2 min read
+      </p>
+
+      <div class="post-body">
+<p> Should you begin an eval project by choosing metrics? </p>
+<p> Usually, no. </p>
+<p> "Helpfulness", "relevance", and "coherence" look sensible in a dashboard. But they may have little to do with the problems your users actually face. </p>
+<p> A support bot can sound helpful while quoting an old policy. A research assistant can be coherent while inventing a source. An agent can write a polished reply after updating the wrong account. </p>
+<p> Start with the failures, not the metric menu. </p>
+<h2> Read real traces </h2>
+<p> Pull 50 to 100 recent conversations or agent runs. </p>
+<p> Read them carefully. </p>
+<p> For each trace, write one short note describing what went wrong: </p>
+<ul><li>Quoted the old refund policy. </li><li>Asked for information already provided. </li><li>Failed to hand off to a person. </li><li>Used the right tool with the wrong customer ID. </li><li>Gave a correct answer that was too long for mobile. </li></ul>
+<p> Do not create categories yet. Just describe the failure in plain language. </p>
+<p> This step is sometimes called open coding. The name is less important than the habit. </p>
+<h2> Group similar failures </h2>
+<p> After reading enough traces, patterns appear. </p>
+<p> Your notes might group into: </p>
+<ul><li>Wrong policy detail: 23 </li><li>Did not hand off: 14 </li><li>Asked twice for the same information: 10 </li><li>Too long for mobile: 5 </li><li>Robotic tone: 3 </li></ul>
+<p> Now you have something useful: a ranked list of actual product problems. </p>
+<p> This list tells you where to spend time. It also tells you what to evaluate. </p>
+<h2> Turn each important failure into a check </h2>
+<p> Do not build one grader for "quality". </p>
+<p> Build focused graders for the failure modes that matter. </p>
+<p> For example: </p>
+<ul><li>Policy accuracy: Does every policy claim appear in the supplied document? </li><li>Handoff behaviour: Did the bot transfer the conversation when the user requested a person? </li><li>Repetition: Did it ask for information already present in the conversation? </li><li>Length: Is the response under the mobile limit? </li></ul>
+<p> Specific checks are easier to trust and easier to debug. </p>
+<p> When the score drops, you know what kind of behaviour changed. </p>
+<h2> Fix, rerun, and read again </h2>
+<p> Once the first suite exists: </p>
+<ol><li>Change the prompt, model, retrieval, or tool logic. </li><li>Run the same cases again. </li><li>Compare the failure rates. </li><li>Read the traces that changed. </li></ol>
+<p> This last step matters. </p>
+<p> A failed case may mean the system is wrong. It may also mean the task is ambiguous, the reference answer is outdated, or the grader is too strict. </p>
+<p> The score points you toward the problem. The trace explains it. </p>
+<h2> Keep production in the loop </h2>
+<p> Your first dataset will miss things. That is normal. </p>
+<p> Every new incident, complaint, or strange conversation is a candidate test case. </p>
+<p> Over time, the process becomes a loop: </p>
+<p> Observe → Group → Test → Fix → Ship → Observe again </p>
+<p> This is why evals are never really finished. A mature suite is a record of what the product has learned about its own failures. </p>
+<h2> Three things to remember </h2>
+<ol><li>Generic metrics rarely reveal product-specific failure modes. </li><li>Read enough traces for patterns to repeat. </li><li>Every confirmed production failure should become a future test. </li></ol>
+<p> The most valuable eval work often happens before anyone writes a grader. </p>
+<p> It happens when someone sits down and reads what the system actually did. </p>
+      </div>
+
+      <p class="source">Originally published on
+        <a href="https://www.linkedin.com/pulse/stop-picking-metrics-before-reading-failures-sagar-trivedi-khfjc" rel="nofollow">LinkedIn</a>.</p>
+    </article>
+<nav class="prevnext-wrap" aria-label="More in this series"><a class="prevnext prev" href="../../articles/every-ai-eval-has-same-five-parts/"><span class="dir">Previous</span>Every AI Eval Has the Same Five Parts</a><a class="prevnext next" href="../../articles/clever-grader-cannot-save-weak-dataset/"><span class="dir">Next</span>A Clever Grader Cannot Save a Weak Dataset</a></nav>
+  </main>
+
+  <footer>
+    <p><a href="../../">Sagar Trivedi</a> · Applied AI Architect</p>
+    <nav aria-label="Site">
+      <a href="../../">Resume</a>
+      <a href="../../articles/">Writing</a>
+    </nav>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var media = window.matchMedia('(prefers-color-scheme: dark)');
+  function isDark() {
+    var set = root.getAttribute('data-theme');
+    return set ? set === 'dark' : media.matches;
+  }
+  function syncLabel() {
+    btn.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' theme');
+  }
+  btn.addEventListener('click', function () {
+    var next = isDark() ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+    syncLabel();
+  });
+  media.addEventListener('change', function () {
+    if (!root.getAttribute('data-theme')) syncLabel();
+  });
+  syncLabel();
+})();
+
+/* Diagrams autoplay like the GIFs they replace, but never for visitors who
+   asked for reduced motion: pause them and expose controls instead. */
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    var videos = document.querySelectorAll('figure.diagram video');
+    for (var i = 0; i < videos.length; i++) {
+      var v = videos[i];
+      if (reduce.matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      } else {
+        v.controls = false;
+        if (v.paused) { var p = v.play(); if (p) { p.catch(function () {}); } }
+      }
+    }
+  }
+  apply();
+  reduce.addEventListener('change', apply);
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Stop Picking Metrics Before Reading Failures",
+  "datePublished": "2026-10-06",
+  "description": "Should you begin an eval project by choosing metrics? Usually, no. \"Helpfulness\", \"relevance\", and \"coherence\" look sensible in a dashboard. But they may have little to do with the problems your users",
+  "wordCount": 515,
+  "url": "https://sagartrivedi.dev/articles/stop-picking-metrics-before-reading-failures/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://sagartrivedi.dev/articles/stop-picking-metrics-before-reading-failures/"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Sagar Trivedi",
+    "url": "https://sagartrivedi.dev/"
+  }
+}
+</script>
+</body>
+</html>

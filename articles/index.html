@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Writing · Sagar Trivedi</title>
-<meta name="description" content="30 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta name="description" content="36 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 <meta name="author" content="Sagar Trivedi">
 <link rel="canonical" href="https://sagartrivedi.dev/articles/">
 
 <meta property="og:type" content="article">
 <meta property="og:title" content="Writing · Sagar Trivedi">
-<meta property="og:description" content="30 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta property="og:description" content="36 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 <meta property="og:url" content="https://sagartrivedi.dev/articles/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Writing · Sagar Trivedi">
-<meta name="twitter:description" content="30 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
+<meta name="twitter:description" content="36 articles on LLM evaluation, agent architecture, the Model Context Protocol, and agent tooling.">
 
 <meta name="theme-color" content="#fcfcfa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#131313" media="(prefers-color-scheme: dark)">
@@ -57,7 +57,7 @@
     <h1>Writing</h1>
     <p class="lede">I write about the parts of AI systems that decide whether they survive
     production: evaluation, failure modes, cost, and the protocols and tooling underneath.
-    30 articles, about 32,000 words.</p>
+    36 articles, about 35,000 words.</p>
   </header>
 
   <main id="main">
@@ -151,9 +151,9 @@
           </li>
         </ul>
       </section>
-      <section class="group" aria-labelledby="g-agents-and-evaluation">
-        <h2 id="g-agents-and-evaluation">Agents and evaluation</h2>
-        <p class="companion">Companion guides: <a href="https://sagartrivedi.dev/learn-managed-agents/">Managed Agents field guide</a> and <a href="https://sagartrivedi.dev/learn-eval/">Evals field guide</a></p>
+      <section class="group" aria-labelledby="g-managed-agents">
+        <h2 id="g-managed-agents">Managed Agents</h2>
+        <p class="companion">Companion guide: <a href="https://sagartrivedi.dev/learn-managed-agents/">Managed Agents field guide</a></p>
         <ul class="entries">
           <li>
             <a class="entry" href="scariest-ai-agent-failure-one-looks-like-success/">
@@ -194,6 +194,60 @@
                 <span class="dot">·</span>3 min</span>
             </a>
             <p class="entry-excerpt">You might have spent a good part of this year building AI solutions, and then kept running into the same wall. Not a bug. Not a bad prompt. A wall that&#x27;s built into the architecture itself. Let me wal…</p>
+          </li>
+        </ul>
+      </section>
+      <section class="group" aria-labelledby="g-eval">
+        <h2 id="g-eval">Eval</h2>
+        <p class="companion">Companion guide: <a href="https://sagartrivedi.dev/learn-eval/">Evals field guide</a></p>
+        <ul class="entries">
+          <li>
+            <a class="entry" href="your-ai-app-did-crash-quietly-got-worse/">
+              <span class="entry-title">Your AI App Did Not Crash. It Quietly Got Worse.</span>
+              <span class="entry-meta"><time datetime="2026-09-28">28 September 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">You changed the prompt. The answers look shorter. The tone feels better. Five examples worked. So you ship it. Two days later, support finds a problem. The new prompt fixed long answers, but it also r…</p>
+          </li>
+          <li>
+            <a class="entry" href="every-ai-eval-has-same-five-parts/">
+              <span class="entry-title">Every AI Eval Has the Same Five Parts</span>
+              <span class="entry-meta"><time datetime="2026-10-02">2 October 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores. Strip the language away and nearly every eval ha…</p>
+          </li>
+          <li>
+            <a class="entry" href="stop-picking-metrics-before-reading-failures/">
+              <span class="entry-title">Stop Picking Metrics Before Reading Failures</span>
+              <span class="entry-meta"><time datetime="2026-10-06">6 October 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">Should you begin an eval project by choosing metrics? Usually, no. &quot;Helpfulness&quot;, &quot;relevance&quot;, and &quot;coherence&quot; look sensible in a dashboard. But they may have little to do with the problems your users…</p>
+          </li>
+          <li>
+            <a class="entry" href="clever-grader-cannot-save-weak-dataset/">
+              <span class="entry-title">A Clever Grader Cannot Save a Weak Dataset</span>
+              <span class="entry-meta"><time datetime="2026-10-13">13 October 2026</time>
+                <span class="dot">·</span>3 min</span>
+            </a>
+            <p class="entry-excerpt">Would your eval catch a question nobody on your team thought to write? Probably not. That is why the dataset matters so much. A sophisticated grader applied to easy, repetitive questions gives you a p…</p>
+          </li>
+          <li>
+            <a class="entry" href="use-simplest-grader-works/">
+              <span class="entry-title">Use the Simplest Grader That Works</span>
+              <span class="entry-meta"><time datetime="2026-10-20">20 October 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">Does this eval really need another LLM? Sometimes it does. Often, ten lines of code would be faster, cheaper, and easier to trust. A practical grading order is: Code first. LLM judge second. Human rev…</p>
+          </li>
+          <li>
+            <a class="entry" href="who-evaluates-evaluator/">
+              <span class="entry-title">Who Evaluates the Evaluator?</span>
+              <span class="entry-meta"><time datetime="2026-10-27">27 October 2026</time>
+                <span class="dot">·</span>2 min</span>
+            </a>
+            <p class="entry-excerpt">Your LLM judge says the system passes 94% of the time. Should you trust it? Not until you know how often the judge itself is wrong. An unchecked judge is just another model producing an opinion. A pol…</p>
           </li>
         </ul>
       </section>

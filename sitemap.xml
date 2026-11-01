@@ -7,8 +7,32 @@
     <loc>https://sagartrivedi.dev/articles/</loc>
   </url>
   <url>
+    <loc>https://sagartrivedi.dev/articles/who-evaluates-evaluator/</loc>
+    <lastmod>2026-10-27</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/use-simplest-grader-works/</loc>
+    <lastmod>2026-10-20</lastmod>
+  </url>
+  <url>
     <loc>https://sagartrivedi.dev/articles/a-green-test-suite-should-let-you-relax/</loc>
     <lastmod>2026-10-16</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/clever-grader-cannot-save-weak-dataset/</loc>
+    <lastmod>2026-10-13</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/stop-picking-metrics-before-reading-failures/</loc>
+    <lastmod>2026-10-06</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/every-ai-eval-has-same-five-parts/</loc>
+    <lastmod>2026-10-02</lastmod>
+  </url>
+  <url>
+    <loc>https://sagartrivedi.dev/articles/your-ai-app-did-crash-quietly-got-worse/</loc>
+    <lastmod>2026-09-28</lastmod>
   </url>
   <url>
     <loc>https://sagartrivedi.dev/articles/how-rag-fails-eleven-modes-one-symptom/</loc>

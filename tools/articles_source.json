@@ -21,7 +21,7 @@
    "https://www.linkedin.com/pulse/how-rag-fails-eleven-modes-one-symptom-sagar-trivedi-pzk3c"
   ]
  ],
- "Agents and evaluation": [
+ "Managed Agents": [
   [
    "The Scariest AI Agent Failure Is the One That Looks Like Success",
    "https://www.linkedin.com/pulse/scariest-ai-agent-failure-one-looks-like-success-sagar-trivedi-th4kc"
@@ -41,6 +41,32 @@
   [
    "Your AI Agent Has a Ceiling. Here's Where It Is.",
    "https://www.linkedin.com/pulse/your-ai-agent-has-ceiling-heres-where-sagar-trivedi-kapbc"
+  ]
+ ],
+ "Eval": [
+  [
+   "Your AI App Did Not Crash. It Quietly Got Worse.",
+   "https://www.linkedin.com/pulse/your-ai-app-did-crash-quietly-got-worse-sagar-trivedi-tjdxc"
+  ],
+  [
+   "Every AI Eval Has the Same Five Parts",
+   "https://www.linkedin.com/pulse/every-ai-eval-has-same-five-parts-sagar-trivedi-yplnc"
+  ],
+  [
+   "Stop Picking Metrics Before Reading Failures",
+   "https://www.linkedin.com/pulse/stop-picking-metrics-before-reading-failures-sagar-trivedi-khfjc"
+  ],
+  [
+   "A Clever Grader Cannot Save a Weak Dataset",
+   "https://www.linkedin.com/pulse/clever-grader-cannot-save-weak-dataset-sagar-trivedi-tuwhc"
+  ],
+  [
+   "Use the Simplest Grader That Works",
+   "https://www.linkedin.com/pulse/use-simplest-grader-works-sagar-trivedi-3m5cc"
+  ],
+  [
+   "Who Evaluates the Evaluator?",
+   "https://www.linkedin.com/pulse/who-evaluates-evaluator-sagar-trivedi-azuzc"
   ]
  ],
  "Model Context Protocol": [

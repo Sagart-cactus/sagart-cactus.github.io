@@ -276,7 +276,7 @@
     "linkedin_alt": "Article content"
    }
   ],
-  "group": "Agents and evaluation",
+  "group": "Managed Agents",
   "listed_title": "The Scariest AI Agent Failure Is the One That Looks Like Success",
   "media": [
    {
@@ -306,7 +306,7 @@
     "linkedin_alt": "Article content"
    }
   ],
-  "group": "Agents and evaluation",
+  "group": "Managed Agents",
   "listed_title": "Every Multi-Agent System I've Studied Is One of These Five Designs",
   "media": [
    {
@@ -336,7 +336,7 @@
     "linkedin_alt": "Article content"
    }
   ],
-  "group": "Agents and evaluation",
+  "group": "Managed Agents",
   "listed_title": "I Assumed Multi-Agent Meant 4x the Cost. The Math Said Otherwise.",
   "media": [
    {
@@ -366,7 +366,7 @@
     "linkedin_alt": "Article content"
    }
   ],
-  "group": "Agents and evaluation",
+  "group": "Managed Agents",
   "listed_title": "The One Sentence That Explains Every Multi-Agent Failure I've Seen",
   "media": [
    {
@@ -396,7 +396,7 @@
     "linkedin_alt": "Article content"
    }
   ],
-  "group": "Agents and evaluation",
+  "group": "Managed Agents",
   "listed_title": "Your AI Agent Has a Ceiling. Here's Where It Is.",
   "media": [
    {
@@ -408,6 +408,135 @@
     "bytes": 62201,
     "linkedin_alt": "Article content",
     "source_bytes": 76082
+   }
+  ]
+ },
+ {
+  "title": "Your AI App Did Not Crash. It Quietly Got Worse.",
+  "date": "Sep 28, 2026",
+  "source_url": "https://www.linkedin.com/pulse/your-ai-app-did-crash-quietly-got-worse-sagar-trivedi-tjdxc",
+  "slug": "your-ai-app-did-crash-quietly-got-worse",
+  "html": "<p> You changed the prompt. </p>\n<p> The answers look shorter. The tone feels better. Five examples worked. </p>\n<p> So you ship it. </p>\n<p> Two days later, support finds a problem. The new prompt fixed long answers, but it also removed an important refund warning in some cases. </p>\n<p> Nothing crashed. No exception was raised. Every request returned a valid response. </p>\n<p> The product simply became a little worse. </p>\n<p> That is the uncomfortable thing about AI applications. Most regressions are quiet. </p>\n<h2> Normal tests are not enough </h2>\n<p> Traditional software is predictable. </p>\n<p> Give a function the same input and you expect the same output. A unit test can compare the result with an exact value. </p>\n<p> AI systems behave differently. The same question can produce two different answers. Both may be acceptable. One may also be subtly wrong. </p>\n<p> That changes the question. </p>\n<p> Instead of asking, \"Does this pass?\" you often need to ask, \"How often does this pass?\" </p>\n<p> That is what an eval gives you. </p>\n<p> An eval runs a set of realistic inputs through your AI system, checks the outputs against a clear definition of good, and reports the result as a score. </p>\n<p> For example: </p>\n<ul><li>Version 1 passes 32 of 40 support questions. </li><li>Version 2 passes 36 of 40. </li><li>Version 2 fixes seven old failures. </li><li>Version 2 also breaks three cases that used to work. </li></ul>\n<p> The average score improved. The product still gained three regressions. </p>\n<p> Without an eval, you probably see the first part and miss the second. </p>\n<figure data-img=\"0\"></figure>\n<h2> An eval tests the system, not just the model </h2>\n<p> The model is only one part of the application. </p>\n<p> Your result also depends on: </p>\n<ul><li>the system prompt </li><li>retrieved documents </li><li>tool definitions </li><li>conversation history </li><li>model settings </li><li>application code </li></ul>\n<p> The same model can perform very differently when any of these change. </p>\n<p> Public benchmarks can help you choose a model. They cannot tell you whether your refund assistant follows your refund policy. </p>\n<p> Your own evals answer that question. </p>\n<h2> Start smaller than you think </h2>\n<p> You do not need an evaluation platform on day one. </p>\n<p> Start with 20 to 50 questions from real users. For every question, write down what a good answer must contain, what it must avoid, or what final result it must produce. </p>\n<p> Then run the set before and after a change. </p>\n<p> The first version can be a spreadsheet and a short script. The important part is not the tool. It is having the same questions and the same grading rules each time. </p>\n<p> That gives you something more useful than confidence. </p>\n<p> It gives you evidence. </p>\n<h2> Three things to remember </h2>\n<ol><li>AI regressions often return perfectly valid responses. </li><li>A better average can hide newly broken cases. </li><li>Your eval should test the whole application, not the model in isolation. </li></ol>\n<p> The goal is not to remove judgment from AI development. </p>\n<p> The goal is to stop making every product decision by squinting at five examples. </p>",
+  "words": 465,
+  "minutes": 2,
+  "excerpt": "You changed the prompt. The answers look shorter. The tone feels better. Five examples worked. So you ship it. Two days later, support finds a problem. The new prompt fixed long answers, but it also r",
+  "images": [
+   {
+    "url": "https://media.licdn.com/dms/image/v2/D5612AQESl07tZl3KGw/article-inline_image-shrink_400_744/B56aDewtI6JIAQ-/0/1790443705294?e=2147483647&v=beta&t=FMQG7ixWF7DoXG-P-fIyboDxXCB-sMGN672BINJQ9B8",
+    "linkedin_alt": "Article content"
+   }
+  ],
+  "group": "Eval",
+  "listed_title": "Your AI App Did Not Crash. It Quietly Got Worse.",
+  "media": [
+   {
+    "type": "image",
+    "src": "00.png",
+    "width": 711,
+    "height": 400,
+    "bytes": 42677,
+    "source_bytes": 42677,
+    "linkedin_alt": "Article content"
+   }
+  ]
+ },
+ {
+  "title": "Every AI Eval Has the Same Five Parts",
+  "date": "Oct 2, 2026",
+  "source_url": "https://www.linkedin.com/pulse/every-ai-eval-has-same-five-parts-sagar-trivedi-yplnc",
+  "slug": "every-ai-eval-has-same-five-parts",
+  "html": "<p> What exactly is inside an AI eval? </p>\n<p> The terminology can make it sound more complicated than it is. </p>\n<p> Datasets. Trials. Traces. Graders. Harnesses. Scores. </p>\n<p> Strip the language away and nearly every eval has the same five parts: </p>\n<p> Input \u2192 System \u2192 Output \u2192 Grader \u2192 Score </p>\n<p> Once this shape is clear, most eval tools become easier to understand. </p>\n<figure data-img=\"0\"></figure>\n<h2> 1. Input </h2>\n<p> The input is one realistic task. </p>\n<p> For a support bot, it might be: </p>\n<blockquote>Can I get a refund after 30 days? </blockquote>\n<p> For a coding agent, it might be a bug report and a repository. </p>\n<p> For a research agent, it might be a question plus a collection of documents. </p>\n<p> Good inputs look like real work. They include ambiguity, missing details, typos, awkward phrasing, and edge cases. </p>\n<p> Clean demo prompts are useful for demos. They are rarely enough for evals. </p>\n<h2> 2. System </h2>\n<p> The system is everything that tries to complete the task. </p>\n<p> That may include: </p>\n<ul><li>the model </li><li>prompts </li><li>tools </li><li>retrieved context </li><li>memory </li><li>application logic </li></ul>\n<p> This matters because an eval does not measure a model in isolation. It measures the product configuration your users actually experience. </p>\n<p> Change the prompt, retrieval, tool schema, or model, and the score may change. </p>\n<h2> 3. Output </h2>\n<p> For a chatbot, the output may be one answer. </p>\n<p> For an agent, it may be the full transcript, including every tool call, retry, and intermediate result. </p>\n<p> Sometimes the most useful output is not text at all. It is the state left behind. </p>\n<p> Did the agent create the correct booking? Did it update the right record? Did the generated SQL run? </p>\n<p> For agents, checking the final state is often more reliable than expecting one exact sequence of steps. </p>\n<h2> 4. Grader </h2>\n<p> The grader decides whether the result is acceptable. </p>\n<p> It can be: </p>\n<ul><li>code, such as an exact match or schema check </li><li>another model, often called an LLM judge </li><li>a human reviewer </li></ul>\n<p> The grader should check one clear thing. </p>\n<p> \"Is this response good?\" is vague. </p>\n<p> \"Does every refund-policy claim appear in the supplied policy text?\" is testable. </p>\n<p> Most of the hard work in evals lives here, because someone must turn a product expectation into a repeatable decision. </p>\n<h2> 5. Score </h2>\n<p> One test case gives you a pass or fail. </p>\n<p> A set of cases gives you a rate. </p>\n<p> If 43 of 50 cases pass, the score is 86%. </p>\n<p> That number becomes useful when you compare it with something: </p>\n<ul><li>the previous prompt </li><li>a different model </li><li>last week's production score </li><li>a release threshold </li></ul>\n<p> A score without context is just a number. A score tied to specific cases tells you what changed. </p>\n<h2> The surrounding vocabulary </h2>\n<p> A few common terms now become simple: </p>\n<ul><li>A task or case is one input plus its expected behavior. </li><li>A trial is one attempt at that task. </li><li>A trace is the full record of what happened. </li><li>A suite is a collection of related cases. </li><li>A harness is the plumbing that runs everything and records the results. </li></ul>\n<p> Different tools use slightly different names. The five-part shape stays the same. </p>\n<h2> Three things to remember </h2>\n<ol><li>Inputs should look like real user work. </li><li>The grader needs a precise definition of acceptable behavior. </li><li>The score becomes valuable when it helps you compare two versions. </li></ol>\n<p> If an eval setup feels confusing, draw five boxes. </p>\n<p> You will usually find the missing piece quickly. </p>",
+  "words": 540,
+  "minutes": 2,
+  "excerpt": "What exactly is inside an AI eval? The terminology can make it sound more complicated than it is. Datasets. Trials. Traces. Graders. Harnesses. Scores. Strip the language away and nearly every eval ha",
+  "images": [
+   {
+    "url": "https://media.licdn.com/dms/image/v2/D5612AQEuwC6IBEdycw/article-inline_image-shrink_400_744/B56aDeygovIMAM-/0/1790444178335?e=2147483647&v=beta&t=hm1csBL_2ATjnBqIn22UeFq26tqXP6_HJaZ_uSxeHnU",
+    "linkedin_alt": "Article content"
+   }
+  ],
+  "group": "Eval",
+  "listed_title": "Every AI Eval Has the Same Five Parts",
+  "media": [
+   {
+    "type": "image",
+    "src": "00.png",
+    "width": 711,
+    "height": 400,
+    "bytes": 45509,
+    "source_bytes": 45509,
+    "linkedin_alt": "Article content"
+   }
+  ]
+ },
+ {
+  "title": "Stop Picking Metrics Before Reading Failures",
+  "date": "Oct 6, 2026",
+  "source_url": "https://www.linkedin.com/pulse/stop-picking-metrics-before-reading-failures-sagar-trivedi-khfjc",
+  "slug": "stop-picking-metrics-before-reading-failures",
+  "html": "<p> Should you begin an eval project by choosing metrics? </p>\n<p> Usually, no. </p>\n<p> \"Helpfulness\", \"relevance\", and \"coherence\" look sensible in a dashboard. But they may have little to do with the problems your users actually face. </p>\n<p> A support bot can sound helpful while quoting an old policy. A research assistant can be coherent while inventing a source. An agent can write a polished reply after updating the wrong account. </p>\n<p> Start with the failures, not the metric menu. </p>\n<h2> Read real traces </h2>\n<p> Pull 50 to 100 recent conversations or agent runs. </p>\n<p> Read them carefully. </p>\n<p> For each trace, write one short note describing what went wrong: </p>\n<ul><li>Quoted the old refund policy. </li><li>Asked for information already provided. </li><li>Failed to hand off to a person. </li><li>Used the right tool with the wrong customer ID. </li><li>Gave a correct answer that was too long for mobile. </li></ul>\n<p> Do not create categories yet. Just describe the failure in plain language. </p>\n<p> This step is sometimes called open coding. The name is less important than the habit. </p>\n<h2> Group similar failures </h2>\n<p> After reading enough traces, patterns appear. </p>\n<p> Your notes might group into: </p>\n<ul><li>Wrong policy detail: 23 </li><li>Did not hand off: 14 </li><li>Asked twice for the same information: 10 </li><li>Too long for mobile: 5 </li><li>Robotic tone: 3 </li></ul>\n<p> Now you have something useful: a ranked list of actual product problems. </p>\n<p> This list tells you where to spend time. It also tells you what to evaluate. </p>\n<h2> Turn each important failure into a check </h2>\n<p> Do not build one grader for \"quality\". </p>\n<p> Build focused graders for the failure modes that matter. </p>\n<p> For example: </p>\n<ul><li>Policy accuracy: Does every policy claim appear in the supplied document? </li><li>Handoff behaviour: Did the bot transfer the conversation when the user requested a person? </li><li>Repetition: Did it ask for information already present in the conversation? </li><li>Length: Is the response under the mobile limit? </li></ul>\n<p> Specific checks are easier to trust and easier to debug. </p>\n<p> When the score drops, you know what kind of behaviour changed. </p>\n<h2> Fix, rerun, and read again </h2>\n<p> Once the first suite exists: </p>\n<ol><li>Change the prompt, model, retrieval, or tool logic. </li><li>Run the same cases again. </li><li>Compare the failure rates. </li><li>Read the traces that changed. </li></ol>\n<p> This last step matters. </p>\n<p> A failed case may mean the system is wrong. It may also mean the task is ambiguous, the reference answer is outdated, or the grader is too strict. </p>\n<p> The score points you toward the problem. The trace explains it. </p>\n<h2> Keep production in the loop </h2>\n<p> Your first dataset will miss things. That is normal. </p>\n<p> Every new incident, complaint, or strange conversation is a candidate test case. </p>\n<p> Over time, the process becomes a loop: </p>\n<p> Observe \u2192 Group \u2192 Test \u2192 Fix \u2192 Ship \u2192 Observe again </p>\n<p> This is why evals are never really finished. A mature suite is a record of what the product has learned about its own failures. </p>\n<h2> Three things to remember </h2>\n<ol><li>Generic metrics rarely reveal product-specific failure modes. </li><li>Read enough traces for patterns to repeat. </li><li>Every confirmed production failure should become a future test. </li></ol>\n<p> The most valuable eval work often happens before anyone writes a grader. </p>\n<p> It happens when someone sits down and reads what the system actually did. </p>",
+  "words": 515,
+  "minutes": 2,
+  "excerpt": "Should you begin an eval project by choosing metrics? Usually, no. \"Helpfulness\", \"relevance\", and \"coherence\" look sensible in a dashboard. But they may have little to do with the problems your users",
+  "images": [],
+  "group": "Eval",
+  "listed_title": "Stop Picking Metrics Before Reading Failures",
+  "media": []
+ },
+ {
+  "title": "A Clever Grader Cannot Save a Weak Dataset",
+  "date": "Oct 13, 2026",
+  "source_url": "https://www.linkedin.com/pulse/clever-grader-cannot-save-weak-dataset-sagar-trivedi-tuwhc",
+  "slug": "clever-grader-cannot-save-weak-dataset",
+  "html": "<p> Would your eval catch a question nobody on your team thought to write? </p>\n<p> Probably not. </p>\n<p> That is why the dataset matters so much. </p>\n<p> A sophisticated grader applied to easy, repetitive questions gives you a precise answer to the wrong problem. </p>\n<p> The quality of an eval begins with the cases you choose. </p>\n<h2> Start with real behavior </h2>\n<p> The best test cases usually come from places where the product has already met reality: </p>\n<ol><li>Production conversations </li><li>Bug reports and complaints </li><li>Domain experts </li><li>Synthetic data </li></ol>\n<p> Production data is valuable because users are strange in ways a planning meeting cannot predict. </p>\n<p> They make typos. They combine three requests. They leave out key details. They ask the same question in five different ways. </p>\n<p> Bug reports are even better. Each one gives you a real input and a known failure. Once fixed, it should become a regression case. </p>\n<h2> Add synthetic cases with structure </h2>\n<p> Before launch, you may not have enough production data. </p>\n<p> Synthetic data can help, but a broad prompt such as \"Generate 50 customer questions\" usually produces polite, similar, easy examples. </p>\n<p> Instead, define the dimensions that make cases meaningfully different. </p>\n<p> For a refund assistant, those dimensions might be: </p>\n<ul><li>Customer type: new, returning, business </li><li>Intent: refund, exchange, invoice </li><li>Situation: within policy, outside policy, missing receipt </li><li>Tone: neutral, angry, confused </li><li>Channel: short mobile message, email, chat transcript </li></ul>\n<p> Then combine the dimensions before generating the final wording. </p>\n<p> This produces better coverage because the variety comes from the scenario, not from superficial phrasing. </p>\n<h2> Include cases the system should not answer </h2>\n<p> Many datasets contain only answerable questions. </p>\n<p> That rewards a dangerous behavior: answering everything confidently. </p>\n<p> Include cases where the correct action is to: </p>\n<ul><li>refuse </li><li>say \"I do not know\" </li><li>ask a clarifying question </li><li>hand off to a person </li><li>avoid calling a tool </li></ul>\n<p> The absence of an action can be the correct outcome. </p>\n<p> Your dataset should measure restraint as well as capability. </p>\n<h2> Write down what good means </h2>\n<p> Every case needs a target. </p>\n<p> That target does not always need to be a perfect reference answer. It can be: </p>\n<ul><li>facts that must be mentioned </li><li>claims that must not appear </li><li>an expected tool call </li><li>an expected database state </li><li>a required refusal or handoff </li></ul>\n<p> Clear expectations make grading easier and expose disagreements early. </p>\n<p> If two experts cannot agree on what should happen, the problem is not ready for automated grading. </p>\n<h2> Keep a hidden set </h2>\n<p> If developers can see every eval case, they may tune the prompt until it passes those exact examples. </p>\n<p> The score improves, but general behavior may not. </p>\n<p> Keep part of the dataset hidden. Use it as an honest check after tuning. </p>\n<p> Also version the dataset. A score from version 4 should not be compared directly with a score from version 7 if the cases changed substantially. </p>\n<h2> Start small, then earn complexity </h2>\n<p> Twenty to fifty strong cases are enough for a useful first suite. </p>\n<p> The goal is not to collect thousands of questions immediately. The goal is to create a set that reflects real risk and teaches you something when it fails. </p>\n<p> Grow it with every incident, every new feature, and every new class of user behavior. </p>\n<h2> Three things to remember </h2>\n<ol><li>Real user traces are usually your best source of cases. </li><li>Synthetic data needs structured dimensions, not one broad prompt. </li><li>A strong dataset includes cases where the correct behavior is restraint. </li></ol>\n<p> The grader tells you whether the system passed the test. </p>\n<p> The dataset decides whether you asked the right question. </p>",
+  "words": 565,
+  "minutes": 3,
+  "excerpt": "Would your eval catch a question nobody on your team thought to write? Probably not. That is why the dataset matters so much. A sophisticated grader applied to easy, repetitive questions gives you a p",
+  "images": [],
+  "group": "Eval",
+  "listed_title": "A Clever Grader Cannot Save a Weak Dataset",
+  "media": []
+ },
+ {
+  "title": "Use the Simplest Grader That Works",
+  "date": "Oct 20, 2026",
+  "source_url": "https://www.linkedin.com/pulse/use-simplest-grader-works-sagar-trivedi-3m5cc",
+  "slug": "use-simplest-grader-works",
+  "html": "<p> Does this eval really need another LLM? </p>\n<p> Sometimes it does. </p>\n<p> Often, ten lines of code would be faster, cheaper, and easier to trust. </p>\n<p> A practical grading order is: </p>\n<p> Code first. LLM judge second. Human review third. </p>\n<p> Move down the list only when the simpler option cannot check what matters. </p>\n<h2> Start with code </h2>\n<p> Code is the best grader when the requirement is objective. </p>\n<p> Examples: </p>\n<ul><li>Is the output valid JSON? </li><li>Does it match the required schema? </li><li>Did the agent call the correct tool? </li><li>Did it use the correct customer ID? </li><li>Does the generated SQL execute? </li><li>Is the answer under 200 words? </li><li>Do the unit tests pass? </li></ul>\n<p> These checks are fast, cheap, and deterministic. </p>\n<p> They also fail clearly. If the schema is invalid, you know why. </p>\n<p> Do not ask an LLM whether JSON is valid. Parse it. </p>\n<h2> Use an LLM judge for judgment calls </h2>\n<p> Some requirements cannot be captured with an exact rule. </p>\n<p> Examples: </p>\n<ul><li>Is every claim supported by the supplied documents? </li><li>Did the response answer the user's actual question? </li><li>Was the handoff appropriate? </li><li>Does the summary preserve the important meaning? </li></ul>\n<p> An LLM judge can handle this kind of open-ended evaluation at scale. </p>\n<p> But the prompt must be precise. </p>\n<p> \"Rate this response for quality from 1 to 5\" leaves too much room for interpretation. </p>\n<p> A better judge checks one failure mode: </p>\n<blockquote>Fail if the reply states a refund window, fee, or eligibility rule that is missing from or contradicts the supplied policy. Otherwise pass. </blockquote>\n<p> The second version is easier to explain, test, and improve. </p>\n<h2> Prefer pass or fail over 1 to 5 </h2>\n<p> Rating scales look more informative than binary decisions. </p>\n<p> In practice, people rarely agree on what separates a 3 from a 4. The same reviewer may score the same answer differently tomorrow. </p>\n<p> Pass or fail forces the team to define the acceptable boundary. </p>\n<p> If one binary score is too simple, split the requirement into several focused checks: </p>\n<ul><li>Factually supported: pass or fail </li><li>Correct handoff: pass or fail </li><li>Required details present: pass or fail </li><li>Length limit respected: pass or fail </li></ul>\n<p> You get more useful information without pretending that a vague number is precise. </p>\n<h2> Use humans where they add the most value </h2>\n<p> Human review is still essential. </p>\n<p> Use domain experts to: </p>\n<ul><li>define what good looks like </li><li>label examples for judge development </li><li>resolve ambiguous cases </li><li>spot-check automated results </li><li>review high-stakes decisions </li></ul>\n<p> Humans should not grade every production output. That does not scale. </p>\n<p> Their role is to create and protect the standard that automated graders apply. </p>\n<p> One trusted domain owner is often more effective than a large committee. Someone needs to make the final call when reasonable people disagree. </p>\n<h2> Combine graders when needed </h2>\n<p> A single case can have several graders. </p>\n<p> For a support response, you might check: </p>\n<ol><li>Valid output structure with code </li><li>Policy grounding with an LLM judge </li><li>A random sample with a human reviewer </li></ol>\n<p> Each grader handles the part it is best suited for. </p>\n<p> This is usually better than asking one large judge prompt to evaluate correctness, tone, safety, length, and relevance at once. </p>\n<h2> Three things to remember </h2>\n<ol><li>If code can check it, use code. </li><li>Give an LLM judge one specific failure mode. </li><li>Use humans to define and audit the standard. </li></ol>\n<p> The best grader is not the most advanced one. </p>\n<p> It is the simplest grader that can make the decision reliably. </p>",
+  "words": 546,
+  "minutes": 2,
+  "excerpt": "Does this eval really need another LLM? Sometimes it does. Often, ten lines of code would be faster, cheaper, and easier to trust. A practical grading order is: Code first. LLM judge second. Human rev",
+  "images": [],
+  "group": "Eval",
+  "listed_title": "Use the Simplest Grader That Works",
+  "media": []
+ },
+ {
+  "title": "Who Evaluates the Evaluator?",
+  "date": "Oct 27, 2026",
+  "source_url": "https://www.linkedin.com/pulse/who-evaluates-evaluator-sagar-trivedi-azuzc",
+  "slug": "who-evaluates-evaluator",
+  "html": "<p> Your LLM judge says the system passes 94% of the time. </p>\n<p> Should you trust it? </p>\n<p> Not until you know how often the judge itself is wrong. </p>\n<p> An unchecked judge is just another model producing an opinion. A polished dashboard does not make that opinion reliable. </p>\n<p> The judge needs an eval too. </p>\n<h2> Create a human-labelled set </h2>\n<p> Ask a trusted domain expert to label a representative set of outputs as pass or fail. </p>\n<p> Around 100 examples can be enough for a useful first check. </p>\n<p> The set should include: </p>\n<ul><li>clear passes </li><li>clear failures </li><li>borderline cases </li><li>common production patterns </li><li>difficult edge cases </li></ul>\n<p> Do not use all the examples while writing the judge prompt. </p>\n<p> Use some as prompt examples, some for tuning, and keep the final group untouched for validation. </p>\n<p> That held-out group tells you whether the judge learned the rule or merely adapted to familiar examples. </p>\n<h2> Compare the judge with the human </h2>\n<p> For every held-out example, compare the two decisions. </p>\n<p> You will get four outcomes: </p>\n<ul><li>The judge and human both say fail: correct failure </li><li>The judge says fail and the human says pass: false alarm </li><li>The judge says pass and the human says fail: missed failure </li><li>The judge and human both say pass: correct pass </li></ul>\n<p> Suppose the results are: </p>\n<ul><li>27 correct failures </li><li>6 false alarms </li><li>3 missed failures </li><li>64 correct passes </li></ul>\n<p> The judge catches 27 of 30 real failures, or 90%. </p>\n<p> It also leaves 64 of 70 good answers alone, or about 91%. </p>\n<figure data-img=\"0\"></figure>\n<p> Both numbers matter. </p>\n<h2> Accuracy alone can mislead you </h2>\n<p> Imagine that only 5% of production responses contain a serious failure. </p>\n<p> A judge that always says \"pass\" will be 95% accurate. </p>\n<p> It will also catch zero failures. </p>\n<p> That is why one accuracy score is not enough. </p>\n<p> Track at least: </p>\n<ul><li>How many real failures the judge catches </li><li>How many good answers it incorrectly blocks </li></ul>\n<p> The right balance depends on the risk. </p>\n<p> For a harmless formatting issue, a missed failure may be acceptable. For a medical or financial claim, the cost can be much higher. </p>\n<h2> Watch for judge bias </h2>\n<p> LLM judges have known tendencies. </p>\n<p> They may prefer: </p>\n<ul><li>longer answers </li><li>the first option in a pair </li><li>language that resembles their own model family </li><li>confident wording </li></ul>\n<p> You can reduce some of these effects. </p>\n<p> For pairwise comparison, swap the order and run the judge again. If the verdict flips, the result is not stable enough. </p>\n<p> Keep judge prompts focused. Include real examples. Revalidate whenever the judge model or prompt changes. </p>\n<h2> Read disagreements </h2>\n<p> The most useful examples are often where the human and judge disagree. </p>\n<p> Read them one by one. </p>\n<p> You may discover: </p>\n<ul><li>the judge rule is unclear </li><li>the human label is wrong </li><li>the case is genuinely ambiguous </li><li>the policy itself needs clarification </li></ul>\n<p> Calibration is not only about improving the judge. It often exposes gaps in the product requirements. </p>\n<h2> Three things to remember </h2>\n<ol><li>Every LLM judge needs a human-labelled validation set. </li><li>Track missed failures and false alarms separately. </li><li>Recheck the judge whenever its model, prompt, or task changes. </li></ol>\n<p> Do not ask whether the judge sounds reasonable. </p>\n<p> Ask how it performs against decisions you already trust. </p>",
+  "words": 506,
+  "minutes": 2,
+  "excerpt": "Your LLM judge says the system passes 94% of the time. Should you trust it? Not until you know how often the judge itself is wrong. An unchecked judge is just another model producing an opinion. A pol",
+  "images": [
+   {
+    "url": "https://media.licdn.com/dms/image/v2/D5612AQHaoEAqngR_3g/article-inline_image-shrink_400_744/B56aDe4U6zIUAM-/0/1790445703081?e=2147483647&v=beta&t=qO9uBCmGGORKCPTYuXtBUY7K-XM3E6CqQ98yFMzEfog",
+    "linkedin_alt": "Article content"
+   }
+  ],
+  "group": "Eval",
+  "listed_title": "Who Evaluates the Evaluator?",
+  "media": [
+   {
+    "type": "image",
+    "src": "00.png",
+    "width": 711,
+    "height": 400,
+    "bytes": 50991,
+    "source_bytes": 50991,
+    "linkedin_alt": "Article content"
    }
   ]
  },

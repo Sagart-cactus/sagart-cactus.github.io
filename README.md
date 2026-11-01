@@ -9,7 +9,7 @@ dropping the file onto any static host.
 
 ```
 index.html          the resume page: markup, styles, print styles, theme toggle, JSON-LD
-articles/           30 articles, one directory per article
+articles/           36 articles, one directory per article
 articles/index.html the writing archive
 assets/site.css     shared styles for the archive and article pages
 tools/              the scripts that fetch and rebuild the archive
@@ -173,7 +173,7 @@ as "cutting annual cloud spend substantially" rather than with the dollar figure
 
 ## The writing archive
 
-The writing archive contains 29 republished LinkedIn articles and one article published directly
+The writing archive contains 35 republished LinkedIn articles and one article published directly
 on this site. Articles are grouped the same way as the resume's Writing section. Each article gets
 its own page with a publish date, reading time, prev/next links within its group, and `BlogPosting`
 structured data. Republished articles also link back to the LinkedIn original.
@@ -184,10 +184,10 @@ expected and it resolves as the site accumulates its own history. If you ever wa
 change the `<link rel="canonical">` in the generated pages to `a["source_url"]` in
 `tools/build_site.py` and rebuild.
 
-**Diagrams are self-hosted.** Each article carries explainer diagrams. The LinkedIn archive has 58
-across 29 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
+**Diagrams are self-hosted.** Each article carries explainer diagrams. The LinkedIn archive has 61
+across 35 articles. LinkedIn serves them as GIF, and the 21 animated ones weigh about 23 MB between
 them. `tools/fetch_media.py` downloads everything, re-encodes animated GIFs to H.264 MP4, and
-extracts a poster frame. The whole set drops from **32.4 MB to 4.3 MB**; the worst single file goes
+extracts a poster frame. The whole set drops from **32.5 MB to 4.4 MB**; the worst single file goes
 from 2674 KB to 46 KB. Animated diagrams render as `<video autoplay loop muted playsinline>`, which
 behaves like a GIF but is roughly two orders of magnitude smaller. Median article page weight,
 including media, is 89 KB.
@@ -211,8 +211,8 @@ are GitHub Pages project sites, so they already live on this same domain under `
 | Guide | Consolidates |
 | --- | --- |
 | [RAG](https://sagartrivedi.dev/learn-rag/) | Retrieval and RAG |
-| [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Agents and evaluation |
-| [Evals](https://sagartrivedi.dev/learn-eval/) | Agents and evaluation |
+| [Managed Agents](https://sagartrivedi.dev/learn-managed-agents/) | Managed Agents |
+| [Evals](https://sagartrivedi.dev/learn-eval/) | Eval |
 | [The MCP Knowledgebase](https://sagartrivedi.dev/learn-mcp/) | Model Context Protocol |
 | [Anatomy of an AI Coding Agent](https://sagartrivedi.dev/learn-codex-internals/) | Inside Codex CLI |
 | [Claude Code Plugins](https://sagartrivedi.dev/learn-claude-code-plugin/) | Agent tooling and team practice |
